@@ -1,28 +1,28 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
+import EmitRecipe from "./pages/medic/EmitRecipe";
+import Container from "@material-ui/core/Container";
+
 import "./index.css";
 function App() {
   return (
     <Router>
       <Navbar />
-      <div>
-        <Header />
-
-        <Route exact path="/" component={Home} />
-        <Route path="/emitir" component={About} />
-        <Route path="/topics" component={Topics} />
-      </div>
+      <Container fixed>
+        <div>
+          <Header />
+          <Route exact path="/" component={Home} />
+          <Route path="/emitir" component={EmitRecipe} />
+          <Route path="/topics" component={Topics} />
+        </div>
+      </Container>
     </Router>
   );
 }
 
 function Home() {
   return <h2>Home</h2>;
-}
-
-function About() {
-  return <h2>Emitir</h2>;
 }
 
 function Topic({ match }) {
@@ -56,9 +56,6 @@ function Topics({ match }) {
 function Header() {
   return (
     <ul>
-      <li>
-        <Link to="/emitir">Emitir</Link>
-      </li>
       <li>
         <Link to="/topics">Topics</Link>
       </li>
