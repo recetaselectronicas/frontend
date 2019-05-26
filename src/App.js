@@ -1,14 +1,16 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-
+import Navbar from "./components/navbar/Navbar";
+import "./index.css";
 function App() {
   return (
     <Router>
+      <Navbar />
       <div>
         <Header />
 
         <Route exact path="/" component={Home} />
-        <Route path="/about" component={About} />
+        <Route path="/emitir" component={About} />
         <Route path="/topics" component={Topics} />
       </div>
     </Router>
@@ -20,7 +22,7 @@ function Home() {
 }
 
 function About() {
-  return <h2>About</h2>;
+  return <h2>Emitir</h2>;
 }
 
 function Topic({ match }) {
@@ -55,10 +57,7 @@ function Header() {
   return (
     <ul>
       <li>
-        <Link to="/">Home</Link>
-      </li>
-      <li>
-        <Link to="/about">About</Link>
+        <Link to="/emitir">Emitir</Link>
       </li>
       <li>
         <Link to="/topics">Topics</Link>
