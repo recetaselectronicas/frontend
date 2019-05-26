@@ -19,6 +19,7 @@ import Add from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
+import AddItemDialog from "./components/addItemDialog/AddItemDialog";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -46,17 +47,9 @@ const useStyles = makeStyles(theme => ({
 const EmitRecipe = props => {
   const classes = useStyles();
 
-  const [values, setValues] = React.useState({
-    age: "",
-    name: "hai"
-  });
-
-  function handleChange(event) {
-    setValues(oldValues => ({
-      ...oldValues,
-      [event.target.name]: event.target.value
-    }));
-  }
+  const [addItemDialogOpen, setVisibiltyOfAddItemDialog] = React.useState(
+    false
+  );
 
   return (
     // TODO: agregar pasos entre los inputs
@@ -78,8 +71,6 @@ const EmitRecipe = props => {
               <FormControl className={classes.formControlObraSocial}>
                 <InputLabel htmlFor="age-simple">Obra social</InputLabel>
                 <Select
-                  value={values.age}
-                  onChange={handleChange}
                   inputProps={{
                     name: "age",
                     id: "age-simple"
@@ -103,7 +94,7 @@ const EmitRecipe = props => {
               }}
             />
             <div style={{ textAlign: "left", marginTop: 10, marginBottom: 10 }}>
-              Nombre : pepito Gonzalez - Categoria : 310
+              Nombre : Pepito Gonzalez - Categoria : 310
             </div>
           </div>
           <Typography
@@ -124,7 +115,13 @@ const EmitRecipe = props => {
                 </ListItemSecondaryAction>
               </ListItem>
             </List>
-            <div style={{ textAlign: "end" }}>Agregar...</div>
+            <div
+              style={{ textAlign: "end", cursor: "pointer" }}
+              className="emit-recipe__add-item"
+              onClick={() => setVisibiltyOfAddItemDialog(true)}
+            >
+              Agregar...
+            </div>
           </div>
           <div>
             <TextField
@@ -162,6 +159,10 @@ const EmitRecipe = props => {
           Emitir
         </Button>
       </Grid>
+      <AddItemDialog
+        open={addItemDialogOpen}
+        handleClose={() => setVisibiltyOfAddItemDialog(false)}
+      />
     </Grid>
   );
 };
