@@ -3,7 +3,6 @@ import { shallow } from "enzyme";
 import EmitRecipe from "./EmitRecipe";
 
 const props = {
-  label: "default label"
 };
 const setup = (anotherProps = {}) => {
   const newProps = {

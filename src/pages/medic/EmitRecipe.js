@@ -162,6 +162,7 @@ const EmitRecipe = props => {
       <AddItemDialog
         open={addItemDialogOpen}
         handleClose={() => setVisibiltyOfAddItemDialog(false)}
+        searchMedicament={() => ({ result: [{ label: "ibuprofeno 600" }] })}
       />
     </Grid>
   );
