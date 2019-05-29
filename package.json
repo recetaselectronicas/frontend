@@ -44,7 +44,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "npm test & npm run lint"
+      "pre-push": "CI=true npm test & npm run lint"
     }
   }
 }
