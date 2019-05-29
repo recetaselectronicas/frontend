@@ -1,54 +1,52 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import Typography from "@material-ui/core/Typography";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import Add from "@material-ui/icons/Add";
-import DeleteIcon from "@material-ui/icons/Delete";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import IconButton from "@material-ui/core/IconButton";
-import AddItemDialog from "./components/addItemDialog/AddItemDialog";
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import DeleteIcon from '@material-ui/icons/Delete';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import IconButton from '@material-ui/core/IconButton';
+import AddItemDialog from './components/addItemDialog/AddItemDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   paper: {
-    padding: "2em",
-    paddingTop: "1em",
-    textAlign: "center",
-    color: theme.palette.text.secondary
+    padding: '2em',
+    paddingTop: '1em',
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 120
+    minWidth: 120,
   },
   formControlObraSocial: {
     minWidth: 120,
-    justifyContent: "flex-start"
+    justifyContent: 'flex-start',
   },
   button: {
-    marginRight: 12
-  }
+    marginRight: 12,
+  },
 }));
 
-const EmitRecipe = props => {
+const EmitRecipe = () => {
   const classes = useStyles();
 
   const [addItemDialogOpen, setVisibiltyOfAddItemDialog] = React.useState(
-    false
+    false,
   );
 
   return (
@@ -64,16 +62,16 @@ const EmitRecipe = props => {
               fullWidth
               margin="normal"
               InputLabelProps={{
-                shrink: true
+                shrink: true,
               }}
             />
-            <div style={{ textAlign: "left" }}>
+            <div style={{ textAlign: 'left' }}>
               <FormControl className={classes.formControlObraSocial}>
                 <InputLabel htmlFor="age-simple">Obra social</InputLabel>
                 <Select
                   inputProps={{
-                    name: "age",
-                    id: "age-simple"
+                    name: 'age',
+                    id: 'age-simple',
                   }}
                 >
                   <MenuItem value={10}>Ten</MenuItem>
@@ -90,15 +88,15 @@ const EmitRecipe = props => {
               fullWidth
               margin="normal"
               InputLabelProps={{
-                shrink: true
+                shrink: true,
               }}
             />
-            <div style={{ textAlign: "left", marginTop: 10, marginBottom: 10 }}>
+            <div style={{ textAlign: 'left', marginTop: 10, marginBottom: 10 }}>
               Nombre : Pepito Gonzalez - Categoria : 310
             </div>
           </div>
           <Typography
-            style={{ textAlign: "start" }}
+            style={{ textAlign: 'start' }}
             variant="h6"
             className={classes.title}
           >
@@ -116,7 +114,7 @@ const EmitRecipe = props => {
               </ListItem>
             </List>
             <div
-              style={{ textAlign: "end", cursor: "pointer" }}
+              style={{ textAlign: 'end', cursor: 'pointer' }}
               className="emit-recipe__add-item"
               onClick={() => setVisibiltyOfAddItemDialog(true)}
             >
@@ -131,13 +129,13 @@ const EmitRecipe = props => {
               fullWidth
               margin="normal"
               InputLabelProps={{
-                shrink: true
+                shrink: true,
               }}
             />
             <Grid container direction="row" justify="flex-end">
               <FormControlLabel
                 control={
-                  <Checkbox checked={true} value="checkedB" color="primary" />
+                  <Checkbox checked value="checkedB" color="primary" />
                 }
                 labelPlacement="start"
                 label="Tratamiento prolongado"
@@ -162,7 +160,7 @@ const EmitRecipe = props => {
       <AddItemDialog
         open={addItemDialogOpen}
         handleClose={() => setVisibiltyOfAddItemDialog(false)}
-        searchMedicament={() => ({ result: [{ label: "ibuprofeno 600" }] })}
+        searchMedicament={() => ({ result: [{ label: 'ibuprofeno 600' }] })}
       />
     </Grid>
   );

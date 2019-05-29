@@ -1,34 +1,34 @@
-import React from "react";
-import { shallow } from "enzyme";
-import EmitRecipe from "./EmitRecipe";
+import React from 'react';
+import { shallow } from 'enzyme';
+import EmitRecipe from './EmitRecipe';
 
 const props = {
 };
 const setup = (anotherProps = {}) => {
   const newProps = {
     ...props,
-    ...anotherProps
+    ...anotherProps,
   };
   const wrapper = shallow(<EmitRecipe {...newProps} />);
   return {
     wrapper,
     instance: wrapper.instance(),
-    addItemButton: wrapper.find(".emit-recipe__add-item")
+    addItemButton: wrapper.find('.emit-recipe__add-item'),
   };
 };
 
-describe("<EmitRecipe />", () => {
-  it("smoke test", () => {
+describe('<EmitRecipe />', () => {
+  it('smoke test', () => {
     const { wrapper } = setup();
     expect(wrapper.exists()).toBe(true);
   });
-  describe("when click add item button", () => {
+  describe('when click add item button', () => {
     const { addItemButton, wrapper } = setup({});
     beforeAll(() => {
-      addItemButton.simulate("click");
+      addItemButton.simulate('click');
     });
-    it("open add item modal", () => {
-      const modalAddItem = wrapper.find("AddItemDialog");
+    it('open add item modal', () => {
+      const modalAddItem = wrapper.find('AddItemDialog');
       expect(modalAddItem.props().open).toBe(true);
     });
   });

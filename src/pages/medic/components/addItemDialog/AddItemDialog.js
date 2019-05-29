@@ -1,36 +1,35 @@
-import React from "react";
-import { withStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import MuiDialogTitle from "@material-ui/core/DialogTitle";
-import MuiDialogContent from "@material-ui/core/DialogContent";
-import MuiDialogActions from "@material-ui/core/DialogActions";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import SearchIcon from "@material-ui/icons/Search";
-import Typography from "@material-ui/core/Typography";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import TextField from "@material-ui/core/TextField";
-import Grid from "@material-ui/core/Grid";
-
-import { makeStyles } from '@material-ui/core/styles';
+import React from 'react';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import MuiDialogActions from '@material-ui/core/DialogActions';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import SearchIcon from '@material-ui/icons/Search';
+import Typography from '@material-ui/core/Typography';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import TextField from '@material-ui/core/TextField';
+import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
+import propTypes from 'prop-types';
 
 const styles = theme => ({
   root: {
     margin: 0,
-    padding: theme.spacing(2)
+    padding: theme.spacing(2),
   },
   closeButton: {
-    position: "absolute",
+    position: 'absolute',
     right: theme.spacing(1),
     top: theme.spacing(1),
-    color: theme.palette.grey[500]
-  }
+    color: theme.palette.grey[500],
+  },
 });
 
-const DialogTitle = withStyles(styles)(props => {
+const DialogTitle = withStyles(styles)((props) => {
   const { children, classes, onClose } = props;
   return (
     <MuiDialogTitle disableTypography className={classes.root}>
@@ -50,46 +49,46 @@ const DialogTitle = withStyles(styles)(props => {
 
 const DialogContent = withStyles(theme => ({
   root: {
-    padding: theme.spacing(2)
-  }
+    padding: theme.spacing(2),
+  },
 }))(MuiDialogContent);
 
 const DialogActions = withStyles(theme => ({
   root: {
     margin: 0,
-    padding: theme.spacing(1)
-  }
+    padding: theme.spacing(1),
+  },
 }))(MuiDialogActions);
 
-const AddItemDialog = props => {
+const AddItemDialog = (props) => {
   const [suggestionList, setSuggestionList] = React.useState([]);
   const [selectedSuggestion, setSelectedSuggestion] = React.useState({});
-  const [suggestionInput, setSuggestionInput] = React.useState("");
+  const [suggestionInput, setSuggestionInput] = React.useState('');
   const [itemQuantity, setItemQuantity] = React.useState(0);
 
   const onChangeItemInput = async (event) => {
     try {
-      const value = event.target.value;
+      const { value } = event.target;
       setSuggestionInput(value);
       const data = await props.searchMedicament(value);
-      setSuggestionList(data.result)
+      setSuggestionList(data.result);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
   const onSelectSuggestion = (suggestion) => {
-    setSuggestionList([])
-    setSelectedSuggestion(suggestion)
-    setSuggestionInput(suggestion.label)
-  }
+    setSuggestionList([]);
+    setSelectedSuggestion(suggestion);
+    setSuggestionInput(suggestion.label);
+  };
   const addItem = () => {
     props.addItem({
       item: selectedSuggestion,
-      quantity: itemQuantity
-    })
-  }
+      quantity: itemQuantity,
+    });
+  };
   const { handleClose, open } = props;
-  const classes = {}
+  const classes = {};
 
   return (
     <div>
@@ -100,7 +99,7 @@ const AddItemDialog = props => {
       >
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
           Agregar item
-          </DialogTitle>
+        </DialogTitle>
         <DialogContent>
           <Grid container spacing={2}>
             <Grid item>
@@ -117,11 +116,11 @@ const AddItemDialog = props => {
                         <InputAdornment position="start">
                           <SearchIcon />
                         </InputAdornment>
-                      )
+                      ),
                     }}
                     onChange={onChangeItemInput}
                   />
-                  <div >
+                  <div>
                     {suggestionList.length > 0 && (
                       <Paper className={classes.paper} square>
                         <Suggestions data={suggestionList} onSelectSuggestion={onSelectSuggestion} />
@@ -135,11 +134,12 @@ const AddItemDialog = props => {
 
             </Grid>
             <Grid item>
-              <TextField id="input-with-icon-textfield"
+              <TextField
+                id="input-with-icon-textfield"
                 label="Cantidad"
                 className="add-item__quantity-texfield"
                 value={itemQuantity}
-                onChange={(event) => setItemQuantity(event.target.value)}
+                onChange={event => setItemQuantity(event.target.value)}
               />
             </Grid>
           </Grid>
@@ -152,23 +152,24 @@ const AddItemDialog = props => {
             onClick={addItem}
           >
             Agregar
-              </Button>
+          </Button>
           <Button onClick={handleClose} color="secondary">
             Cancelar
-              </Button>
+          </Button>
         </DialogActions>
       </Dialog>
     </div>
   );
-}
+};
 
 
 function Suggestions(props) {
-  return props.data.map((suggestion) =>
+  return props.data.map(suggestion => (
     <Suggestion
       onSelectSuggestion={props.onSelectSuggestion}
-      data={suggestion} />,
-  )
+      data={suggestion}
+    />
+  ));
 }
 
 function Suggestion(props) {
@@ -182,6 +183,11 @@ function Suggestion(props) {
   );
 }
 
-
+AddItemDialog.propTypes = {
+  searchMedicament: propTypes.func.isRequired,
+  addItem: propTypes.func.isRequired,
+  handleClose: propTypes.func.isRequired,
+  open: propTypes.bool.isRequired,
+};
 
 export default AddItemDialog;
