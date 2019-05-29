@@ -63,18 +63,33 @@ const DialogActions = withStyles(theme => ({
 
 const AddItemDialog = props => {
   const [suggestionList, setSuggestionList] = React.useState([]);
+  const [selectedSuggestion, setSelectedSuggestion] = React.useState({});
+  const [suggestionInput, setSuggestionInput] = React.useState("");
+  const [itemQuantity, setItemQuantity] = React.useState(0);
 
   const onChangeItemInput = async (event) => {
     try {
-      const data = await props.searchMedicament(event.target.value);
+      const value = event.target.value;
+      setSuggestionInput(value);
+      const data = await props.searchMedicament(value);
       setSuggestionList(data.result)
     } catch (error) {
       console.log(error)
     }
   }
-  const classes = {}
-
+  const onSelectSuggestion = (suggestion) => {
+    setSuggestionList([])
+    setSelectedSuggestion(suggestion)
+    setSuggestionInput(suggestion.label)
+  }
+  const addItem = () => {
+    props.addItem({
+      item: selectedSuggestion,
+      quantity: itemQuantity
+    })
+  }
   const { handleClose, open } = props;
+  const classes = {}
 
   return (
     <div>
@@ -96,6 +111,7 @@ const AddItemDialog = props => {
                     id="input-with-icon-textfield"
                     label="Medicamento"
                     className="add-item__item-texfield"
+                    value={suggestionInput}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -108,7 +124,7 @@ const AddItemDialog = props => {
                   <div >
                     {suggestionList.length > 0 && (
                       <Paper className={classes.paper} square>
-                        <Suggestions data={suggestionList} />
+                        <Suggestions data={suggestionList} onSelectSuggestion={onSelectSuggestion} />
                       </Paper>
                     )}
                   </div>
@@ -119,12 +135,22 @@ const AddItemDialog = props => {
 
             </Grid>
             <Grid item>
-              <TextField id="input-with-icon-textfield" label="Cantidad" />
+              <TextField id="input-with-icon-textfield"
+                label="Cantidad"
+                className="add-item__quantity-texfield"
+                value={itemQuantity}
+                onChange={(event) => setItemQuantity(event.target.value)}
+              />
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button
+            color="primary"
+            className="add-item__confirm-button"
+            disabled={Object.keys(selectedSuggestion).length === 0}
+            onClick={addItem}
+          >
             Agregar
               </Button>
           <Button onClick={handleClose} color="secondary">
@@ -139,16 +165,19 @@ const AddItemDialog = props => {
 
 function Suggestions(props) {
   return props.data.map((suggestion) =>
-    renderSuggestion(suggestion),
+    <Suggestion
+      onSelectSuggestion={props.onSelectSuggestion}
+      data={suggestion} />,
   )
 }
 
-function renderSuggestion(suggestionProps) {
+function Suggestion(props) {
   return (
     <MenuItem
       component="div"
+      onClick={() => props.onSelectSuggestion(props.data)}
     >
-      {suggestionProps.label}
+      {props.data.label}
     </MenuItem>
   );
 }

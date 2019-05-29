@@ -29,7 +29,6 @@ describe("<EmitRecipe />", () => {
     });
     it("open add item modal", () => {
       const modalAddItem = wrapper.find("AddItemDialog");
-
       expect(modalAddItem.props().open).toBe(true);
     });
   });
