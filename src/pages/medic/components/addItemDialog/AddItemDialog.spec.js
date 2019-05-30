@@ -5,6 +5,7 @@ import AddItemDialog from './AddItemDialog';
 const sinon = require('sinon');
 
 const props = {
+  handleClose: () => { },
 };
 const setup = (anotherProps = {}) => {
   const newProps = {

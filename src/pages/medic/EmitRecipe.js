@@ -12,12 +12,9 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
+import Item from './components/item/Item';
 import AddItemDialog from './components/addItemDialog/AddItemDialog';
+import MedicamentService from '../../services/MedicamentService';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -48,7 +45,17 @@ const EmitRecipe = () => {
   const [addItemDialogOpen, setVisibiltyOfAddItemDialog] = React.useState(
     false,
   );
+  const [listItem, setListItem] = React.useState([]);
 
+  const addItem = (item) => {
+    const newListItem = [...listItem];
+    newListItem.push({ ...item, id: listItem.length });
+    setListItem(newListItem);
+  };
+  const removeItem = (id) => {
+    const newListItem = listItem.filter(item => item.id !== id);
+    setListItem(newListItem);
+  };
   return (
     // TODO: agregar pasos entre los inputs
     <Grid container justify="center" spacing={3}>
@@ -104,14 +111,9 @@ const EmitRecipe = () => {
           </Typography>
           <div>
             <List component="nav">
-              <ListItem button>
-                <ListItemText primary="Ibu 400" />
-                <ListItemSecondaryAction>
-                  <IconButton edge="end" aria-label="Delete">
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
+              {listItem.map(item => (
+                <Item {...item} removeItem={removeItem} />
+              ))}
             </List>
             <div
               style={{ textAlign: 'end', cursor: 'pointer' }}
@@ -134,9 +136,7 @@ const EmitRecipe = () => {
             />
             <Grid container direction="row" justify="flex-end">
               <FormControlLabel
-                control={
-                  <Checkbox checked value="checkedB" color="primary" />
-                }
+                control={<Checkbox checked value="checkedB" color="primary" />}
                 labelPlacement="start"
                 label="Tratamiento prolongado"
               />
@@ -160,7 +160,8 @@ const EmitRecipe = () => {
       <AddItemDialog
         open={addItemDialogOpen}
         handleClose={() => setVisibiltyOfAddItemDialog(false)}
-        searchMedicament={() => ({ result: [{ label: 'ibuprofeno 600' }] })}
+        addItem={addItem}
+        searchMedicament={MedicamentService.searchMedicamentByName}
       />
     </Grid>
   );

@@ -13,8 +13,8 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import MenuItem from '@material-ui/core/MenuItem';
 import propTypes from 'prop-types';
+import Suggestions from '../suggestions/Suggestions';
 
 const styles = theme => ({
   root: {
@@ -86,6 +86,11 @@ const AddItemDialog = (props) => {
       item: selectedSuggestion,
       quantity: itemQuantity,
     });
+    // clean the inputs and close the modal
+    setSelectedSuggestion({});
+    setItemQuantity(0);
+    setSuggestionInput('');
+    props.handleClose();
   };
   const { handleClose, open } = props;
   const classes = {};
@@ -104,7 +109,6 @@ const AddItemDialog = (props) => {
           <Grid container spacing={2}>
             <Grid item>
               <div className={classes.root}>
-
                 <div className={classes.container}>
                   <TextField
                     id="input-with-icon-textfield"
@@ -123,15 +127,15 @@ const AddItemDialog = (props) => {
                   <div>
                     {suggestionList.length > 0 && (
                       <Paper className={classes.paper} square>
-                        <Suggestions data={suggestionList} onSelectSuggestion={onSelectSuggestion} />
+                        <Suggestions
+                          data={suggestionList}
+                          onSelectSuggestion={onSelectSuggestion}
+                        />
                       </Paper>
                     )}
                   </div>
                 </div>
-
-
               </div>
-
             </Grid>
             <Grid item>
               <TextField
@@ -139,6 +143,7 @@ const AddItemDialog = (props) => {
                 label="Cantidad"
                 className="add-item__quantity-texfield"
                 value={itemQuantity}
+                type="number"
                 onChange={event => setItemQuantity(event.target.value)}
               />
             </Grid>
@@ -161,27 +166,6 @@ const AddItemDialog = (props) => {
     </div>
   );
 };
-
-
-function Suggestions(props) {
-  return props.data.map(suggestion => (
-    <Suggestion
-      onSelectSuggestion={props.onSelectSuggestion}
-      data={suggestion}
-    />
-  ));
-}
-
-function Suggestion(props) {
-  return (
-    <MenuItem
-      component="div"
-      onClick={() => props.onSelectSuggestion(props.data)}
-    >
-      {props.data.label}
-    </MenuItem>
-  );
-}
 
 AddItemDialog.propTypes = {
   searchMedicament: propTypes.func.isRequired,
