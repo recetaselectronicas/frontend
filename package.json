@@ -11,12 +11,13 @@
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0",
     "react-scripts": "3.0.1",
-    "react-test-renderer": "^16.8.6"
+    "react-test-renderer": "^16.8.6",
+    "sinon": "^7.3.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --verbose",
     "eject": "react-scripts eject",
     "lint": "eslint ./src/components ./src/pages",
     "lint:fix": "eslint ./src/components ./src/pages --fix"
@@ -40,7 +41,8 @@
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-react": "^7.13.0",
-    "husky": "^2.3.0"
+    "husky": "^2.3.0",
+    "prop-types": "^15.7.2"
   },
   "husky": {
     "hooks": {
