@@ -4,6 +4,8 @@ import EmitRecipe from './EmitRecipe';
 
 const props = {
 };
+
+const getAffilateTextfield = wrapper => wrapper.find('.emit-recipe__affilate-textfield');
 const setup = (anotherProps = {}) => {
   const newProps = {
     ...props,
@@ -16,6 +18,8 @@ const setup = (anotherProps = {}) => {
     addItemButton: wrapper.find('.emit-recipe__add-item'),
     AddItemDialog: wrapper.find('AddItemDialog'),
     Item: wrapper.find('Item'),
+    medicalInsuranceSelect: wrapper.find('.emit-recipe__medical-insurance-select'),
+    affiliateTextfield: getAffilateTextfield(wrapper),
   };
 };
 
@@ -61,6 +65,27 @@ describe('<EmitRecipe />', () => {
     it('open add item modal', () => {
       const modalAddItem = wrapper.find('AddItemDialog');
       expect(modalAddItem.props().open).toBe(true);
+    });
+  });
+
+  describe('when write in affilate textfield', () => {
+    const { wrapper, medicalInsuranceSelect, affiliateTextfield } = setup();
+    const changeValue = 2131221312312;
+    beforeAll(() => {
+      affiliateTextfield.simulate('change', { target: { value: changeValue } });
+    });
+    it('set the value into the input', () => {
+      const affiliateTextfieldMuttated = getAffilateTextfield(wrapper);
+      expect(affiliateTextfieldMuttated.props().value).toEqual(changeValue);
+    });
+    describe('and select a medical insurance', () => {
+      beforeAll(() => {
+        medicalInsuranceSelect.simulate('change', { target: { value: 1 } });
+      });
+      it('clean affiliate textfield', () => {
+        const affiliateTextfieldMuttated = getAffilateTextfield(wrapper);
+        expect(affiliateTextfieldMuttated.props().value).toEqual('');
+      });
     });
   });
 });

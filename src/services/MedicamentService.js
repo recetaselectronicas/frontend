@@ -1,10 +1,10 @@
 export default class MedicamentService {
   static searchMedicamentByName() {
-    return {
+    return new Promise(res => res({
       result: [
-        { label: 'ibuprofeno 600' },
-        { label: 'clonazepan 600' },
+        { id: 0, label: 'ibuprofeno 600' },
+        { id: 1, label: 'clonazepan 600' },
       ],
-    };
+    }));
   }
 }
