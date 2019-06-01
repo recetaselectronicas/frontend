@@ -19,6 +19,8 @@ import InstitutionService from '../../services/InstutionService';
 import MedicalInsuranceService from '../../services/MedicalInsuranceService';
 import Suggestions from './components/suggestions/Suggestions';
 import AffilateService from '../../services/AffilateService';
+import PrescriptionService from '../../services/PrescriptionService';
+import PrescriptionRequest from '../../requestBuilders/PrescriptionRequest';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -46,7 +48,8 @@ const EmitRecipe = () => {
   const classes = useStyles();
 
   const [addItemDialogOpen, setVisibiltyOfAddItemDialog] = useState(false);
-  const [listItem, setListItem] = useState([]);
+  const [prolongedTreatment, setProlongedTreatment] = useState(false);
+  const [items, setItems] = useState([]);
   const [institutions, setInstitutions] = useState([]);
   const [medicalInsurances, setMedicalInsurances] = useState([]);
   const [selectedMedicalInsurance, setSelectedMedicalInsurance] = useState(null);
@@ -76,13 +79,13 @@ const EmitRecipe = () => {
   }, []);
 
   const addItem = (item) => {
-    const newListItem = [...listItem];
-    newListItem.push({ ...item, id: listItem.length });
-    setListItem(newListItem);
+    const newListItem = [...items];
+    newListItem.push({ ...item, id: items.length });
+    setItems(newListItem);
   };
   const removeItem = (id) => {
-    const newListItem = listItem.filter(item => item.id !== id);
-    setListItem(newListItem);
+    const newListItem = items.filter(item => item.id !== id);
+    setItems(newListItem);
   };
   const onSelectSuggestion = (affilate) => {
     setSuggestionList([]);
@@ -107,8 +110,26 @@ const EmitRecipe = () => {
     setSelectedMedicalInsurance(event.target.value);
   };
 
+  const emitRecipe = async () => {
+    const prescriptionRequest = new PrescriptionRequest
+      .Builder()
+      .withAffiliate(selectedAffilate.id)
+      .withDiagnosis(diagnostic)
+      .withDoctor(2)
+      .withInstitution(selectedInstitution)
+      .withMedicalInsurance(selectedMedicalInsurance)
+      .withItems(items)
+      .withProlongedTreatment(prolongedTreatment)
+      .build();
+    try {
+      const data = await PrescriptionService.create(prescriptionRequest);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    // TODO: agregar pasos entre los inputs
     <Grid container justify="center" spacing={3}>
       <Grid item xs={9}>
         <Paper className={classes.paper}>
@@ -172,11 +193,11 @@ const EmitRecipe = () => {
             )}
             {selectedAffilate && (
             <div style={{ textAlign: 'left', marginTop: 10, marginBottom: 10 }}>
-              Nombre :
+            Nombre :
               {selectedAffilate.name}
               {' '}
               {selectedAffilate.lastname}
-- Categoria :
+            - Categoria :
               {' '}
 
               {selectedAffilate.category}
@@ -192,14 +213,14 @@ const EmitRecipe = () => {
           </Typography>
           <div>
             <List component="nav">
-              {listItem.length === 0
-                && (
+              {items.length === 0
+              && (
                 <Paper style={{ padding: 25 }}>
-                  Aun no tiene items agregados
+                Aun no tiene items agregados
                 </Paper>
-                )
+              )
               }
-              {listItem.map(item => (
+              {items.map(item => (
                 <Item {...item} removeItem={removeItem} />
               ))}
             </List>
@@ -208,7 +229,7 @@ const EmitRecipe = () => {
               className="emit-recipe__add-item"
               onClick={() => setVisibiltyOfAddItemDialog(true)}
             >
-              Agregar...
+                Agregar...
             </div>
           </div>
           <div>
@@ -226,7 +247,12 @@ const EmitRecipe = () => {
             />
             <Grid container direction="row" justify="flex-end">
               <FormControlLabel
-                control={<Checkbox checked value="checkedB" color="primary" />}
+                control={(
+                  <Checkbox
+                    color="primary"
+                    onChange={event => setProlongedTreatment(event.target.checked)}
+                  />
+                  )}
                 labelPlacement="start"
                 label="Tratamiento prolongado"
               />
@@ -235,7 +261,7 @@ const EmitRecipe = () => {
             <Grid container direction="row" justify="space-between">
               <div>Fecha</div>
               <div>
-                Doctor : Gonzalo gras cantou
+                  Doctor : Gonzalo gras cantou
                 <div>simulacion de la firma del doctor</div>
               </div>
             </Grid>
@@ -248,14 +274,14 @@ const EmitRecipe = () => {
           color="primary"
           className={classes.button}
           disabled={
-!selectedMedicalInsurance
-|| !selectedInstitution
- || !selectedMedicalInsurance
- || listItem.length === 0
-        }
-
+                    !selectedMedicalInsurance
+                    || !selectedInstitution
+                    || !selectedMedicalInsurance
+                    || items.length === 0
+                  }
+          onClick={emitRecipe}
         >
-          Emitir
+                  Emitir
         </Button>
       </Grid>
       <AddItemDialog
