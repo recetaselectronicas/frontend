@@ -44,6 +44,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const initialState = {
+  selectedAffilate: {
+    code: '',
+  },
+};
+const isUndefinedOrNull = value => value === undefined || value === null;
 const EmitRecipe = () => {
   const classes = useStyles();
 
@@ -54,9 +60,8 @@ const EmitRecipe = () => {
   const [medicalInsurances, setMedicalInsurances] = useState([]);
   const [selectedMedicalInsurance, setSelectedMedicalInsurance] = useState(null);
   const [selectedInstitution, setSelectedInstitution] = useState(null);
-  const [selectedAffilate, setSelectedAffilate] = useState(null);
+  const [selectedAffilate, setSelectedAffilate] = useState(initialState.selectedAffilate);
   const [suggestionList, setSuggestionList] = useState([]);
-  const [affilateTextfieldValue, setAffilateTextfieldValue] = useState('');
   const [diagnostic, setDiagnostic] = useState(null);
 
   // componentDidMount
@@ -94,7 +99,7 @@ const EmitRecipe = () => {
 
   const onChangeAffilateTexfield = async (event) => {
     const affilateNumber = event.target.value;
-    setAffilateTextfieldValue(affilateNumber);
+    setSelectedAffilate({ code: affilateNumber });
     if (affilateNumber.length >= 3) {
       try {
         const data = await AffilateService.searchAffilateNumber(affilateNumber);
@@ -105,8 +110,7 @@ const EmitRecipe = () => {
     }
   };
   const onChangeMedicalInsurance = (event) => {
-    setSelectedAffilate(null);
-    setAffilateTextfieldValue('');
+    setSelectedAffilate(initialState.selectedAffilate);
     setSelectedMedicalInsurance(event.target.value);
   };
 
@@ -177,7 +181,7 @@ const EmitRecipe = () => {
               margin="normal"
               type="number"
               className="emit-recipe__affilate-textfield"
-              value={affilateTextfieldValue}
+              value={selectedAffilate.code}
               onChange={onChangeAffilateTexfield}
               InputLabelProps={{
                 shrink: true,
@@ -277,6 +281,7 @@ const EmitRecipe = () => {
                     !selectedMedicalInsurance
                     || !selectedInstitution
                     || !selectedMedicalInsurance
+                    || isUndefinedOrNull(selectedAffilate)
                     || items.length === 0
                   }
           onClick={emitRecipe}
