@@ -98,6 +98,10 @@ describe('<EmitRecipe />', () => {
         const affiliateTextfieldMuttated = getAffilateTextfield(wrapper);
         expect(affiliateTextfieldMuttated.props().value).toEqual('');
       });
+      it('enable affiliate textfield ', () => {
+        const affiliateTextfieldMuttated = getAffilateTextfield(wrapper);
+        expect(affiliateTextfieldMuttated.props().disabled).toBe(false);
+      });
     });
   });
 });
