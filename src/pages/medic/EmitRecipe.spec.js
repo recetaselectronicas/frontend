@@ -2,8 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import EmitRecipe from './EmitRecipe';
 
-const props = {
-};
+const props = {};
 
 const getAffilateTextfield = wrapper => wrapper.find('.emit-recipe__affilate-textfield');
 const setup = (anotherProps = {}) => {
@@ -20,6 +19,7 @@ const setup = (anotherProps = {}) => {
     Item: wrapper.find('Item'),
     medicalInsuranceSelect: wrapper.find('.emit-recipe__medical-insurance-select'),
     affiliateTextfield: getAffilateTextfield(wrapper),
+    emitRecipeButton: wrapper.find('.emit-recipe__button'),
   };
 };
 
@@ -27,6 +27,15 @@ describe('<EmitRecipe />', () => {
   it('smoke test', () => {
     const { wrapper } = setup();
     expect(wrapper.exists()).toBe(true);
+  });
+  describe('initial render', () => {
+    const { affiliateTextfield, emitRecipeButton } = setup();
+    it('emit button is disabled', () => {
+      expect(emitRecipeButton.props().disabled).toBe(true);
+    });
+    it('affiliateTextfield is disabled', () => {
+      expect(affiliateTextfield.props().disabled).toBe(true);
+    });
   });
   describe('when execute addItem', () => {
     const { wrapper, AddItemDialog } = setup();
@@ -48,7 +57,10 @@ describe('<EmitRecipe />', () => {
     describe('and remove this item', () => {
       beforeAll(() => {
         const items = wrapper.find('Item');
-        items.at(0).props().removeItem(0);
+        items
+          .at(0)
+          .props()
+          .removeItem(0);
       });
       it('remove this item', () => {
         const items = wrapper.find('Item');

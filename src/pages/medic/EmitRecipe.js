@@ -181,6 +181,7 @@ const EmitRecipe = () => {
               margin="normal"
               type="number"
               className="emit-recipe__affilate-textfield"
+              disabled={!selectedInstitution}
               value={selectedAffilate.code}
               onChange={onChangeAffilateTexfield}
               InputLabelProps={{
@@ -276,7 +277,7 @@ const EmitRecipe = () => {
         <Button
           variant="contained"
           color="primary"
-          className={classes.button}
+          className={`emit-recipe__button ${classes.button}`}
           disabled={
                     !selectedMedicalInsurance
                     || !selectedInstitution

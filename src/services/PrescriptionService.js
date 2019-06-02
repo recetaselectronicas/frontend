@@ -1,13 +1,10 @@
-import axios from 'axios';
-import config from '../config/default';
+import RestclientService from './RestclientService';
 
-
-export default class PrescriptionService {
+export default class PrescriptionService extends RestclientService {
   static async create(prescription) {
     console.log('go to send', JSON.stringify({ ...prescription }));
-    const response = await axios.post(`${config.baseUrl}/prescription`, {
+    return this.post('/prescription', {
       ...prescription,
     });
-    return response.data;
   }
 }

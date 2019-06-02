@@ -1,6 +1,14 @@
-export default class AffilateService {
-  static searchAffilateNumber() {
-    return new Promise(res => res([
+import RestclientService from './RestclientService';
+
+export default class AffilateService extends RestclientService {
+  static searchAffilateByCodeAndMedicalInsurance(code, medicalInsuranceId) {
+    return this.get('/affilates', {
+      params: {
+        code,
+        medical_insurance: medicalInsuranceId,
+      },
+    });
+    /* return new Promise(res => res([
       {
         label: 'Gonzalito Gras cantou - 23221231',
         id: 1,
@@ -17,6 +25,6 @@ export default class AffilateService {
         lastname: 'Devoto',
         category: 'Prepaga',
       },
-    ]));
+    ])); */
   }
 }
