@@ -115,8 +115,7 @@ const EmitRecipe = () => {
   };
 
   const emitRecipe = async () => {
-    const prescriptionRequest = new PrescriptionRequest
-      .Builder()
+    const prescriptionRequest = new PrescriptionRequest.Builder()
       .withAffiliate(selectedAffilate.id)
       .withDiagnosis(diagnostic)
       .withDoctor(2)
@@ -133,6 +132,9 @@ const EmitRecipe = () => {
     }
   };
 
+  const noItemsAdded = items.length === 0;
+  const noMedicalInsuranceSelected = isUndefinedOrNull(selectedMedicalInsurance);
+  const cantEmitRecipe = isUndefinedOrNull(selectedInstitution) || noMedicalInsuranceSelected || isUndefinedOrNull(selectedAffilate) || noItemsAdded;
   return (
     <Grid container justify="center" spacing={3}>
       <Grid item xs={9}>
@@ -149,9 +151,7 @@ const EmitRecipe = () => {
                 onChange={event => setSelectedInstitution(event.target.value)}
               >
                 {institutions.map(institution => (
-                  <MenuItem value={institution.id}>
-                    {institution.label}
-                  </MenuItem>
+                  <MenuItem value={institution.id}>{institution.label}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -167,9 +167,7 @@ const EmitRecipe = () => {
                 onChange={onChangeMedicalInsurance}
               >
                 {medicalInsurances.map(institution => (
-                  <MenuItem value={institution.id}>
-                    {institution.label}
-                  </MenuItem>
+                  <MenuItem value={institution.id}>{institution.label}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -181,6 +179,7 @@ const EmitRecipe = () => {
               margin="normal"
               type="number"
               className="emit-recipe__affilate-textfield"
+              disabled={noMedicalInsuranceSelected}
               value={selectedAffilate.code}
               onChange={onChangeAffilateTexfield}
               InputLabelProps={{
@@ -188,52 +187,34 @@ const EmitRecipe = () => {
               }}
             />
             {suggestionList.length > 0 && (
-            <Paper className={classes.paper} square>
-              <Suggestions
-                data={suggestionList}
-                onSelectSuggestion={onSelectSuggestion}
-              />
-            </Paper>
+              <Paper className={classes.paper} square>
+                <Suggestions data={suggestionList} onSelectSuggestion={onSelectSuggestion} />
+              </Paper>
             )}
             {selectedAffilate && (
-            <div style={{ textAlign: 'left', marginTop: 10, marginBottom: 10 }}>
-            Nombre :
-              {selectedAffilate.name}
-              {' '}
-              {selectedAffilate.lastname}
-            - Categoria :
-              {' '}
-
-              {selectedAffilate.category}
-            </div>
+              <div style={{ textAlign: 'left', marginTop: 10, marginBottom: 10 }}>
+                Nombre :
+                {selectedAffilate.name}
+                {' '}
+                {selectedAffilate.lastname}
+- Categoria :
+                {' '}
+                {selectedAffilate.category}
+              </div>
             )}
           </div>
-          <Typography
-            style={{ textAlign: 'start' }}
-            variant="h6"
-            className={classes.title}
-          >
+          <Typography style={{ textAlign: 'start' }} variant="h6" className={classes.title}>
             Medicamentos
           </Typography>
           <div>
             <List component="nav">
-              {items.length === 0
-              && (
-                <Paper style={{ padding: 25 }}>
-                Aun no tiene items agregados
-                </Paper>
-              )
-              }
+              {noItemsAdded && <Paper style={{ padding: 25 }}>Aun no tiene items agregados</Paper>}
               {items.map(item => (
                 <Item {...item} removeItem={removeItem} />
               ))}
             </List>
-            <div
-              style={{ textAlign: 'end', cursor: 'pointer' }}
-              className="emit-recipe__add-item"
-              onClick={() => setVisibiltyOfAddItemDialog(true)}
-            >
-                Agregar...
+            <div style={{ textAlign: 'end', cursor: 'pointer' }} className="emit-recipe__add-item" onClick={() => setVisibiltyOfAddItemDialog(true)}>
+              Agregar...
             </div>
           </div>
           <div>
@@ -250,22 +231,13 @@ const EmitRecipe = () => {
               onChange={event => setDiagnostic(event.target.value)}
             />
             <Grid container direction="row" justify="flex-end">
-              <FormControlLabel
-                control={(
-                  <Checkbox
-                    color="primary"
-                    onChange={event => setProlongedTreatment(event.target.checked)}
-                  />
-                  )}
-                labelPlacement="start"
-                label="Tratamiento prolongado"
-              />
+              <FormControlLabel control={<Checkbox color="primary" onChange={event => setProlongedTreatment(event.target.checked)} />} labelPlacement="start" label="Tratamiento prolongado" />
             </Grid>
 
             <Grid container direction="row" justify="space-between">
               <div>Fecha</div>
               <div>
-                  Doctor : Gonzalo gras cantou
+                Doctor : Gonzalo gras cantou
                 <div>simulacion de la firma del doctor</div>
               </div>
             </Grid>
@@ -276,25 +248,14 @@ const EmitRecipe = () => {
         <Button
           variant="contained"
           color="primary"
-          className={classes.button}
-          disabled={
-                    !selectedMedicalInsurance
-                    || !selectedInstitution
-                    || !selectedMedicalInsurance
-                    || isUndefinedOrNull(selectedAffilate)
-                    || items.length === 0
-                  }
+          className={`emit-recipe__button ${classes.button}`}
+          disabled={cantEmitRecipe}
           onClick={emitRecipe}
         >
-                  Emitir
+          Emitir
         </Button>
       </Grid>
-      <AddItemDialog
-        open={addItemDialogOpen}
-        handleClose={() => setVisibiltyOfAddItemDialog(false)}
-        addItem={addItem}
-        searchMedicament={MedicamentService.searchMedicamentByName}
-      />
+      <AddItemDialog open={addItemDialogOpen} handleClose={() => setVisibiltyOfAddItemDialog(false)} addItem={addItem} searchMedicament={MedicamentService.searchMedicamentByName} />
     </Grid>
   );
 };
