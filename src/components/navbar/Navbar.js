@@ -10,12 +10,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
+import { withRouter } from 'react-router';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,7 +32,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function MenuAppBar() {
+function MenuAppBar(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -44,10 +41,7 @@ function MenuAppBar() {
   });
 
   const toggleDrawer = openValue => (event) => {
-    if (
-      event.type === 'keydown'
-      && (event.key === 'Tab' || event.key === 'Shift')
-    ) {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
 
@@ -61,18 +55,17 @@ function MenuAppBar() {
   function handleClose() {
     setAnchorEl(null);
   }
+  const onSelectedItem = (item) => {
+    console.log('hello');
+    setState({ ...state, open: false });
+    props.history.push(item.url);
+  };
 
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="Menu"
-            onClick={toggleDrawer(true)}
-          >
+          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="Menu" onClick={toggleDrawer(true)}>
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
@@ -80,12 +73,7 @@ function MenuAppBar() {
           </Typography>
 
           <div>
-            <IconButton
-              aria-owns={open ? 'menu-appbar' : undefined}
-              aria-haspopup="true"
-              onClick={handleMenu}
-              color="inherit"
-            >
+            <IconButton aria-owns={open ? 'menu-appbar' : undefined} aria-haspopup="true" onClick={handleMenu} color="inherit">
               <AccountCircle />
             </IconButton>
             <Menu
@@ -109,30 +97,11 @@ function MenuAppBar() {
         </Toolbar>
       </AppBar>
       <Drawer open={state.open} onClose={toggleDrawer(false)}>
-        <div
-          className={classes.list}
-          role="presentation"
-          onClick={toggleDrawer(false)}
-          onKeyDown={toggleDrawer(false)}
-        >
+        <div className={classes.list} role="presentation" onKeyDown={toggleDrawer(false)}>
           <List>
-            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <List>
-            {['All mail', 'Trash', 'Spam'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
+            {[{ text: 'Emitir', url: '/emitir' }, { text: 'Ver recetas', url: '/recetas' }].map(link => (
+              <ListItem button key={link.text} onClick={() => onSelectedItem(link)}>
+                <ListItemText primary={link.text} />
               </ListItem>
             ))}
           </List>
@@ -142,4 +111,4 @@ function MenuAppBar() {
   );
 }
 
-export default MenuAppBar;
+export default withRouter(MenuAppBar);
