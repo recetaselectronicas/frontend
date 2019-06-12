@@ -1,5 +1,7 @@
 import RestclientService from './RestclientService';
 
+const querystring = require('querystring');
+
 export default class PrescriptionService extends RestclientService {
   static async create(prescription) {
     console.log('go to send', JSON.stringify({ ...prescription }));
@@ -131,175 +133,124 @@ export default class PrescriptionService extends RestclientService {
     };
   }
 
-  static async getPrescriptionsList() {
-    /*return {
+  static async getPrescriptionsList(filters = {}) {
+    /* return {
       result: [
         {
-          id: 1,
-          issuedDate: '12/12/12 12:12',
-          soldDate: '12/12/12 12:12',
-          auditedDate: '12/12/12 12:12',
+          id: 4852,
+          issuedDate: '08/06/2019 19:39',
+          soldDate: null,
+          auditedDate: null,
           prolongedTreatment: true,
-          diagnosis: 'texto',
+          diagnosis: 'texto laaaargo',
           ttl: 30,
           institution: {
             id: 1,
-            description: 'Hospital italiano',
+            description: null,
+            address: null,
           },
           affiliate: {
-            id: 9999,
-            description: 'Hospital italiano',
-          },
-          medicalInsurance: {
-            id: 9999,
-            description: 'OSDE',
+            id: 1,
+            idPatient: null,
+            name: null,
+            surname: null,
+            userName: null,
+            birthDate: null,
+            gender: null,
+            contactNumber: null,
+            email: null,
+            address: null,
+            nationality: null,
+            nicNumber: null,
+            nicIssueDate: null,
+            nicType: null,
+            nicExemplary: null,
+            nicPhoto: null,
+            fromDate: null,
+            toDate: null,
+            code: null,
+            category: null,
+            imageCredential: null,
+            plan: {
+              entryDate: null,
+              leavingDate: null,
+            },
           },
           doctor: {
-            id: 9999,
-            description: 'doctor random',
+            id: 1,
+            name: null,
+            lastName: null,
+            userName: null,
+            birthDate: null,
+            entryDate: null,
+            leavingDate: null,
+            contactNumber: null,
+            nationality: null,
+            address: null,
+            email: null,
+            nationalMatriculation: null,
+            provincialMatriculation: null,
+            specialty: null,
+          },
+          medicalInsurance: {
+            id: 1,
+            description: 'OSDE',
+            userName: null,
+            corporateName: null,
+            email: null,
+            address: null,
+            contactNumber: null,
           },
           status: 'EMITIDA',
-          norm: {
-            id: 1,
-          },
+          norm: 1,
           items: [
             {
-              description: 'Ibuprofeno 600',
-              id: 1,
+              id: null,
               prescribed: {
                 quantity: 99,
                 medicine: {
-                  id: 1,
+                  id: 92,
                 },
               },
               received: {
-                quantity: 99,
-                soldDate: '12/12/12',
+                quantity: null,
+                soldDate: null,
                 medicine: {
-                  id: 1,
+                  id: null,
                 },
                 pharmacist: {
-                  id: 1,
+                  id: null,
                 },
               },
               audited: {
-                quantity: 99,
+                quantity: null,
                 medicine: {
-                  id: 1,
+                  id: null,
                 },
               },
             },
-          ],
-        },
-        {
-          id: 1,
-          issuedDate: '12/12/12 12:12',
-          soldDate: '12/12/12 12:12',
-          auditedDate: '12/12/12 12:12',
-          prolongedTreatment: true,
-          diagnosis: 'texto',
-          ttl: 30,
-          institution: {
-            id: 1,
-            description: 'Hospital italiano',
-          },
-          affiliate: {
-            id: 9999,
-            description: 'Hospital italiano',
-          },
-          medicalInsurance: {
-            id: 9999,
-            description: 'OSDE',
-          },
-          doctor: {
-            id: 9999,
-            description: 'doctor random',
-          },
-          status: 'EMITIDA',
-          norm: {
-            id: 1,
-          },
-          items: [
             {
-              description: 'Ibuprofeno 600',
-              id: 1,
+              id: null,
               prescribed: {
-                quantity: 99,
+                quantity: 1,
                 medicine: {
-                  id: 1,
+                  id: 2,
                 },
               },
               received: {
-                quantity: 99,
-                soldDate: '12/12/12',
+                quantity: null,
+                soldDate: null,
                 medicine: {
-                  id: 1,
+                  id: null,
                 },
                 pharmacist: {
-                  id: 1,
+                  id: null,
                 },
               },
               audited: {
-                quantity: 99,
+                quantity: null,
                 medicine: {
-                  id: 1,
-                },
-              },
-            },
-          ],
-        },
-        {
-          id: 1,
-          issuedDate: '12/12/12 12:12',
-          soldDate: '12/12/12 12:12',
-          auditedDate: '12/12/12 12:12',
-          prolongedTreatment: true,
-          diagnosis: 'texto',
-          ttl: 30,
-          institution: {
-            id: 1,
-            description: 'Hospital italiano',
-          },
-          affiliate: {
-            id: 9999,
-            description: 'Hospital italiano',
-          },
-          medicalInsurance: {
-            id: 9999,
-            description: 'OSDE',
-          },
-          doctor: {
-            id: 9999,
-            description: 'doctor random',
-          },
-          status: 'EMITIDA',
-          norm: {
-            id: 1,
-          },
-          items: [
-            {
-              description: 'Ibuprofeno 600',
-              id: 1,
-              prescribed: {
-                quantity: 99,
-                medicine: {
-                  id: 1,
-                },
-              },
-              received: {
-                quantity: 99,
-                soldDate: '12/12/12',
-                medicine: {
-                  id: 1,
-                },
-                pharmacist: {
-                  id: 1,
-                },
-              },
-              audited: {
-                quantity: 99,
-                medicine: {
-                  id: 1,
+                  id: null,
                 },
               },
             },
@@ -308,12 +259,27 @@ export default class PrescriptionService extends RestclientService {
       ],
       filters: {
         singles: {
+          id: {
+            key: 'id',
+          },
           status: {
-            id: 'status',
+            key: 'status',
             values: [
+              {
+                id: 'ISSUED',
+                value: 'EMITIDA',
+              },
+              {
+                id: 'CANCELLED',
+                value: 'CANCELADA',
+              },
               {
                 id: 'CONFIRMED',
                 value: 'CONFIRMADA',
+              },
+              {
+                id: 'EXPIRED',
+                value: 'VENCIDA',
               },
               {
                 id: 'RECEIVED',
@@ -324,102 +290,104 @@ export default class PrescriptionService extends RestclientService {
                 value: 'PARCIALMENTE_RECEPCIONADA',
               },
               {
+                id: 'INCOMPLETE',
+                value: 'INCOMPLETA',
+              },
+              {
                 id: 'AUDITED',
                 value: 'AUDITADA',
               },
               {
-                id: 'EXPIRED',
-                value: 'VENCIDA',
-              },
-            ],
-          },
-          id: {
-            id: 'id',
-          },
-          institution: {
-            id: 'institution',
-            values: [
-              {
-                id: 1,
-                value: 'Instituto Santa Brigida',
+                id: 'REJECTED',
+                value: 'RECHAZADA',
               },
               {
-                id: 2,
-                value: 'Hospital Italiano',
-              },
-              {
-                id: 3,
-                value: 'Centro de Ojos Maipu',
+                id: 'PARTIALLY_REJECTED',
+                value: 'PARCIALMENTE_RECHAZADA',
               },
             ],
           },
         },
         ranges: {
           issueDateRange: {
-            from: 'fromIssueDate',
-            to: 'toIssueDate',
+            keyFrom: 'fromIssueDate',
+            keyTo: 'toIssueDate',
+            format: 'DD/MM/YYYY HH:mm',
           },
           receivedDateRange: {
-            from: 'fromReceivedDate',
-            to: 'toReceivedDate',
+            keyFrom: 'fromReceivedDate',
+            keyTo: 'toReceivedDate',
+            format: 'DD/MM/YYYY HH:mm',
+          },
+          auditedDateRange: {
+            keyFrom: 'fromAuditedDate',
+            keyTo: 'toAuditedDate',
+            format: 'DD/MM/YYYY HH:mm',
           },
         },
       },
       specialFilters: {
         singles: {
-          medicalInsurance: {
-            id: 'medicalInsurance',
-            values: [
-              {
-                id: 1,
-                value: 'OSECAC',
-              },
-              {
-                id: 2,
-                value: 'OSDE',
-              },
-            ],
-          },
-          affiliate: {
-            id: 'affiliate',
-          },
-          medicine: {
-            id: 'medicine',
+          institution: {
+            key: 'institution',
+            values: [],
           },
           doctor: {
-            id: 'doctor',
+            key: 'doctor',
+          },
+          affiliate: {
+            key: 'affiliate',
+          },
+          pharmacist: {
+            key: 'pharmacist',
+          },
+          medicine: {
+            key: 'medicine',
           },
         },
-        ranges: {
-          auditedDateRange: {
-            from: 'fromAuditedDate',
-            to: 'toAuditedDate',
-          },
-        },
+        ranges: {},
       },
       orders: {
-        issuedDate: {
-          id: 'issuedDate',
-          sorting: {
-            asc: 'asc',
-            dsc: 'desc',
+        // orderBy=issuedDate-asc
+        key: 'orderBy',
+        values: {
+          id: {
+            key: 'id',
+            sorting: {
+              asc: 'asc',
+            },
           },
-        },
-        soldDate: {
-          id: 'soldDate',
-          sorting: {
-            asc: 'asc',
-            dsc: 'desc',
+          issuedDate: {
+            key: 'issuedDate',
+            sorting: {
+              asc: 'asc',
+              dsc: 'desc',
+            },
           },
-        },
-        id: {
-          id: 'id',
-          sorting: {
-            asc: 'asc',
+          soldDate: {
+            key: 'soldDate',
+            sorting: {
+              asc: 'asc',
+              dsc: 'desc',
+            },
+          },
+          auditedDate: {
+            key: 'audtitedDate',
+            sorting: {
+              asc: 'asc',
+              dsc: 'desc',
+            },
           },
         },
       },
-    };*/
-     return this.get('/prescriptions');
+    }; */
+    return this.get('/prescriptions', {
+      params: {
+        ...filters,
+      },
+      paramsSerializer(params) {
+        return querystring.stringify(params, '');
+      },
+    });
   }
 }

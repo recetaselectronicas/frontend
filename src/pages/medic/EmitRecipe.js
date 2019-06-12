@@ -134,7 +134,10 @@ const EmitRecipe = () => {
 
   const noItemsAdded = items.length === 0;
   const noMedicalInsuranceSelected = isUndefinedOrNull(selectedMedicalInsurance);
-  const cantEmitRecipe = isUndefinedOrNull(selectedInstitution) || noMedicalInsuranceSelected || isUndefinedOrNull(selectedAffilate) || noItemsAdded;
+  const cantEmitRecipe = isUndefinedOrNull(selectedInstitution)
+    || noMedicalInsuranceSelected
+    || isUndefinedOrNull(selectedAffilate)
+    || noItemsAdded;
   return (
     <Grid container justify="center" spacing={3}>
       <Grid item xs={9}>
@@ -213,7 +216,11 @@ const EmitRecipe = () => {
                 <Item {...item} removeItem={removeItem} />
               ))}
             </List>
-            <div style={{ textAlign: 'end', cursor: 'pointer' }} className="emit-recipe__add-item" onClick={() => setVisibiltyOfAddItemDialog(true)}>
+            <div
+              style={{ textAlign: 'end', cursor: 'pointer' }}
+              className="emit-recipe__add-item"
+              onClick={() => setVisibiltyOfAddItemDialog(true)}
+            >
               Agregar...
             </div>
           </div>
@@ -231,7 +238,11 @@ const EmitRecipe = () => {
               onChange={event => setDiagnostic(event.target.value)}
             />
             <Grid container direction="row" justify="flex-end">
-              <FormControlLabel control={<Checkbox color="primary" onChange={event => setProlongedTreatment(event.target.checked)} />} labelPlacement="start" label="Tratamiento prolongado" />
+              <FormControlLabel
+                control={<Checkbox color="primary" onChange={event => setProlongedTreatment(event.target.checked)} />}
+                labelPlacement="start"
+                label="Tratamiento prolongado"
+              />
             </Grid>
 
             <Grid container direction="row" justify="space-between">
@@ -255,7 +266,12 @@ const EmitRecipe = () => {
           Emitir
         </Button>
       </Grid>
-      <AddItemDialog open={addItemDialogOpen} handleClose={() => setVisibiltyOfAddItemDialog(false)} addItem={addItem} searchMedicament={MedicamentService.searchMedicamentByName} />
+      <AddItemDialog
+        open={addItemDialogOpen}
+        handleClose={() => setVisibiltyOfAddItemDialog(false)}
+        addItem={addItem}
+        searchMedicament={MedicamentService.searchMedicamentByName}
+      />
     </Grid>
   );
 };
