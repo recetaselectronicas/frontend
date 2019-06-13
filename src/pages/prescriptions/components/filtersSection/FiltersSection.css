@@ -1,0 +1,11 @@
+.range-filter-container {
+  display: flex;
+  justify-content: space-between;
+}
+.range-filter-container > div {
+  margin-top: 1em;
+  margin-right: 1em;
+}
+.multiple-dropdown {
+  margin-right: 15px !important;
+}
