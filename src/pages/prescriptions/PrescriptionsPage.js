@@ -28,6 +28,7 @@ const PrescriptionsPage = (props) => {
     console.log('filterRequest', JSON.stringify(filterRequest));
     PrescriptionService.getPrescriptionsList(filterRequest).then(({ result, filters, orders }) => {
       setPrescriptions(result);
+      console.table(result);
       if (!filtersValue) {
         setFilters({ filters, orders });
       }

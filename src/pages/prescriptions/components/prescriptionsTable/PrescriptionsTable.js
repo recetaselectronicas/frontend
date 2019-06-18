@@ -149,7 +149,7 @@ function EnhancedTable(props) {
                     <TableCell>{emptyValueHandler(prescription.medicalInsurance.description)}</TableCell>
                     <TableCell>{emptyValueHandler(prescription.ttl)}</TableCell>
                     <TableCell>{emptyValueHandler(prescription.institution.description)}</TableCell>
-                    <TableCell>{emptyValueHandler(prescription.status.status)}</TableCell>
+                    <TableCell>{emptyValueHandler(prescription.status)}</TableCell>
                     <TableCell>{emptyValueHandler(prescription.items.length)}</TableCell>
                   </TableRow>
                 ))}
