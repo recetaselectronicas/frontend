@@ -8,18 +8,19 @@ import IconButton from '@material-ui/core/IconButton';
 import propTypes from 'prop-types';
 
 const Item = (props) => {
-  const { quantity, item, id } = props;
+  const {
+    quantity, medicine, id, removeItem,
+  } = props;
+  const hasDeleteButton = !!removeItem;
   return (
     <ListItem button>
-      <ListItemText primary={`${quantity} x ${item.label}`} />
+      <ListItemText primary={`${quantity} x ${medicine.description}`} />
       <ListItemSecondaryAction>
-        <IconButton
-          edge="end"
-          aria-label="Delete"
-          onClick={() => props.removeItem(id)}
-        >
-          <DeleteIcon />
-        </IconButton>
+        {hasDeleteButton && (
+          <IconButton edge="end" aria-label="Delete" onClick={() => removeItem(id)}>
+            <DeleteIcon />
+          </IconButton>
+        )}
       </ListItemSecondaryAction>
     </ListItem>
   );

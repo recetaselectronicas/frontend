@@ -1,64 +1,16 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
-import MuiDialogActions from '@material-ui/core/DialogActions';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import SearchIcon from '@material-ui/icons/Search';
-import Typography from '@material-ui/core/Typography';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import propTypes from 'prop-types';
 import Suggestions from '../suggestions/Suggestions';
-
-const styles = theme => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(2),
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.grey[500],
-  },
-});
-
-const DialogTitle = withStyles(styles)((props) => {
-  const { children, classes, onClose } = props;
-  return (
-    <MuiDialogTitle disableTypography className={classes.root}>
-      <Typography variant="h6">{children}</Typography>
-      {onClose ? (
-        <IconButton
-          aria-label="Close"
-          className={classes.closeButton}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
-      ) : null}
-    </MuiDialogTitle>
-  );
-});
-
-const DialogContent = withStyles(theme => ({
-  root: {
-    padding: theme.spacing(2),
-  },
-}))(MuiDialogContent);
-
-const DialogActions = withStyles(theme => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(1),
-  },
-}))(MuiDialogActions);
+import DialogTitle from '../../../../components/dialog/dialogTitle/DialogTitle';
+import DialogContent from '../../../../components/dialog/dialogContent/DialogContent';
+import DialogActions from '../../../../components/dialog/dialogActions/DialogActions';
 
 const AddItemDialog = (props) => {
   const [suggestionList, setSuggestionList] = React.useState([]);
@@ -97,11 +49,7 @@ const AddItemDialog = (props) => {
 
   return (
     <div>
-      <Dialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-      >
+      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
           Agregar item
         </DialogTitle>
@@ -127,10 +75,7 @@ const AddItemDialog = (props) => {
                   <div>
                     {suggestionList.length > 0 && (
                       <Paper className={classes.paper} square>
-                        <Suggestions
-                          data={suggestionList}
-                          onSelectSuggestion={onSelectSuggestion}
-                        />
+                        <Suggestions data={suggestionList} onSelectSuggestion={onSelectSuggestion} />
                       </Paper>
                     )}
                   </div>
