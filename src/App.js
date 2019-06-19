@@ -7,6 +7,7 @@ import PrescriptionsPage from './pages/prescriptions/PrescriptionsPage';
 import PrescriptionPage from './pages/prescriptionPage/PrescriptionPage';
 
 import './index.css';
+import Norm from './pages/norms/norms';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/emitir" component={EmitRecipe} />
           <Route path="/recetas" component={PrescriptionsPage} />
           <Route path="/receta/:id" exact component={PrescriptionPage} />
+          <Route path="/norms" exact component={Norm} />
         </main>
       </Container>
     </Router>
