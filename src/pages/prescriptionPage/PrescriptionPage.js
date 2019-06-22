@@ -51,6 +51,7 @@ const PrescriptionsPage = (props) => {
       type: 'primary',
       itemAction: {
         onClick: (id) => {
+          console.log('el id ', id);
           setFillItemModal({ ...fillItemModal, open: true, id });
         },
         label: 'Auditar',
@@ -63,9 +64,9 @@ const PrescriptionsPage = (props) => {
       },
       type: 'primary',
       finishFlowAction: async () => {
-        console.log('go to recepcionar');
         try {
           await PrescriptionService.receive(prescription.id, receiveItems);
+          onCancelFlow();
         } catch (e) {
           setSnackbar({
             open: true,
@@ -107,11 +108,9 @@ const PrescriptionsPage = (props) => {
       });
       console.log('error', e);
     }
-    onCancelFlow();
   };
   const onFinishFlow = async () => {
     await actionsMapper[currentActionFlow].finishFlowAction();
-    onCancelFlow();
   };
 
   const cancelPrescription = async (reason) => {
@@ -145,42 +144,65 @@ const PrescriptionsPage = (props) => {
     <React.Fragment>
       <Grid container>
         <Grid item xs={10}>
-          {prescription && <Prescription {...prescription} actionButtonItems={actionButtonItems} />}
+          {prescription && (
+            <Prescription
+              {...prescription}
+              actionButtonItems={actionButtonItems}
+              receiveItems={receiveItems.items}
+              auditedItems={auditedItems.items}
+            />
+          )}
         </Grid>
         <Grid item xs={2}>
           <div
             style={{
               display: 'flex',
-              justifyContent: 'center',
+              justifyContent: 'space-between',
               alignItems: 'center',
               flexDirection: 'column',
+              height: '100%',
             }}
           >
-            {actions.map(({ id }) => (
-              <Button
-                style={{ marginBottom: '12px' }}
-                variant="contained"
-                disabled={areInFlow}
-                color={actionsMapper[id].type}
-                className={`action-recipe__button ${id}`}
-                onClick={() => dispatchAction(id)}
-              >
-                {actionsMapper[id].label}
-              </Button>
-            ))}
-          </div>
-
-          <div>
-            {areInFlow && (
-              <div>
-                <Button variant="contained" onClick={onFinishFlow}>
-                  Aceptar
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'column',
+              }}
+            >
+              {actions.map(({ id }) => (
+                <Button
+                  style={{ marginBottom: '12px' }}
+                  variant="contained"
+                  disabled={areInFlow}
+                  color={actionsMapper[id].type}
+                  className={`action-recipe__button ${id}`}
+                  onClick={() => dispatchAction(id)}
+                >
+                  {actionsMapper[id].label}
                 </Button>
-                <Button variant="contained" onClick={onCancelFlow}>
-                  Cancelar
-                </Button>
-              </div>
-            )}
+              ))}
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-evenly',
+                alignItems: 'center',
+                marginBottom: '15px',
+              }}
+            >
+              {areInFlow && (
+                <React.Fragment>
+                  <Button variant="contained" onClick={onFinishFlow} style={{ flexBasis: '45%' }}>
+                    Aceptar
+                  </Button>
+                  <Button variant="contained" onClick={onCancelFlow} style={{ flexBasis: '45%' }}>
+                    Cancelar
+                  </Button>
+                </React.Fragment>
+              )}
+            </div>
           </div>
         </Grid>
       </Grid>
@@ -193,6 +215,7 @@ const PrescriptionsPage = (props) => {
       />
       <FillDataItemDialog
         open={fillItemModal.open}
+        id={fillItemModal.id}
         handleClose={() => {
           setFillItemModal(fillItemModalInitialState);
         }}

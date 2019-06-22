@@ -45,12 +45,24 @@ const Prescription = (props) => {
     doctor,
     prolongedTreatment,
     actionButtonItems,
+    receiveItems,
+    auditedItems,
+    status,
   } = props;
-  const classes = useStyles();
+  const auditedItemsIds = auditedItems.map(auditedItem => auditedItem.id);
+  const receiveItemIds = receiveItems.map(receiveItem => receiveItem.id);
 
+  const allItemsIds = [...auditedItemsIds, ...receiveItemIds];
+  const classes = useStyles();
   const noItemsAdded = items.length === 0;
   return (
     <Paper className={classes.paper}>
+      <div style={{ textAlign: 'end' }}>
+        <Typography style={{ fontSize: 20 }}>
+Estado :
+          {` ${status}`}
+        </Typography>
+      </div>
       <div style={{ textAlign: 'start' }}>
         <div>
           <Typography style={{ fontSize: 20 }}>
@@ -89,12 +101,16 @@ const Prescription = (props) => {
       <div>
         <List component="nav">
           {noItemsAdded && <Paper style={{ padding: 25 }}>Aun no tiene items agregados</Paper>}
-          {items.map(({ id, prescribed: { quantity, medicine } }) => (
+          {items.map(({ id, prescribed: { quantity, medicine }, received: { quantity: quantityMedicineReceived } }) => (
             <ListItem style={{ border: '1px solid black', marginBottom: 8 }}>
               <ListItemText primary={`${quantity} x ${medicine.description}`} />
               <ListItemSecondaryAction>
                 {actionButtonItems && (
-                  <Button color="primary" onClick={() => actionButtonItems.onClick(id)}>
+                  <Button
+                    color="primary"
+                    onClick={() => actionButtonItems.onClick(id)}
+                    disabled={allItemsIds.includes(id) || quantityMedicineReceived > 0}
+                  >
                     {actionButtonItems.label}
                   </Button>
                 )}

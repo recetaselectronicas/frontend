@@ -8,4 +8,8 @@ export default class MedicineService extends RestclientService {
       },
     });
   }
+
+  static getByTroquel(troquel) {
+    return this.get(`/medicines/troquel/${troquel}`);
+  }
 }
