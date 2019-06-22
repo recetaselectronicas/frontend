@@ -8,6 +8,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import ChipInput from 'material-ui-chip-input';
+import { finders } from '../utils';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -32,7 +33,6 @@ export default function Operator(props) {
   const { onChange } = props;
   const { metadata } = props;
   const { predicates } = props;
-  const { finders } = props;
   const { operators, operatorsByType } = predicates;
   const { type } = props;
   const operator = finders.findOperator(predicates, metadata);

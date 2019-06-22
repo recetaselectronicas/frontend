@@ -5,9 +5,9 @@ import Navbar from './components/navbar/Navbar';
 import EmitRecipe from './pages/medic/EmitRecipe';
 import PrescriptionsPage from './pages/prescriptions/PrescriptionsPage';
 import PrescriptionPage from './pages/prescriptionPage/PrescriptionPage';
+import Norm from './pages/norms/norms';
 
 import './index.css';
-import Norm from './pages/norms/norms';
 
 function App() {
   return (
