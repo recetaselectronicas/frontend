@@ -56,7 +56,6 @@ function MenuAppBar(props) {
     setAnchorEl(null);
   }
   const onSelectedItem = (item) => {
-    console.log('hello');
     setState({ ...state, open: false });
     props.history.push(item.url);
   };

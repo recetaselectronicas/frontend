@@ -9,12 +9,13 @@ import propTypes from 'prop-types';
 
 const Item = (props) => {
   const {
-    quantity, medicine, id, removeItem,
+    quantity, id, removeItem, medicine,
   } = props;
+  const { description } = medicine;
   const hasDeleteButton = !!removeItem;
   return (
     <ListItem button>
-      <ListItemText primary={`${quantity} x ${medicine.description}`} />
+      <ListItemText primary={`${quantity} x ${description}`} />
       <ListItemSecondaryAction>
         {hasDeleteButton && (
           <IconButton edge="end" aria-label="Delete" onClick={() => removeItem(id)}>

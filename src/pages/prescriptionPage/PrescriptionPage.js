@@ -116,7 +116,12 @@ const PrescriptionsPage = (props) => {
 
   const cancelPrescription = async (reason) => {
     try {
-      await PrescriptionService.cancel(prescription.id, reason);
+      await PrescriptionService.cancel(prescription.id, { reason });
+      setSnackbar({
+        open: true,
+        message: 'Su receta fue cancelada con exito',
+        variant: 'success',
+      });
     } catch (e) {
       setSnackbar({
         open: true,
@@ -128,7 +133,6 @@ const PrescriptionsPage = (props) => {
     onCancelFlow();
   };
   const handleCloseSnackbar = () => {
-    console.log('handleCloseSnackbar');
     setSnackbar(snackbarInitialState);
   };
   const dispatchAction = (action) => {

@@ -52,14 +52,12 @@ export default class PrescriptionRequest {
           prescribed: {
             quantity: toInt(item.quantity),
             medicine: {
-              id: toInt(item.id),
+              id: toInt(item.medicine.id),
             },
           },
-
         }));
         return this;
       }
-
 
       build() {
         return new PrescriptionRequest(this);

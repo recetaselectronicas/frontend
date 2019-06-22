@@ -9,11 +9,15 @@ describe('<PrescriptionRequest />', () => {
     const itemsValue = [
       {
         quantity: '2',
-        id: '10',
+        medicine: {
+          id: '10',
+        },
       },
       {
         quantity: 4,
-        id: 20,
+        medicine: {
+          id:20,
+        },
       },
     ];
     const result = new PrescriptionRequest

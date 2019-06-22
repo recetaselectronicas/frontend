@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -12,15 +12,15 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
+import _ from 'lodash';
 import Item from './components/item/Item';
 import AddItemDialog from './components/addItemDialog/AddItemDialog';
-import MedicamentService from '../../services/MedicamentService';
 import InstitutionService from '../../services/InstutionService';
 import MedicalInsuranceService from '../../services/MedicalInsuranceService';
-import Suggestions from './components/suggestions/Suggestions';
-import AffilateService from '../../services/AffilateService';
+import AffiliateService from '../../services/AffilateService';
 import PrescriptionService from '../../services/PrescriptionService';
 import PrescriptionRequest from '../../requestBuilders/PrescriptionRequest';
+import SnackbarWrapper from '../../components/snackbarWrapper/SnackbarWrapper';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -50,7 +50,9 @@ const initialState = {
   },
 };
 const isUndefinedOrNull = value => value === undefined || value === null;
-const EmitRecipe = () => {
+const snackbarInitialState = { open: false, variant: 'error', message: '' };
+
+const EmitRecipe = (props) => {
   const classes = useStyles();
 
   const [addItemDialogOpen, setVisibiltyOfAddItemDialog] = useState(false);
@@ -63,6 +65,17 @@ const EmitRecipe = () => {
   const [selectedAffilate, setSelectedAffilate] = useState(initialState.selectedAffilate);
   const [suggestionList, setSuggestionList] = useState([]);
   const [diagnostic, setDiagnostic] = useState(null);
+  const [snackbar, setSnackbar] = useState(snackbarInitialState);
+
+  const debounderSearchAffiliate = useCallback(
+    _.debounce(async (code, medicalInsurance) => {
+      if (code.length >= 3) {
+        const data = await AffiliateService.searchAffilateNumber(code, medicalInsurance);
+        setSuggestionList(data);
+      }
+    }, 300),
+    [],
+  );
 
   // componentDidMount
   useEffect(() => {
@@ -96,18 +109,10 @@ const EmitRecipe = () => {
     setSuggestionList([]);
     setSelectedAffilate(affilate);
   };
-
   const onChangeAffilateTexfield = async (event) => {
     const affilateNumber = event.target.value;
     setSelectedAffilate({ code: affilateNumber });
-    if (affilateNumber.length >= 3) {
-      try {
-        const data = await AffilateService.searchAffilateNumber(affilateNumber);
-        setSuggestionList(data);
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    debounderSearchAffiliate(affilateNumber, selectedMedicalInsurance);
   };
   const onChangeMedicalInsurance = (event) => {
     setSelectedAffilate(initialState.selectedAffilate);
@@ -125,10 +130,22 @@ const EmitRecipe = () => {
       .withProlongedTreatment(prolongedTreatment)
       .build();
     try {
-      const data = await PrescriptionService.create(prescriptionRequest);
-      console.log(data);
+      await PrescriptionService.create(prescriptionRequest);
+      setSnackbar({
+        message: 'Se genero correctamente la receta',
+        open: true,
+        variant: 'success',
+        onExit: () => {
+          props.history.push('/recetas');
+        },
+      });
     } catch (error) {
-      console.log(error);
+      setSnackbar({
+        message: 'Hubo un error en la generacion de la receta',
+        open: true,
+        variant: 'error',
+        onExit: () => {},
+      });
     }
   };
 
@@ -139,140 +156,165 @@ const EmitRecipe = () => {
     || isUndefinedOrNull(selectedAffilate)
     || noItemsAdded;
   return (
-    <Grid container justify="center" spacing={3}>
-      <Grid item xs={9}>
-        <Paper className={classes.paper}>
-          <div>
-            <FormControl className={classes.formControlObraSocial} fullWidth>
-              <InputLabel htmlFor="institution">Institucion</InputLabel>
-              <Select
-                inputProps={{
-                  name: 'age',
-                  id: 'institution',
+    <React.Fragment>
+      <Grid container justify="center" spacing={3}>
+        <Grid item xs={9}>
+          <Paper className={classes.paper}>
+            <div>
+              <FormControl className={classes.formControlObraSocial} fullWidth>
+                <InputLabel htmlFor="institution">Institucion</InputLabel>
+                <Select
+                  inputProps={{
+                    name: 'age',
+                    id: 'institution',
+                  }}
+                  value={selectedInstitution}
+                  onChange={event => setSelectedInstitution(event.target.value)}
+                >
+                  {institutions.map(institution => (
+                    <MenuItem value={institution.id}>{institution.description}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl className={classes.formControlObraSocial} fullWidth>
+                <InputLabel htmlFor="medical-insurance">Obra social</InputLabel>
+                <Select
+                  inputProps={{
+                    name: 'age',
+                    id: 'medical-insurance',
+                  }}
+                  className="emit-recipe__medical-insurance-select"
+                  value={selectedMedicalInsurance}
+                  onChange={onChangeMedicalInsurance}
+                >
+                  {medicalInsurances.map(institution => (
+                    <MenuItem value={institution.id}>{institution.description}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                id="standard-full-width"
+                label="Nro de afiliado"
+                placeholder="Complete con NRO de afiliado"
+                fullWidth
+                margin="normal"
+                type="number"
+                className="emit-recipe__affilate-textfield"
+                disabled={noMedicalInsuranceSelected}
+                value={selectedAffilate.code}
+                onChange={onChangeAffilateTexfield}
+                InputLabelProps={{
+                  shrink: true,
                 }}
-                value={selectedInstitution}
-                onChange={event => setSelectedInstitution(event.target.value)}
-              >
-                {institutions.map(institution => (
-                  <MenuItem value={institution.id}>{institution.label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl className={classes.formControlObraSocial} fullWidth>
-              <InputLabel htmlFor="medical-insurance">Obra social</InputLabel>
-              <Select
-                inputProps={{
-                  name: 'age',
-                  id: 'medical-insurance',
-                }}
-                className="emit-recipe__medical-insurance-select"
-                value={selectedMedicalInsurance}
-                onChange={onChangeMedicalInsurance}
-              >
-                {medicalInsurances.map(institution => (
-                  <MenuItem value={institution.id}>{institution.label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <TextField
-              id="standard-full-width"
-              label="Nro de afiliado"
-              placeholder="Complete con NRO de afiliado"
-              fullWidth
-              margin="normal"
-              type="number"
-              className="emit-recipe__affilate-textfield"
-              disabled={noMedicalInsuranceSelected}
-              value={selectedAffilate.code}
-              onChange={onChangeAffilateTexfield}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-            {suggestionList.length > 0 && (
-              <Paper className={classes.paper} square>
-                <Suggestions data={suggestionList} onSelectSuggestion={onSelectSuggestion} />
-              </Paper>
-            )}
-            {selectedAffilate && (
-              <div style={{ textAlign: 'left', marginTop: 10, marginBottom: 10 }}>
-                Nombre :
-                {selectedAffilate.name}
-                {' '}
-                {selectedAffilate.lastname}
-- Categoria :
-                {' '}
-                {selectedAffilate.category}
-              </div>
-            )}
-          </div>
-          <Typography style={{ textAlign: 'start' }} variant="h6" className={classes.title}>
-            Medicamentos
-          </Typography>
-          <div>
-            <List component="nav">
-              {noItemsAdded && <Paper style={{ padding: 25 }}>Aun no tiene items agregados</Paper>}
-              {items.map(item => (
-                <Item {...item} removeItem={removeItem} />
-              ))}
-            </List>
-            <div
-              style={{ textAlign: 'end', cursor: 'pointer' }}
-              className="emit-recipe__add-item"
-              onClick={() => setVisibiltyOfAddItemDialog(true)}
-            >
-              Agregar...
-            </div>
-          </div>
-          <div>
-            <TextField
-              id="standard-full-width"
-              label="Diagnostico"
-              placeholder="Complete con el diagnostico del afiliado"
-              fullWidth
-              margin="normal"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              value={diagnostic}
-              onChange={event => setDiagnostic(event.target.value)}
-            />
-            <Grid container direction="row" justify="flex-end">
-              <FormControlLabel
-                control={<Checkbox color="primary" onChange={event => setProlongedTreatment(event.target.checked)} />}
-                labelPlacement="start"
-                label="Tratamiento prolongado"
               />
-            </Grid>
-
-            <Grid container direction="row" justify="space-between">
-              <div>Fecha</div>
-              <div>
-                Doctor : Gonzalo gras cantou
-                <div>simulacion de la firma del doctor</div>
+              {suggestionList.length > 0 && (
+                <Paper className={classes.paper} square>
+                  {suggestionList.map(affiliate => (
+                    <MenuItem onClick={() => onSelectSuggestion(affiliate)}>
+                      {affiliate.name}
+                      {' '}
+                      {affiliate.surname}
+                      {' '}
+-
+                      {' '}
+                      {affiliate.code}
+                    </MenuItem>
+                  ))}
+                </Paper>
+              )}
+              {!!selectedAffilate.id && (
+                <div style={{ textAlign: 'left', marginTop: 10, marginBottom: 10 }}>
+                  Nombre :
+                  {' '}
+                  {selectedAffilate.name}
+                  {' '}
+                  {selectedAffilate.surname}
+                  {' '}
+(
+                  {selectedAffilate.nicNumber}
+                  )
+                  <br />
+                  Categoria :
+                  {selectedAffilate.category}
+                </div>
+              )}
+            </div>
+            <Typography style={{ textAlign: 'start' }} variant="h6" className={classes.title}>
+              Medicamentos
+            </Typography>
+            <div>
+              <List component="nav">
+                {noItemsAdded && <Paper style={{ padding: 25 }}>Aun no tiene items agregados</Paper>}
+                {items.map(item => (
+                  <Item {...item} removeItem={removeItem} />
+                ))}
+              </List>
+              <div
+                style={{ textAlign: 'end', cursor: 'pointer' }}
+                className="emit-recipe__add-item"
+                onClick={() => setVisibiltyOfAddItemDialog(true)}
+              >
+                Agregar...
               </div>
-            </Grid>
-          </div>
-        </Paper>
+            </div>
+            <div>
+              <TextField
+                id="standard-full-width"
+                label="Diagnostico"
+                placeholder="Complete con el diagnostico del afiliado"
+                fullWidth
+                margin="normal"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={diagnostic}
+                onChange={event => setDiagnostic(event.target.value)}
+              />
+              <Grid container direction="row" justify="flex-end">
+                <FormControlLabel
+                  control={<Checkbox color="primary" onChange={event => setProlongedTreatment(event.target.checked)} />}
+                  labelPlacement="start"
+                  label="Tratamiento prolongado"
+                />
+              </Grid>
+
+              <Grid container direction="row" justify="space-between">
+                <div>Fecha</div>
+                <div>
+                  Doctor : Gonzalo gras cantou
+                  <div>simulacion de la firma del doctor</div>
+                </div>
+              </Grid>
+            </div>
+          </Paper>
+        </Grid>
+        <Grid container justify="flex-end" xs={9}>
+          <Button
+            variant="contained"
+            color="primary"
+            className={`emit-recipe__button ${classes.button}`}
+            disabled={cantEmitRecipe}
+            onClick={emitRecipe}
+          >
+            Emitir
+          </Button>
+        </Grid>
+        <AddItemDialog
+          open={addItemDialogOpen}
+          handleClose={() => setVisibiltyOfAddItemDialog(false)}
+          addItem={addItem}
+        />
       </Grid>
-      <Grid container justify="flex-end" xs={9}>
-        <Button
-          variant="contained"
-          color="primary"
-          className={`emit-recipe__button ${classes.button}`}
-          disabled={cantEmitRecipe}
-          onClick={emitRecipe}
-        >
-          Emitir
-        </Button>
-      </Grid>
-      <AddItemDialog
-        open={addItemDialogOpen}
-        handleClose={() => setVisibiltyOfAddItemDialog(false)}
-        addItem={addItem}
-        searchMedicament={MedicamentService.searchMedicamentByName}
+      <SnackbarWrapper
+        vertical="bottom"
+        horizontal="center"
+        open={snackbar.open}
+        onClose={() => setSnackbar({ ...snackbarInitialState, onExit: snackbar.onExit })}
+        variant={snackbar.variant}
+        message={snackbar.message}
+        onExit={snackbar.onExit}
       />
-    </Grid>
+    </React.Fragment>
   );
 };
 
