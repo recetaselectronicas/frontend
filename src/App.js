@@ -5,6 +5,7 @@ import Navbar from './components/navbar/Navbar';
 import EmitRecipe from './pages/medic/EmitRecipe';
 import PrescriptionsPage from './pages/prescriptions/PrescriptionsPage';
 import PrescriptionPage from './pages/prescriptionPage/PrescriptionPage';
+import LoginPage from './pages/loginPage/LoginPage';
 
 import './index.css';
 
@@ -12,6 +13,7 @@ function App() {
   return (
     <Router>
       <Navbar />
+      <Route path="/" exact component={LoginPage} />
       <Container fixed>
         <main>
           <Route path="/emitir" component={EmitRecipe} />
