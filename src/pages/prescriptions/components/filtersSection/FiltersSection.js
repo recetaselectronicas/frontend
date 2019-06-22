@@ -16,6 +16,8 @@ import './FiltersSection.css';
 
 const FiltersSection = (props) => {
   const [selectedStates, setSelectedStates] = useState([]);
+  const [selectedInstutions, setSelectedInstutions] = useState([]);
+  const [idPrescription, setIdPrescription] = useState('');
   const { filters } = props;
   const {
     status, institution, id, issueDateRange, receivedDateRange,
@@ -23,6 +25,18 @@ const FiltersSection = (props) => {
   const selectStatusFilter = (valueStatus) => {
     props.onSelectFilter({ property: 'status', id: valueStatus });
     setSelectedStates(valueStatus);
+  };
+  const selectInstitutionFilter = (valueStatus) => {
+    props.onSelectFilter({ property: 'institution', id: valueStatus });
+    setSelectedInstutions(valueStatus);
+  };
+  const onChangeTexfieldPrescriptionId = (event) => {
+    const { value } = event.target;
+    setIdPrescription(value);
+  };
+  const searchById = (event) => {
+    event.preventDefault();
+    props.onSelectFilter({ property: 'id', id: idPrescription });
   };
   return (
     <div>
@@ -41,7 +55,14 @@ const FiltersSection = (props) => {
                 <Search />
               </Grid>
               <Grid item>
-                <TextField id="input-with-icon-grid" label="Receta ID" />
+                <form onSubmit={searchById}>
+                  <TextField
+                    id="input-with-icon-grid"
+                    label="Receta ID"
+                    onChange={onChangeTexfieldPrescriptionId}
+                    value={idPrescription}
+                  />
+                </form>
               </Grid>
             </Grid>
           </div>
@@ -58,10 +79,11 @@ const FiltersSection = (props) => {
 
         {institution && (
           <MultipleDropdown
-            selectedValues={selectedStates}
+            selectedValues={selectedInstutions}
             values={institution.values}
-            onSelect={values => setSelectedStates(values)}
+            onSelect={selectInstitutionFilter}
             label="Instituciones"
+            className="institution-dropdown"
           />
         )}
       </div>
