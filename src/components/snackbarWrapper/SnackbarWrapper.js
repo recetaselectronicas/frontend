@@ -5,7 +5,7 @@ import SnackbarContentWrapper from '../snackbarContent/SnackbarContent';
 
 const SnackbarWrapper = (props) => {
   const {
-    horizontal, vertical, onClose, variant, message, open,
+    horizontal, vertical, onClose, variant, message, open, onExit,
   } = props;
   return (
     <Snackbar
@@ -14,8 +14,9 @@ const SnackbarWrapper = (props) => {
         horizontal,
       }}
       open={open}
-      autoHideDuration={6000}
+      autoHideDuration={2000}
       onClose={onClose}
+      onExit={onExit}
     >
       <SnackbarContentWrapper onClose={onClose} variant={variant} message={message} />
     </Snackbar>

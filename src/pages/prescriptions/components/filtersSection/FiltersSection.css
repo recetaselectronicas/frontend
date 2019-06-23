@@ -6,6 +6,9 @@
   margin-top: 1em;
   margin-right: 1em;
 }
-.multiple-dropdown {
+.status-dropdown {
+  margin-right: 15px !important;
+}
+.institution-dropdown {
   margin-right: 15px !important;
 }

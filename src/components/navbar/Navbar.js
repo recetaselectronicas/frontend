@@ -13,6 +13,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { withRouter } from 'react-router';
+import unifyLogo from './unify_logo.png';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -22,6 +23,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2),
   },
   title: {
+    marginLeft: '8px',
     flexGrow: 1,
   },
   list: {
@@ -56,7 +58,6 @@ function MenuAppBar(props) {
     setAnchorEl(null);
   }
   const onSelectedItem = (item) => {
-    console.log('hello');
     setState({ ...state, open: false });
     props.history.push(item.url);
   };
@@ -65,15 +66,27 @@ function MenuAppBar(props) {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="Menu" onClick={toggleDrawer(true)}>
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="Menu"
+            onClick={toggleDrawer(true)}
+          >
             <MenuIcon />
           </IconButton>
+          <img src={unifyLogo} alt="" width={25} />
           <Typography variant="h6" className={classes.title}>
             Unify
           </Typography>
 
           <div>
-            <IconButton aria-owns={open ? 'menu-appbar' : undefined} aria-haspopup="true" onClick={handleMenu} color="inherit">
+            <IconButton
+              aria-owns={open ? 'menu-appbar' : undefined}
+              aria-haspopup="true"
+              onClick={handleMenu}
+              color="inherit"
+            >
               <AccountCircle />
             </IconButton>
             <Menu

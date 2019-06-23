@@ -8,6 +8,9 @@ const restclient = axios.create({
 const sucessfullRequestHandler = request => request.data;
 const errorRequestHandler = (error) => {
   // TODO : ver como hacer handlers de los errores una vez este mas avanzado el backend
+  if (error.response) {
+    throw error.response.data;
+  }
   throw error;
 };
 export default class RestclientService {

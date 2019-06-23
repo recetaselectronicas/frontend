@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import SearchIcon from '@material-ui/icons/Search';
@@ -7,41 +7,49 @@ import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import propTypes from 'prop-types';
+import _ from 'lodash';
 import Suggestions from '../suggestions/Suggestions';
 import DialogTitle from '../../../../components/dialog/dialogTitle/DialogTitle';
 import DialogContent from '../../../../components/dialog/dialogContent/DialogContent';
 import DialogActions from '../../../../components/dialog/dialogActions/DialogActions';
+import MedicineService from '../../../../services/MedicineService';
 
+const initialState = {
+  medicine: {
+    description: '',
+  },
+};
 const AddItemDialog = (props) => {
   const [suggestionList, setSuggestionList] = React.useState([]);
-  const [selectedSuggestion, setSelectedSuggestion] = React.useState({});
-  const [suggestionInput, setSuggestionInput] = React.useState('');
-  const [itemQuantity, setItemQuantity] = React.useState(0);
+  const [medicine, setMedicine] = React.useState(initialState.medicine);
 
+  const [itemQuantity, setItemQuantity] = React.useState(0);
+  const deboundedSearchMedicine = useCallback(
+    _.debounce(async (name) => {
+      if (name.length >= 3) {
+        const data = await MedicineService.searchByName(name);
+        setSuggestionList(data);
+      }
+    }, 300),
+    [],
+  );
   const onChangeItemInput = async (event) => {
-    try {
-      const { value } = event.target;
-      setSuggestionInput(value);
-      const data = await props.searchMedicament(value);
-      setSuggestionList(data.result);
-    } catch (error) {
-      console.log(error);
-    }
+    const { value } = event.target;
+    setMedicine({ description: value });
+    deboundedSearchMedicine(value);
   };
   const onSelectSuggestion = (suggestion) => {
     setSuggestionList([]);
-    setSelectedSuggestion(suggestion);
-    setSuggestionInput(suggestion.label);
+    setMedicine(suggestion);
   };
   const addItem = () => {
     props.addItem({
-      item: selectedSuggestion,
+      medicine,
       quantity: itemQuantity,
     });
     // clean the inputs and close the modal
-    setSelectedSuggestion({});
     setItemQuantity(0);
-    setSuggestionInput('');
+    setMedicine(initialState.medicine);
     props.handleClose();
   };
   const { handleClose, open } = props;
@@ -62,7 +70,7 @@ const AddItemDialog = (props) => {
                     id="input-with-icon-textfield"
                     label="Medicamento"
                     className="add-item__item-texfield"
-                    value={suggestionInput}
+                    value={medicine.description}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -98,7 +106,7 @@ const AddItemDialog = (props) => {
           <Button
             color="primary"
             className="add-item__confirm-button"
-            disabled={Object.keys(selectedSuggestion).length === 0}
+            disabled={!medicine.id || itemQuantity === 0}
             onClick={addItem}
           >
             Agregar
@@ -113,7 +121,6 @@ const AddItemDialog = (props) => {
 };
 
 AddItemDialog.propTypes = {
-  searchMedicament: propTypes.func.isRequired,
   addItem: propTypes.func.isRequired,
   handleClose: propTypes.func.isRequired,
   open: propTypes.bool.isRequired,

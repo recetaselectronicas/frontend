@@ -6,7 +6,7 @@ const Suggestion = (props) => {
   const { data } = props;
   return (
     <MenuItem component="div" onClick={() => props.onSelectSuggestion(data)}>
-      {data.label}
+      {data.description}
     </MenuItem>
   );
 };

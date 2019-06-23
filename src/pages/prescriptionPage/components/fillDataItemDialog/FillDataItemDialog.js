@@ -6,23 +6,36 @@ import Grid from '@material-ui/core/Grid';
 import DialogTitle from '../../../../components/dialog/dialogTitle/DialogTitle';
 import DialogContent from '../../../../components/dialog/dialogContent/DialogContent';
 import DialogActions from '../../../../components/dialog/dialogActions/DialogActions';
+import MedicineService from '../../../../services/MedicineService';
 
+const initialStateTroquelInput = {
+  value: '',
+  error: false,
+  errorMessage: '',
+};
 const ConfirmCancelPrescriptionDialog = (props) => {
-  const [troquelInput, setTroquelInput] = React.useState('');
-  const [quantityInput, setQuantityInput] = React.useState('');
+  const [troquelInput, setTroquelInput] = React.useState(initialStateTroquelInput);
+  const [quantityInput, setQuantityInput] = React.useState(0);
 
   const onChangeTroquelInput = async (event) => {
     const { value } = event.target;
-    setTroquelInput(value);
+    setTroquelInput({ ...troquelInput, value });
   };
   const onChangeQuantityInput = async (event) => {
     const { value } = event.target;
-    setQuantityInput(value);
+    setQuantityInput(Number.parseInt(value, 10));
   };
-  const onConfirm = () => {
-    props.onConfirm({ id: props.id, troquel: troquelInput, quantity: quantityInput });
-    setTroquelInput('');
-    setQuantityInput('');
+  const onConfirm = async () => {
+    try {
+      const medicine = await MedicineService.getByTroquel(troquelInput.value);
+      props.onConfirm({
+        id: props.id, troquel: troquelInput.value, medicine, quantity: quantityInput,
+      });
+      setTroquelInput(initialStateTroquelInput);
+      setQuantityInput('');
+    } catch ({ message }) {
+      setTroquelInput({ ...troquelInput, errorMessage: message, error: true });
+    }
   };
   const { handleClose, open } = props;
   const classes = {};
@@ -39,7 +52,13 @@ const ConfirmCancelPrescriptionDialog = (props) => {
             <Grid item>
               <div className={classes.root}>
                 <div className={classes.container}>
-                  <TextField label="Troquel" type="number" value={troquelInput} onChange={onChangeTroquelInput} />
+                  <TextField
+                    label="Troquel"
+                    value={troquelInput.value}
+                    onChange={onChangeTroquelInput}
+                    error={troquelInput.error}
+                    helperText={troquelInput.errorMessage}
+                  />
                   <TextField label="Cantidad" type="number" value={quantityInput} onChange={onChangeQuantityInput} />
                 </div>
               </div>
@@ -47,7 +66,7 @@ const ConfirmCancelPrescriptionDialog = (props) => {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={onConfirm}>
+          <Button color="primary" onClick={onConfirm} disabled={quantityInput <= 0 || troquelInput.value.length === 0}>
             Agregar
           </Button>
           <Button onClick={handleClose} color="secondary">
