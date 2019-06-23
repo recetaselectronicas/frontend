@@ -73,7 +73,7 @@ export default function Norm(props) {
           variant: 'success',
         });
       })
-      .catch((err) => {
+      .catch(() => {
         setSnackbar({
           open: true,
           // message: (err.response && err.response.data.message) || err.message,
