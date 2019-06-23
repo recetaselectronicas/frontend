@@ -12,7 +12,6 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'wrap',
   },
   formControl: {
-    margin: theme.spacing(1),
     minWidth: 120,
   },
   selectEmpty: {
@@ -61,6 +60,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Conector(props) {
   const classes = useStyles();
+  const { updatable } = props;
   const { predicates } = props;
   const { metadata } = props;
   const { onChange } = props;
@@ -113,19 +113,19 @@ export default function Conector(props) {
     <Paper className={classes.formControl}>
       {(name === 'IS' || name === 'NOT')
         && (
-          <UnarySymbol conector={conector}>
-            <Predicate predicates={predicates} metadata={predicate} onChange={handleOnSinglePredicateChange} onDelete={handleOnSinlgePredicateDelete} />
+          <UnarySymbol conector={conector} updatable={updatable}>
+            <Predicate predicates={predicates} metadata={predicate} onChange={handleOnSinglePredicateChange} onDelete={handleOnSinlgePredicateDelete} updatable={updatable} />
           </UnarySymbol>
         )}
       {(name === 'OR' || name === 'AND')
-        && metadata.predicates.map((_predicate, index) => <Predicate key={_predicate.type + index} predicates={predicates} metadata={_predicate} onChange={newMetadata => handleOnPredicateChange(index, newMetadata)} onDelete={() => handleOnPredicateDelete(index)} />)
-          .reduce((prev, next, index) => [prev, <Symbol key={index} onClick={handleOnPredicateAdd} conector={conector} />, next])}
+        && metadata.predicates.map((_predicate, index) => <Predicate key={_predicate.type + index} predicates={predicates} metadata={_predicate} onChange={newMetadata => handleOnPredicateChange(index, newMetadata)} onDelete={() => handleOnPredicateDelete(index)} updatable={updatable} />)
+          .reduce((prev, next, index) => [prev, <Symbol key={index} onClick={handleOnPredicateAdd} conector={conector} updatable={updatable} />, next])}
       {(name === 'IMPL' || name === 'DOUBLE_IMPL')
         && (
           <span>
-            <Predicate predicates={predicates} metadata={antecedent} onChange={handleOnAntecedentChange} onDelete={handleOnAntecedentDelete} />
-            <Symbol conector={conector} />
-            <Predicate predicates={predicates} metadata={consequent} onChange={handleOnConsequentChange} onDelete={handleOnConsequentDelete} />
+            <Predicate predicates={predicates} metadata={antecedent} onChange={handleOnAntecedentChange} onDelete={handleOnAntecedentDelete} updatable={updatable} />
+            <Symbol conector={conector} updatable={updatable} />
+            <Predicate predicates={predicates} metadata={consequent} onChange={handleOnConsequentChange} onDelete={handleOnConsequentDelete} updatable={updatable} />
           </span>
         )}
     </Paper>
@@ -134,6 +134,7 @@ export default function Conector(props) {
 
 function Symbol(props) {
   const classes = useStyles();
+  const { updatable } = props;
   const { conector } = props;
   const { onClick } = props;
 
@@ -145,9 +146,9 @@ function Symbol(props) {
     <span className={classes.symbolContainer}>
       <div className={classes.spacer} />
       <Paper className={classes.predicatesConector}>
-        <Typography variant="subtitle1" className={classes.symbol}>{conector.value}</Typography>
+        <Typography variant="subtitle1" className={classes.symbol}>{conector.symbol}</Typography>
       </Paper>
-      {conector.argumentType === 'list' && <Chip className={classes.addCriteria} variant="outlined" label="+" clickable onClick={handleOnClick} />}
+      {updatable && conector.argumentType === 'list' && <Chip className={classes.addCriteria} variant="outlined" label="+" clickable onClick={handleOnClick} />}
       <div className={classes.spacer} />
     </span>
   );
@@ -161,7 +162,7 @@ function UnarySymbol(props) {
   return (
     <span className={classes.symbolContainer}>
       <Paper className={classes.predicatesConector}>
-        <Typography variant="subtitle1" className={classes.symbol}>{conector.value}</Typography>
+        <Typography variant="subtitle1" className={classes.symbol}>{conector.symbol}</Typography>
       </Paper>
       {children}
     </span>

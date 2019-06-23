@@ -6,6 +6,14 @@ export const getNewCriteria = () => ({
   operator: '',
 });
 
+export const getNewRule = () => ({
+  type: 'EXECUTABLE',
+  name: 'RULE',
+  description: '',
+  errorMessage: '',
+  predicate: getNewCriteria(),
+});
+
 export const getResultingCriteria = (oldCriteria, newCriteria) => {
   const criteria = getNewCriteria();
   if (oldCriteria.type !== 'CRITERIA' || newCriteria.type !== 'CRITERIA') {
@@ -93,3 +101,7 @@ export const finders = {
     return quantifier || '';
   },
 };
+
+export function deepCopy(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}

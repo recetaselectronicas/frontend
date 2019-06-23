@@ -37,6 +37,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Predicate(props) {
   const classes = useStyles();
+  const { updatable } = props;
   const { predicates } = props;
   const { metadata } = props;
   const { onChange } = props;
@@ -59,9 +60,9 @@ export default function Predicate(props) {
   if (predicates) {
     return (
       <span className={classes.predicate}>
-        {type === 'CRITERIA' && <Criteria predicates={predicates} metadata={metadata} onChange={handleOnChange} onDelete={handleOnDelete} />}
-        {type === 'CONECTOR' && <Conector predicates={predicates} metadata={metadata} onChange={handleOnChange} />}
-        <FormControl variant="outlined" className={classes.addConector}>
+        {type === 'CRITERIA' && <Criteria predicates={predicates} metadata={metadata} onChange={handleOnChange} onDelete={handleOnDelete} updatable={updatable} />}
+        {type === 'CONECTOR' && <Conector predicates={predicates} metadata={metadata} onChange={handleOnChange} updatable={updatable} />}
+        <FormControl variant="outlined" className={classes.addConector} disabled={!updatable}>
           <Select
             renderValue={value => <span>{value}</span>}
             value="+"
@@ -69,7 +70,7 @@ export default function Predicate(props) {
             displayEmpty
             input={<OutlinedInput name="value" id="value" />}
           >
-            {conectors.map(conector => <MenuItem key={conector.conector} value={conector}>{conector.value}</MenuItem>)}
+            {conectors.map(conector => <MenuItem key={conector.conector} value={conector}>{conector.symbol}</MenuItem>)}
           </Select>
         </FormControl>
       </span>

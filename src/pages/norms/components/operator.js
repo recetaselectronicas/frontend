@@ -30,6 +30,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Operator(props) {
   const classes = useStyles();
+  const { updatable } = props;
   const { onChange } = props;
   const { metadata } = props;
   const { predicates } = props;
@@ -48,7 +49,7 @@ export default function Operator(props) {
 
   return (
     <span>
-      <FormControl variant="outlined" className={classes.formControl} disabled={!metadata.attribute}>
+      <FormControl variant="outlined" className={classes.formControl} disabled={!metadata.attribute || !updatable}>
         <InputLabel htmlFor="operator">
           Operator
         </InputLabel>
@@ -60,13 +61,14 @@ export default function Operator(props) {
           {filteredOperators.map(_operator => <MenuItem key={_operator.operator} value={_operator}>{_operator.symbol}</MenuItem>)}
         </Select>
       </FormControl>
-      {operator && operator.type === 'binary' && <OperatorValue metadata={metadata} onChange={handleOnValueChange} type={type} operator={operator} />}
+      {operator && operator.type === 'binary' && <OperatorValue metadata={metadata} onChange={handleOnValueChange} type={type} operator={operator} updatable={updatable} />}
     </span>
   );
 }
 
 function OperatorValue(props) {
   const classes = useStyles();
+  const { updatable } = props;
   const { onChange } = props;
   const { metadata } = props;
   const { operator } = props;
@@ -110,6 +112,7 @@ function OperatorValue(props) {
             value={stringValue}
             onChange={handleStringChange}
             variant="outlined"
+            disabled={!updatable}
           />
         )}
         {type === 'number' && (
@@ -121,10 +124,11 @@ function OperatorValue(props) {
             onChange={handleNumberChange}
             variant="outlined"
             type="number"
+            disabled={!updatable}
           />
         )}
         {type === 'boolean' && (
-          <FormControl variant="outlined" className={classes.formControl}>
+          <FormControl variant="outlined" className={classes.formControl} disabled={!updatable}>
             <InputLabel htmlFor="value">
               Valor
             </InputLabel>
@@ -152,6 +156,7 @@ function OperatorValue(props) {
           variant="outlined"
           itemType="text"
           label="Valor"
+          disabled={!updatable}
         />
       )}
       {type === 'number' && (
@@ -163,6 +168,7 @@ function OperatorValue(props) {
           variant="outlined"
           InputProps={{ type: 'number' }}
           label="Valor"
+          disabled={!updatable}
         />
       )}
     </span>

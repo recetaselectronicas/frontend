@@ -40,6 +40,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Criteria(props) {
   const classes = useStyles();
+  const { updatable } = props;
   const { predicates } = props;
   const { metadata } = props;
   const { onChange } = props;
@@ -50,29 +51,18 @@ export default function Criteria(props) {
   const { quantificable } = entity;
 
   function handleEntityChange(event) {
-    // onChange({
-    //   type: metadata.type, entity: event.target.value.entity, attribute: '', operator: '',
-    // });
     onChange(getResultingCriteria(metadata, { ...metadata, entity: event.target.value.entity }));
   }
 
   function handleAttributeChange(event) {
-    // onChange({
-    //   type: metadata.type, entity: entity.entity, attribute: event.target.value.attribute, operator: '',
-    // });
     onChange(getResultingCriteria(metadata, { ...metadata, attribute: event.target.value.attribute }));
   }
 
   function handleOperatorChange(operatorMetadata) {
-    // onChange({
-    //   type: metadata.type, entity: entity.entity, attribute: attribute.attribute, ...operatorMetadata,
-    // });
     onChange(getResultingCriteria(metadata, { ...metadata, ...operatorMetadata }));
   }
 
   function handleQuantifierChange(quantifierMetadata) {
-    // onChange({ ...metadata, ...newMetadata });
-    console.log({ metadata }, { quantifierMetadata });
     onChange(getResultingCriteria(metadata, { ...metadata, ...quantifierMetadata }));
   }
 
@@ -82,8 +72,8 @@ export default function Criteria(props) {
 
   return (
     <Paper className={classes.criteria}>
-      {quantificable && <Quantifier onChange={handleQuantifierChange} predicates={predicates} metadata={metadata} />}
-      <FormControl variant="outlined" className={classes.formControl}>
+      {quantificable && <Quantifier onChange={handleQuantifierChange} predicates={predicates} metadata={metadata} updatable={updatable} />}
+      <FormControl variant="outlined" className={classes.formControl} disabled={!updatable}>
         <InputLabel htmlFor="entity">
           Entidad
         </InputLabel>
@@ -95,7 +85,7 @@ export default function Criteria(props) {
           {entities.map(_entity => <MenuItem key={_entity.entity} value={_entity}>{_entity.value}</MenuItem>)}
         </Select>
       </FormControl>
-      <FormControl variant="outlined" className={classes.formControl} disabled={!entity}>
+      <FormControl variant="outlined" className={classes.formControl} disabled={!updatable || !entity}>
         <InputLabel htmlFor="attribute">
           Atributos
         </InputLabel>
@@ -107,8 +97,8 @@ export default function Criteria(props) {
           {entity && entity.attributes.map(_attribute => <MenuItem key={_attribute.attribute} value={_attribute}>{_attribute.value}</MenuItem>)}
         </Select>
       </FormControl>
-      <Operator predicates={predicates} onChange={handleOperatorChange} metadata={{ ...metadata }} type={attribute.type} />
-      <Chip className={classes.deleteCriteria} size="small" variant="outlined" clickable label="-" onClick={handleDeleteClick} />
+      <Operator predicates={predicates} onChange={handleOperatorChange} metadata={{ ...metadata }} type={attribute.type} updatable={updatable} />
+      {updatable && <Chip className={classes.deleteCriteria} size="small" variant="outlined" clickable label="-" onClick={handleDeleteClick} />}
     </Paper>
   );
 }
@@ -116,6 +106,7 @@ export default function Criteria(props) {
 
 function Quantifier(props) {
   const classes = useStyles();
+  const { updatable } = props;
   const { metadata } = props;
   const { predicates } = props;
   const { onChange } = props;
@@ -133,7 +124,7 @@ function Quantifier(props) {
 
   return (
     <span>
-      <FormControl variant="outlined" className={classes.formControl}>
+      <FormControl variant="outlined" className={classes.formControl} disabled={!updatable}>
         <InputLabel htmlFor="quantifier">
           Cuantificador
         </InputLabel>
@@ -155,6 +146,7 @@ function Quantifier(props) {
           onChange={handleQuantityChange}
           variant="outlined"
           type="number"
+          disabled={!updatable}
         />
         )}
     </span>
