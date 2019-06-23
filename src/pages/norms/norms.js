@@ -94,7 +94,7 @@ export default function Norm(props) {
   return (
     <>
       <Container maxWidth="lg" fixed>
-        <Paper style={{ padding: '16px' }}>
+        <Paper style={{ padding: '16px', marginTop: '2rem' }}>
           <Grid container justify="flex-end" alignItems="baseline" className={classes.actionContainer}>
             <Button variant="contained" color="primary" onClick={handleCanModify} disabled={canModify} className={classes.button}>Modificar</Button>
           </Grid>
