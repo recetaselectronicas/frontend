@@ -112,7 +112,7 @@ function MenuAppBar(props) {
       <Drawer open={state.open} onClose={toggleDrawer(false)}>
         <div className={classes.list} role="presentation" onKeyDown={toggleDrawer(false)}>
           <List>
-            {[{ text: 'Emitir', url: '/emitir' }, { text: 'Ver recetas', url: '/recetas' }].map(link => (
+            {[{ text: 'Emitir', url: '/emitir' }, { text: 'Ver recetas', url: '/recetas' }, { text: 'Normas', url: '/normas' }].map(link => (
               <ListItem button key={link.text} onClick={() => onSelectedItem(link)}>
                 <ListItemText primary={link.text} />
               </ListItem>

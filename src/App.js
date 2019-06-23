@@ -21,7 +21,7 @@ function App() {
         <Route path="/emitir" component={EmitRecipe} />
         <Route path="/recetas" component={PrescriptionsPage} />
         <Route path="/receta/:id" exact component={PrescriptionPage} />
-        <Route path="/norms" exact component={Norm} />
+        <Route path="/normas" exact component={Norm} />
       </main>
     </Router>
   );
