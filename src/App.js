@@ -1,6 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-import Container from '@material-ui/core/Container';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Navbar from './components/navbar/Navbar';
 import EmitRecipe from './pages/medic/EmitRecipe';
 import PrescriptionsPage from './pages/prescriptions/PrescriptionsPage';
@@ -14,13 +13,11 @@ function App() {
     <Router>
       <Navbar />
       <Route path="/" exact component={LoginPage} />
-      <Container fixed>
-        <main>
-          <Route path="/emitir" component={EmitRecipe} />
-          <Route path="/recetas" component={PrescriptionsPage} />
-          <Route path="/receta/:id" exact component={PrescriptionPage} />
-        </main>
-      </Container>
+      <main>
+        <Route path="/emitir" component={EmitRecipe} />
+        <Route path="/recetas" component={PrescriptionsPage} />
+        <Route path="/receta/:id" exact component={PrescriptionPage} />
+      </main>
     </Router>
   );
 }

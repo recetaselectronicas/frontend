@@ -15,28 +15,36 @@ import { DateRangePicker } from 'react-dates';
 import './FiltersSection.css';
 
 const FiltersSection = (props) => {
-  const [selectedStates, setSelectedStates] = useState([]);
-  const [selectedInstutions, setSelectedInstutions] = useState([]);
   const [idPrescription, setIdPrescription] = useState('');
-  const { filters } = props;
+  const { filters, selectedFilters } = props;
   const {
     status, institution, id, issueDateRange, receivedDateRange,
   } = filters;
-  const selectStatusFilter = (valueStatus) => {
-    props.onSelectFilter({ property: 'status', id: valueStatus });
-    setSelectedStates(valueStatus);
+  const statusSelectedFilters = selectedFilters
+    .filter(selectedFilter => selectedFilter.property === 'status')
+    .map(sf => sf.value);
+
+  const institutionSelectedFilters = selectedFilters
+    .filter(selectedFilter => selectedFilter.property === 'institution')
+    .map(sf => sf.value);
+
+  const selectStatusFilter = (valuesStatus) => {
+    console.log('valuesStatus', valuesStatus);
+    const [valueToSend] = valuesStatus.filter(valueStatus => !statusSelectedFilters.includes(valueStatus.id));
+    props.onSelectFilter({ property: 'status', value: valueToSend.id, label: valueToSend.value });
   };
-  const selectInstitutionFilter = (valueStatus) => {
-    props.onSelectFilter({ property: 'institution', id: valueStatus });
-    setSelectedInstutions(valueStatus);
+  const selectInstitutionFilter = (valuesStatus) => {
+    const [valueToSend] = valuesStatus.filter(valueStatus => !institutionSelectedFilters.includes(valueStatus));
+    props.onSelectFilter({ property: 'institution', value: valueToSend.id, label: valueToSend.value });
   };
+  // TODO: que pasa cuando me clickean para deseleccionar
   const onChangeTexfieldPrescriptionId = (event) => {
     const { value } = event.target;
     setIdPrescription(value);
   };
   const searchById = (event) => {
     event.preventDefault();
-    props.onSelectFilter({ property: 'id', id: idPrescription });
+    props.onSelectFilter({ property: 'id', value: idPrescription });
   };
   return (
     <div>
@@ -69,7 +77,7 @@ const FiltersSection = (props) => {
         )}
         {status && (
           <MultipleDropdown
-            selectedValues={selectedStates}
+            selectedValues={statusSelectedFilters}
             values={status.values}
             onSelect={selectStatusFilter}
             label="Estados"
@@ -79,7 +87,7 @@ const FiltersSection = (props) => {
 
         {institution && (
           <MultipleDropdown
-            selectedValues={selectedInstutions}
+            selectedValues={institutionSelectedFilters}
             values={institution.values}
             onSelect={selectInstitutionFilter}
             label="Instituciones"
@@ -140,7 +148,11 @@ const MultipleDropdown = (props) => {
         multiple
         value={selectedValues}
         onChange={(event) => {
-          onSelect(event.target.value);
+          const inputValues = event.target.value;
+          const newValue = inputValues
+            .map(inputValue => !selectedValues.includes(inputValue) && values.find(value => value.id === inputValue))
+            .filter(Boolean);
+          onSelect(newValue);
         }}
         inputProps={{
           name: 'age',
@@ -150,8 +162,8 @@ const MultipleDropdown = (props) => {
         input={<Input id="select-multiple-chip" />}
         renderValue={selected => (
           <div>
-            {selected.map(value => (
-              <Chip key={value} label={value} />
+            {selected.map(id => (
+              <Chip key={id} label={values.find(value => value.id === id).value} />
             ))}
           </div>
         )}

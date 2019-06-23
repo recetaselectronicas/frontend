@@ -110,8 +110,10 @@ function EnhancedTable(props) {
   const { prescriptions } = props;
   function handleRequestSort(event, property) {
     const isDesc = orderBy === property && order === 'desc';
-    setOrder(isDesc ? 'asc' : 'desc');
+    const newOrder = isDesc ? 'asc' : 'desc';
+    setOrder(newOrder);
     setOrderBy(property);
+    props.onSelectFilter({ property: 'orderBy', value: `${property}-${newOrder}` });
   }
 
   /* function handleChangePage(event, newPage) {
@@ -140,6 +142,7 @@ function EnhancedTable(props) {
                     onClick={() => props.goToPrescriptionDetail(prescription.id)}
                     tabIndex={-1}
                     key={prescription.name}
+                    style={{ cursor: 'pointer' }}
                   >
                     <TableCell component="th" scope="row">
                       {prescription.id}
@@ -175,7 +178,18 @@ function EnhancedTable(props) {
       </div>
     );
   }
-  return <div> No hay resultados para su busqueda</div>;
+  return (
+    <Paper
+      style={{
+        textAlign: 'center',
+        padding: '5em',
+        marginTop: '2em',
+      }}
+    >
+      {' '}
+      No hay resultados para su busqueda
+    </Paper>
+  );
 }
 const useToolbarStyles = makeStyles(theme => ({
   root: {

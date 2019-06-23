@@ -142,7 +142,7 @@ const PrescriptionsPage = (props) => {
   const actionButtonItems = areInFlow && actionsMapper[currentActionFlow].itemAction;
   return (
     <React.Fragment>
-      <Grid container>
+      <Grid container className="page">
         <Grid item xs={10}>
           {prescription && (
             <Prescription

@@ -154,7 +154,7 @@ const EmitRecipe = (props) => {
   const cantEmitRecipe = noMedicalInsuranceSelected || isUndefinedOrNull(selectedAffilate) || noItemsAdded;
   return (
     <React.Fragment>
-      <Grid container justify="center" spacing={3}>
+      <Grid container justify="center" spacing={3} className="page">
         <Grid item xs={9}>
           <Paper className={classes.paper}>
             <div>
