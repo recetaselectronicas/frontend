@@ -29,7 +29,6 @@ const FiltersSection = (props) => {
     .map(sf => sf.value);
 
   const selectStatusFilter = (valuesStatus) => {
-    console.log('valuesStatus', valuesStatus);
     const [valueToSend] = valuesStatus.filter(valueStatus => !statusSelectedFilters.includes(valueStatus.id));
     props.onSelectFilter({ property: 'status', value: valueToSend.id, label: valueToSend.value });
   };
@@ -152,7 +151,9 @@ const MultipleDropdown = (props) => {
           const newValue = inputValues
             .map(inputValue => !selectedValues.includes(inputValue) && values.find(value => value.id === inputValue))
             .filter(Boolean);
-          onSelect(newValue);
+          if (newValue && newValue.length > 0) {
+            onSelect(newValue);
+          }
         }}
         inputProps={{
           name: 'age',

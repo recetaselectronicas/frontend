@@ -49,7 +49,6 @@ export default function LoginPage() {
 
   const login = (event) => {
     event.preventDefault();
-    console.log('hola');
   };
   return (
     <Grid container component="main" className={classes.root}>
