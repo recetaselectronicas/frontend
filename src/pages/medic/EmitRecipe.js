@@ -13,6 +13,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import _ from 'lodash';
+import { Divider } from '@material-ui/core';
 import Item from './components/item/Item';
 import AddItemDialog from './components/addItemDialog/AddItemDialog';
 import InstitutionService from '../../services/InstutionService';
@@ -21,7 +22,6 @@ import AffiliateService from '../../services/AffilateService';
 import PrescriptionService from '../../services/PrescriptionService';
 import PrescriptionRequest from '../../requestBuilders/PrescriptionRequest';
 import SnackbarWrapper from '../../components/snackbarWrapper/SnackbarWrapper';
-import { Divider } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
