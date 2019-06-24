@@ -10,4 +10,14 @@ export default class SessionService {
       type: localStorage.getItem('type'),
     };
   }
+
+  static userIsLogged() {
+    const user = this.getUserData();
+    return user && user.id;
+  }
+
+  static logout() {
+    localStorage.removeItem('id');
+    localStorage.removeItem('type');
+  }
 }

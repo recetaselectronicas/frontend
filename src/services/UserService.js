@@ -6,5 +6,8 @@ export default class UserService extends RestclientService {
       ...data,
     });
   }
-  // Authorization: Bearer
+
+  static getMenu() {
+    return this.get('/session/menu');
+  }
 }

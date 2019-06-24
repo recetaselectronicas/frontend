@@ -45,6 +45,9 @@ const useStyles = makeStyles(theme => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  error: {
+    color: theme.palette.error.dark,
+  },
 }));
 
 const initialStateUser = {
@@ -54,6 +57,7 @@ const initialStateUser = {
 export default function LoginPage(props) {
   const classes = useStyles();
   const [user, setUserData] = useState(initialStateUser);
+  const [error, setError] = useState('');
   const login = async (event) => {
     event.preventDefault();
     const { type } = props;
@@ -61,8 +65,8 @@ export default function LoginPage(props) {
       await UserService.login({ ...user, type });
       SessionService.saveSessionData(1, type);
       props.history.push('/recetas');
-    } catch (error) {
-      console.log('error login', error);
+    } catch ({ message }) {
+      setError(message);
     }
   };
 
@@ -118,6 +122,7 @@ export default function LoginPage(props) {
               value={user.password}
               onChange={onChangeInput}
             />
+            {error && <Typography className={classes.error}>{error}</Typography>}
             <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Recordarme" />
             <Button
               type="submit"
@@ -127,6 +132,7 @@ export default function LoginPage(props) {
               color="primary"
               className={classes.submit}
               on
+              disabled={user.password.length === 0 || user.username.length === 0}
             >
               Acceder
             </Button>

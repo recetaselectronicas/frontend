@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -14,6 +15,8 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { withRouter } from 'react-router';
 import unifyLogo from './unify_logo.png';
+import SessionService from '../../services/SessionService';
+import UserService from '../../services/UserService';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -21,10 +24,12 @@ const useStyles = makeStyles(theme => ({
   },
   menuButton: {
     marginRight: theme.spacing(2),
+    cursor: 'pointer',
   },
   title: {
     marginLeft: '8px',
     flexGrow: 1,
+    cursor: 'pointer',
   },
   list: {
     width: 250,
@@ -41,15 +46,25 @@ function MenuAppBar(props) {
   const [state, setState] = React.useState({
     open: false,
   });
+  const [menu, setMenu] = React.useState([]);
+
+  const userIsLogged = SessionService.userIsLogged();
 
   const toggleDrawer = openValue => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-
     setState({ ...state, open: openValue });
   };
 
+  useEffect(() => {
+    if (userIsLogged) {
+      UserService.getMenu().then((newMenu) => {
+        setMenu(newMenu);
+      });
+    }
+    console.log('userIsLogged');
+  }, [userIsLogged]);
   function handleMenu(event) {
     setAnchorEl(event.currentTarget);
   }
@@ -61,60 +76,73 @@ function MenuAppBar(props) {
     setState({ ...state, open: false });
     props.history.push(item.url);
   };
+  const goHome = () => {
+    props.history.push(userIsLogged ? '/recetas' : '/');
+  };
+  const logout = () => {
+    SessionService.logout();
+    props.history.push('/');
+    handleClose();
+  };
 
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="Menu"
-            onClick={toggleDrawer(true)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <img src={unifyLogo} alt="" width={25} />
-          <Typography variant="h6" className={classes.title}>
+          {userIsLogged && (
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="Menu"
+              onClick={toggleDrawer(true)}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+          <img src={unifyLogo} alt="" width={25} onClick={goHome} style={{ cursor: 'pointer' }} />
+          <Typography variant="h6" className={classes.title} onClick={goHome}>
             Unify
           </Typography>
 
-          <div>
-            <IconButton
-              aria-owns={open ? 'menu-appbar' : undefined}
-              aria-haspopup="true"
-              onClick={handleMenu}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={open}
-              onClose={handleClose}
-            >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleClose}>My account</MenuItem>
-            </Menu>
-          </div>
+          {userIsLogged && (
+            <div>
+              <IconButton
+                aria-owns={open ? 'menu-appbar' : undefined}
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={open}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                <MenuItem onClick={handleClose}>My account</MenuItem>
+                <MenuItem onClick={logout}>Log out</MenuItem>
+              </Menu>
+            </div>
+          )}
         </Toolbar>
       </AppBar>
       <Drawer open={state.open} onClose={toggleDrawer(false)}>
         <div className={classes.list} role="presentation" onKeyDown={toggleDrawer(false)}>
           <List>
-            {[{ text: 'Emitir', url: '/emitir' }, { text: 'Ver recetas', url: '/recetas' }, { text: 'Normas', url: '/normas' }].map(link => (
-              <ListItem button key={link.text} onClick={() => onSelectedItem(link)}>
-                <ListItemText primary={link.text} />
+            {menu.map(link => (
+              <ListItem button key={link.label} onClick={() => onSelectedItem(link)}>
+                <ListItemText primary={link.label} />
               </ListItem>
             ))}
           </List>

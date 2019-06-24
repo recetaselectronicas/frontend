@@ -5,6 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import HomeBackground from './home_background.jpg';
+import './home.css';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -25,16 +26,6 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     justifyContent: 'space-around',
   },
-  loginLink: {
-    width: '100%',
-    height: '200px',
-    borderLeft: ' 1px solid black',
-    borderRight: '1px solid black',
-    justifyContent: 'center',
-    alignItems: 'center',
-    display: 'flex',
-    cursor: 'pointer',
-  },
 }));
 
 export default function HomePage(props) {
@@ -48,20 +39,18 @@ export default function HomePage(props) {
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <Grid item xs={12} component={Paper} square className={classes.image}>
-        <Paper className={classes.paper}>
-          <div onClick={onClick('doctor')} className={classes.loginLink}>
-            Soy medico
-          </div>
-          <div onClick={onClick('medicalInsurance')} className={classes.loginLink}>
-            Soy os
-          </div>
-          <div onClick={onClick('affiliate')} className={classes.loginLink}>
-            Soy paciente
-          </div>
-          <div onClick={onClick('pharmacist')} className={classes.loginLink}>
-            Soy farmaceutico
-          </div>
-        </Paper>
+        <div onClick={onClick('doctor')} className="login-link">
+          Soy un medico
+        </div>
+        <div onClick={onClick('medicalInsurance')} className="login-link">
+          Soy una obra social
+        </div>
+        <div onClick={onClick('affiliate')} className="login-link">
+          Soy un paciente
+        </div>
+        <div onClick={onClick('pharmacist')} className="login-link">
+          Soy un farmaceutico
+        </div>
       </Grid>
     </Grid>
   );

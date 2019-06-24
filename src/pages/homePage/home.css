@@ -1,0 +1,17 @@
+.login-link {
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+  transition: box-shadow 500ms;
+  width: 100%;
+  cursor: pointer;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+  margin-right: 10px;
+  border-radius: 5px;
+  justify-content: center;
+  background-color: #ffffff;
+}
+.login-link:hover {
+  box-shadow: 0 10px 50px 0 rgba(0, 0, 0, 0.5);
+}
