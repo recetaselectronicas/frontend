@@ -13,6 +13,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import _ from 'lodash';
+import { Divider } from '@material-ui/core';
 import Item from './components/item/Item';
 import AddItemDialog from './components/addItemDialog/AddItemDialog';
 import InstitutionService from '../../services/InstutionService';
@@ -42,6 +43,14 @@ const useStyles = makeStyles(theme => ({
   button: {
     marginRight: 12,
   },
+  issuedErrors: {
+    margin: theme.spacing(0),
+    color: theme.palette.error.dark,
+    textAlign: 'left',
+  },
+  errorsDivider: {
+    margin: theme.spacing(1),
+  },
 }));
 
 const initialState = {
@@ -66,6 +75,8 @@ const EmitRecipe = (props) => {
   const [suggestionList, setSuggestionList] = useState([]);
   const [diagnostic, setDiagnostic] = useState(null);
   const [snackbar, setSnackbar] = useState(snackbarInitialState);
+  // const [errorsStack, setErrorsStack] = useState([{ message: 'Debe indicar tratamiento prolongado' }, { message: 'Debe ingresar un diagnostico' }]);
+  const [errorsStack, setErrorsStack] = useState([]);
 
   const debounderSearchAffiliate = useCallback(
     _.debounce(async (code, medicalInsurance) => {
@@ -138,13 +149,25 @@ const EmitRecipe = (props) => {
           props.history.push('/recetas');
         },
       });
+      setErrorsStack([]);
     } catch (error) {
-      setSnackbar({
-        message: 'Hubo un error en la generacion de la receta',
-        open: true,
-        variant: 'error',
-        onExit: () => {},
-      });
+      const issuedError = error;
+      if (issuedError.code === '1-101' && issuedError.cause && issuedError.cause.code === '1-004') {
+        setSnackbar({
+          message: 'Arregle los errores e intente nuevamente',
+          open: true,
+          variant: 'error',
+          onExit: () => { },
+        });
+        setErrorsStack(issuedError.cause.message.map(message => ({ message })));
+      } else {
+        setSnackbar({
+          message: 'Hubo un error en la generacion de la receta',
+          open: true,
+          variant: 'error',
+          onExit: () => { },
+        });
+      }
     }
   };
 
@@ -211,7 +234,7 @@ const EmitRecipe = (props) => {
                       {' '}
                       {affiliate.surname}
                       {' '}
--
+                      -
                       {' '}
                       {affiliate.code}
                     </MenuItem>
@@ -226,7 +249,7 @@ const EmitRecipe = (props) => {
                   {' '}
                   {selectedAffilate.surname}
                   {' '}
-(
+                  (
                   {selectedAffilate.nicNumber}
                   )
                   <br />
@@ -282,6 +305,19 @@ const EmitRecipe = (props) => {
                 </div>
               </Grid>
             </div>
+            {errorsStack.length > 0
+              && (
+              <>
+                <Divider className={classes.errorsDivider} />
+                <Grid container>
+                  {errorsStack.map(error => (
+                    <Grid item xs={12} className={classes.issuedErrors} justify="flex-start">
+                      <Typography variant="subtitle1">{`• ${error.message}`}</Typography>
+                    </Grid>
+                  ))}
+                </Grid>
+              </>
+              )}
           </Paper>
         </Grid>
         <Grid container justify="flex-end" xs={9}>
