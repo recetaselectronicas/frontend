@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -13,7 +13,10 @@ import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import { Redirect } from 'react-router-dom';
 import loginBackground from './login_background.jpg';
+import UserService from '../../services/UserService';
+import SessionService from '../../services/SessionService';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,12 +47,38 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function LoginPage() {
+const initialStateUser = {
+  username: '',
+  password: '',
+};
+export default function LoginPage(props) {
   const classes = useStyles();
-
-  const login = (event) => {
+  const [user, setUserData] = useState(initialStateUser);
+  const login = async (event) => {
     event.preventDefault();
+    const { type } = props;
+    try {
+      await UserService.login({ ...user, type });
+      SessionService.saveSessionData(1, type);
+      props.history.push('/recetas');
+    } catch (error) {
+      console.log('error login', error);
+    }
   };
+
+  const onChangeInput = ({ target: { name, value } }) => {
+    setUserData({ ...user, [name]: value });
+  };
+  const { type } = props;
+  if (!type) {
+    return (
+      <Redirect
+        to={{
+          pathname: '/',
+        }}
+      />
+    );
+  }
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
@@ -70,9 +99,11 @@ export default function LoginPage() {
               fullWidth
               id="email"
               label="Usuario"
-              name="email"
+              name="username"
               autoComplete="email"
               autoFocus
+              value={user.username}
+              onChange={onChangeInput}
             />
             <TextField
               variant="outlined"
@@ -84,6 +115,8 @@ export default function LoginPage() {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={user.password}
+              onChange={onChangeInput}
             />
             <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Recordarme" />
             <Button

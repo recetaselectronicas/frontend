@@ -1,5 +1,6 @@
 import axios from 'axios';
 import config from '../config/default';
+import SessionService from './SessionService';
 
 const restclient = axios.create({
   baseURL: config.baseUrl,
@@ -14,30 +15,35 @@ const errorRequestHandler = (error) => {
   throw error;
 };
 export default class RestclientService {
+  static getHeaders(opts = {}) {
+    const userHeaders = SessionService.getUserData();
+    return { ...opts.headers, Authorization: `Bearer ${JSON.stringify(userHeaders)}` };
+  }
+
   static get(url, opts) {
     return restclient
-      .get(url, opts)
+      .get(url, { ...opts, headers: this.getHeaders(opts) })
       .then(sucessfullRequestHandler)
       .catch(errorRequestHandler);
   }
 
   static post(url, data, opts) {
     return restclient
-      .post(url, data, opts)
+      .post(url, data, { ...opts, headers: this.getHeaders(opts) })
       .then(sucessfullRequestHandler)
       .catch(errorRequestHandler);
   }
 
   static put(url, data, opts) {
     return restclient
-      .put(url, data, opts)
+      .put(url, data, { ...opts, headers: this.getHeaders(opts) })
       .then(sucessfullRequestHandler)
       .catch(errorRequestHandler);
   }
 
   static delete(url, opts) {
     return restclient
-      .delete(url, opts)
+      .delete(url, { ...opts, headers: this.getHeaders(opts) })
       .then(sucessfullRequestHandler)
       .catch(errorRequestHandler);
   }

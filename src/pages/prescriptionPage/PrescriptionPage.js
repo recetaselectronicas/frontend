@@ -22,12 +22,13 @@ const PrescriptionsPage = (props) => {
   const [receiveItems, setReceiveItems] = useState({ items: [] });
   const [auditedItems, setAuditedItems] = useState({ items: [] });
   const [snackbar, setSnackbar] = useState(snackbarInitialState);
-  useEffect(() => {
+  const getPrescription = () => {
     PrescriptionService.getById(props.match.params.id).then(({ result, actions: actionsResponse }) => {
       setPrescription(result);
       setActions(actionsResponse);
     });
-  }, []);
+  };
+  useEffect(getPrescription, []);
   const onCancelFlow = () => {
     setCurrentAction('');
   };
@@ -55,6 +56,10 @@ const PrescriptionsPage = (props) => {
           setFillItemModal({ ...fillItemModal, open: true, id });
         },
         label: 'Auditar',
+        isDisabled: (item) => {
+          const auditedIds = auditedItems.items.map(auditedItem => auditedItem.id);
+          return !!item.audited.quantity || auditedIds.includes(item.id);
+        },
       },
     },
     RECEIVE: {
@@ -66,6 +71,12 @@ const PrescriptionsPage = (props) => {
       finishFlowAction: async () => {
         try {
           await PrescriptionService.receive(prescription.id, receiveItems);
+          setSnackbar({
+            open: true,
+            message: 'Se Recepciono la receta con exito',
+            variant: 'success',
+          });
+          await getPrescription();
           onCancelFlow();
         } catch (e) {
           setSnackbar({
@@ -82,6 +93,10 @@ const PrescriptionsPage = (props) => {
           setFillItemModal({ ...fillItemModal, open: true, id });
         },
         label: 'Recepcionar',
+        isDisabled: (item) => {
+          const receivedIds = receiveItems.items.map(receiveItem => receiveItem.id);
+          return !!item.received.quantity || receivedIds.includes(item.id);
+        },
       },
     },
   };
@@ -100,6 +115,14 @@ const PrescriptionsPage = (props) => {
   const auditPrescription = async () => {
     try {
       await PrescriptionService.audit(prescription.id, auditedItems);
+      setSnackbar({
+        open: true,
+        message: 'Se audito la receta con exito',
+        variant: 'success',
+      });
+      setConfirmAuditModal({ ...confirmAuditModal, open: false });
+
+      await getPrescription();
     } catch (e) {
       setSnackbar({
         open: true,
@@ -148,8 +171,7 @@ const PrescriptionsPage = (props) => {
             <Prescription
               {...prescription}
               actionButtonItems={actionButtonItems}
-              receiveItems={receiveItems.items}
-              auditedItems={auditedItems.items}
+              currentActionFlow={currentActionFlow}
             />
           )}
         </Grid>
@@ -171,11 +193,11 @@ const PrescriptionsPage = (props) => {
                 flexDirection: 'column',
               }}
             >
-              {actions.map(({ id }) => (
+              {actions.map(({ id, disabled }) => (
                 <Button
                   style={{ marginBottom: '12px' }}
                   variant="contained"
-                  disabled={areInFlow}
+                  disabled={areInFlow || disabled}
                   color={actionsMapper[id].type}
                   className={`action-recipe__button ${id}`}
                   onClick={() => dispatchAction(id)}

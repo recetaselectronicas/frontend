@@ -42,7 +42,7 @@ export default class PrescriptionRequest {
 
       withDoctor(doctorId) {
         this.doctor = {
-          id: doctorId,
+          id: toInt(doctorId),
         };
         return this;
       }
