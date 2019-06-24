@@ -3,7 +3,7 @@ import React from 'react';
 import qs from 'query-string';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Button, Container, Grid, Paper, Divider, Typography, Chip, Avatar, IconButton,
+  Button, Container, Grid, Paper, Divider, Typography, Chip, Avatar, IconButton, TextField,
 } from '@material-ui/core';
 import { AddCircle } from '@material-ui/icons';
 import { withStyles } from '@material-ui/styles';
@@ -121,9 +121,11 @@ function ModificableNorm(props) {
   const { canModify } = props;
   const [states, setStates] = React.useState(norm.states);
   const [activeState, setActiveState] = React.useState('');
+  const [ttl, setTTL] = React.useState(norm.ttl);
 
   React.useEffect(() => {
     setStates(norm.states);
+    setTTL(norm.ttl);
   }, [norm]);
 
   React.useEffect(() => {
@@ -135,7 +137,7 @@ function ModificableNorm(props) {
   }
 
   function handleConfirmChanges() {
-    onConfirm({ ...norm, states });
+    onConfirm({ ...norm, ttl, states });
   }
 
   function handleCancelChanges() {
@@ -163,11 +165,19 @@ function ModificableNorm(props) {
   }
 
   return (
-    // <Paper style={{ padding: '16px' }}>
-    //   <Grid container justify="flex-end" alignItems="baseline" className={classes.actionContainer}>
-    //     <Button variant="contained" color="primary" onClick={handleCanModify} disabled={canModify} className={classes.button}>Modificar</Button>
-    //   </Grid>
     <>
+      <Grid container justify="flex-start" alignItems="center">
+        <TextField
+          autoComplete="off"
+          disabled={!canModify}
+          id="description"
+          label="Vencimiento"
+          value={ttl}
+          onChange={event => setTTL(event.target.value)}
+          type="number"
+          helperText="Vencimiento en días de la receta"
+        />
+      </Grid>
       <Grid container justify="space-evenly" alignItems="flex-end" className={classes.statusContainer}>
         {states && states.map(_state => <NormStatus key={_state.state} variant="contained" color={activeState.state === _state.state ? 'primary' : 'default'} onClick={() => handleStatusChange(_state)}>{_state.value}</NormStatus>)}
       </Grid>
@@ -207,6 +217,5 @@ function ModificableNorm(props) {
         <Button className={classes.button} variant="contained" color="secondary" onClick={handleCancelChanges} disabled={!canModify}>Cancelar</Button>
       </Grid>
     </>
-    // </Paper>
   );
 }
