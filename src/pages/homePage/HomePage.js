@@ -39,24 +39,26 @@ const useStyles = makeStyles(() => ({
 
 export default function HomePage(props) {
   const classes = useStyles();
-  const onClick = () => {
+  const onClick = type => () => {
+    props.setType(type);
     props.history.push('/login');
   };
+
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <Grid item xs={12} component={Paper} square className={classes.image}>
         <Paper className={classes.paper}>
-          <div onClick={onClick} className={classes.loginLink}>
+          <div onClick={onClick('doctor')} className={classes.loginLink}>
             Soy medico
           </div>
-          <div onClick={onClick} className={classes.loginLink}>
+          <div onClick={onClick('medicalInsurance')} className={classes.loginLink}>
             Soy os
           </div>
-          <div onClick={onClick} className={classes.loginLink}>
+          <div onClick={onClick('affiliate')} className={classes.loginLink}>
             Soy paciente
           </div>
-          <div onClick={onClick} className={classes.loginLink}>
+          <div onClick={onClick('pharmacist')} className={classes.loginLink}>
             Soy farmaceutico
           </div>
         </Paper>

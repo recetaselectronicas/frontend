@@ -123,7 +123,6 @@ const EmitRecipe = (props) => {
     const prescriptionRequest = new PrescriptionRequest.Builder()
       .withAffiliate(selectedAffilate.id)
       .withDiagnosis(diagnostic)
-      .withDoctor(2)
       .withInstitution(selectedInstitution)
       .withMedicalInsurance(selectedMedicalInsurance)
       .withItems(items)

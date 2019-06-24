@@ -51,14 +51,9 @@ const Prescription = (props) => {
     doctor,
     prolongedTreatment,
     actionButtonItems,
-    receiveItems,
-    auditedItems,
     status,
   } = props;
-  const auditedItemsIds = auditedItems.map(auditedItem => auditedItem.id);
-  const receiveItemIds = receiveItems.map(receiveItem => receiveItem.id);
 
-  const allItemsIds = [...auditedItemsIds, ...receiveItemIds];
   const classes = useStyles();
   const noItemsAdded = items.length === 0;
   return (
@@ -117,25 +112,31 @@ Estado :
       <div>
         <List component="nav">
           {noItemsAdded ? <Paper style={{ padding: 25 }}>Aun no tiene items agregados</Paper> : <Divider />}
-          {items.map(({ id, prescribed: { quantity, medicine }, received: { quantity: quantityMedicineReceived } }) => (
-            <React.Fragment>
-              <ListItem button>
-                <ListItemText primary={`${quantity} x ${medicine.description}`} />
-                <ListItemSecondaryAction>
-                  {actionButtonItems && (
-                    <Button
-                      color="primary"
-                      onClick={() => actionButtonItems.onClick(id)}
-                      disabled={allItemsIds.includes(id) || quantityMedicineReceived > 0}
-                    >
-                      {actionButtonItems.label}
-                    </Button>
-                  )}
-                </ListItemSecondaryAction>
-              </ListItem>
-              <Divider />
-            </React.Fragment>
-          ))}
+          {items.map((item) => {
+            const {
+              id,
+              prescribed: { quantity, medicine },
+            } = item;
+            return (
+              <React.Fragment>
+                <ListItem button>
+                  <ListItemText primary={`${quantity} x ${medicine.description}`} />
+                  <ListItemSecondaryAction>
+                    {actionButtonItems && (
+                      <Button
+                        color="primary"
+                        onClick={() => actionButtonItems.onClick(id)}
+                        disabled={actionButtonItems.isDisabled(item)}
+                      >
+                        {actionButtonItems.label}
+                      </Button>
+                    )}
+                  </ListItemSecondaryAction>
+                </ListItem>
+                <Divider />
+              </React.Fragment>
+            );
+          })}
         </List>
       </div>
       <div>
