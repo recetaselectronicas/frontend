@@ -12,7 +12,7 @@ const ConfirmAuditDialog = (props) => {
   } = props;
   const classes = {};
 
-  const doesntHaveItems = items.length === 0
+  const doesntHaveItems = items.length === 0;
   return (
     <div>
       <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
