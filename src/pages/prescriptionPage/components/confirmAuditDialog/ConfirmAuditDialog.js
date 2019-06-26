@@ -12,6 +12,7 @@ const ConfirmAuditDialog = (props) => {
   } = props;
   const classes = {};
 
+  const doesntHaveItems = items.length === 0
   return (
     <div>
       <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
@@ -22,6 +23,7 @@ const ConfirmAuditDialog = (props) => {
           <Grid container spacing={2}>
             <Grid item>
               <div className={classes.root}>
+                {doesntHaveItems && <div>No agrego recetas para auditar</div>}
                 {items.map((item, index) => (
                   <div>
                     Troquel
