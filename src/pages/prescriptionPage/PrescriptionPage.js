@@ -19,8 +19,8 @@ const PrescriptionsPage = (props) => {
   const [cancelModal, setCancelModal] = useState(cancelModalInitialState);
   const [fillItemModal, setFillItemModal] = useState(fillItemModalInitialState);
   const [confirmAuditModal, setConfirmAuditModal] = useState(confirmAuditModalInitialState);
-  const [receiveItems, setReceiveItems] = useState({ items: [] });
-  const [auditedItems, setAuditedItems] = useState({ items: [] });
+  const [receiveItems, setReceiveItems] = useState([]);
+  const [auditedItems, setAuditedItems] = useState([]);
   const [snackbar, setSnackbar] = useState(snackbarInitialState);
   const getPrescription = () => {
     PrescriptionService.getById(props.match.params.id).then(({ result, actions: actionsResponse }) => {
@@ -29,8 +29,12 @@ const PrescriptionsPage = (props) => {
     });
   };
   useEffect(getPrescription, []);
-  const onCancelFlow = () => {
+
+  const clearAll = async () => {
     setCurrentAction('');
+    setReceiveItems([]);
+    setAuditedItems([]);
+    await getPrescription();
   };
   const actionsMapper = {
     CANCEL: {
@@ -40,6 +44,49 @@ const PrescriptionsPage = (props) => {
       },
       finishFlowAction: () => {},
       type: 'secondary',
+      fillDataConfirmHandler: () => {},
+    },
+    RECEIVE: {
+      label: 'Recepcionar',
+      action: () => {
+        console.log('go to recepcionar');
+      },
+      type: 'primary',
+      finishFlowAction: async () => {
+        try {
+          await PrescriptionService.receive(prescription.id, { items: receiveItems });
+          setSnackbar({
+            open: true,
+            message: 'Se Recepciono la receta con exito',
+            variant: 'success',
+          });
+          await getPrescription();
+          clearAll();
+        } catch (e) {
+          setSnackbar({
+            open: true,
+            message: 'Hubo un error en la recepcion',
+            variant: 'error',
+          });
+          console.log('error', e);
+        }
+      },
+      itemAction: {
+        onClick: (id) => {
+          console.log('el id es', id);
+          setFillItemModal({ ...fillItemModal, open: true, id });
+        },
+        label: 'Recepcionar',
+        isDisabled: (item) => {
+          const receivedIds = receiveItems.map(receiveItem => receiveItem.id);
+          console.log('wtf', item, receivedIds, receiveItems);
+          return !!item.received.quantity || receivedIds.includes(item.id);
+        },
+      },
+      fillDataConfirmHandler: (newItem) => {
+        const newReceiveItems = [...receiveItems, newItem];
+        setReceiveItems(newReceiveItems);
+      },
     },
     AUDIT: {
       label: 'Auditar',
@@ -57,72 +104,32 @@ const PrescriptionsPage = (props) => {
         },
         label: 'Auditar',
         isDisabled: (item) => {
-          const auditedIds = auditedItems.items.map(auditedItem => auditedItem.id);
+          const auditedIds = auditedItems.map(auditedItem => auditedItem.id);
           return !!item.audited.quantity || auditedIds.includes(item.id);
         },
       },
-    },
-    RECEIVE: {
-      label: 'Recepcionar',
-      action: () => {
-        console.log('go to recepcionar');
-      },
-      type: 'primary',
-      finishFlowAction: async () => {
-        try {
-          await PrescriptionService.receive(prescription.id, receiveItems);
-          setSnackbar({
-            open: true,
-            message: 'Se Recepciono la receta con exito',
-            variant: 'success',
-          });
-          await getPrescription();
-          onCancelFlow();
-        } catch (e) {
-          setSnackbar({
-            open: true,
-            message: 'Hubo un error en la recepcion',
-            variant: 'error',
-          });
-          console.log('error', e);
-        }
-      },
-      itemAction: {
-        onClick: (id) => {
-          console.log('el id es', id);
-          setFillItemModal({ ...fillItemModal, open: true, id });
-        },
-        label: 'Recepcionar',
-        isDisabled: (item) => {
-          const receivedIds = receiveItems.items.map(receiveItem => receiveItem.id);
-          return !!item.received.quantity || receivedIds.includes(item.id);
-        },
+      fillDataConfirmHandler: (newItem) => {
+        const newAuditedItems = [...auditedItems, newItem];
+        setAuditedItems(newAuditedItems);
       },
     },
   };
-  const fillDataConfirmHandler = (data) => {
-    if (currentActionFlow === 'RECEIVE') {
-      const newReceiveItems = { ...receiveItems };
-      newReceiveItems.items.push(data);
-      setReceiveItems(newReceiveItems);
-    } else {
-      const newAuditedItems = { ...auditedItems };
-      newAuditedItems.items.push(data);
-      setAuditedItems(newAuditedItems);
-    }
+
+  const fillDataConfirmHandler = (newItem) => {
+    actionsMapper[currentActionFlow].fillDataConfirmHandler(newItem);
     setFillItemModal({ ...fillItemModal, open: false });
   };
   const auditPrescription = async () => {
     try {
-      await PrescriptionService.audit(prescription.id, auditedItems);
+      await PrescriptionService.audit(prescription.id, { items: auditedItems });
       setSnackbar({
         open: true,
         message: 'Se audito la receta con exito',
         variant: 'success',
       });
       setConfirmAuditModal({ ...confirmAuditModal, open: false });
-
       await getPrescription();
+      clearAll();
     } catch (e) {
       setSnackbar({
         open: true,
@@ -152,7 +159,7 @@ const PrescriptionsPage = (props) => {
       });
       console.log('error', e);
     }
-    onCancelFlow();
+    clearAll();
   };
   const handleCloseSnackbar = () => {
     setSnackbar(snackbarInitialState);
@@ -219,7 +226,7 @@ const PrescriptionsPage = (props) => {
                   <Button variant="contained" onClick={onFinishFlow} style={{ flexBasis: '45%' }}>
                     Aceptar
                   </Button>
-                  <Button variant="contained" onClick={onCancelFlow} style={{ flexBasis: '45%' }}>
+                  <Button variant="contained" onClick={clearAll} style={{ flexBasis: '45%' }}>
                     Cancelar
                   </Button>
                 </React.Fragment>
@@ -248,7 +255,7 @@ const PrescriptionsPage = (props) => {
         handleClose={() => {
           setConfirmAuditModal(confirmAuditModalInitialState);
         }}
-        items={auditedItems.items}
+        items={auditedItems}
         onConfirm={auditPrescription}
       />
       <SnackbarWrapper
