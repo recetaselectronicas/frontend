@@ -7,6 +7,7 @@ import PrescriptionPage from './pages/prescriptionPage/PrescriptionPage';
 import Norm from './pages/norms/norms';
 import LoginPage from './pages/loginPage/LoginPage';
 import HomePage from './pages/homePage/HomePage';
+import ReceivePage from './pages/receivePage/ReceivePage';
 import notFound from './404.png';
 import './index.css';
 
@@ -36,6 +37,7 @@ function App() {
           <Route path="/recetas" component={PrescriptionsPage} />
           <Route path="/receta/:id" exact component={PrescriptionPage} />
           <Route path="/normas" exact component={Norm} />
+          <Route path="/recepcionar" exact component={ReceivePage} />
           <Route component={NoMatch} />
         </Switch>
       </main>

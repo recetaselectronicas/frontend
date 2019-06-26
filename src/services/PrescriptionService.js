@@ -10,8 +10,12 @@ export default class PrescriptionService extends RestclientService {
     });
   }
 
-  static async getById(prescriptionId) {
-    return this.get(`/prescriptions/${prescriptionId}`);
+  static async getById(prescriptionId, query = {}) {
+    return this.get(`/prescriptions/${prescriptionId}`, {
+      params: {
+        ...query,
+      },
+    });
   }
 
   static async getPrescriptionsList(filters = {}) {
