@@ -168,6 +168,7 @@ const EmitRecipe = (props) => {
           variant: 'error',
           onExit: () => { },
         });
+        setErrorsStack([]);
       }
     }
   };
