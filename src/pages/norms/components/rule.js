@@ -41,7 +41,7 @@ export default function Rule(props) {
   const { updatable } = props;
   const { rule } = props;
   const { title } = props;
-  const { onSave, onCancel } = props;
+  const { onSave, onCancel, onEdit } = props;
   const [description, setDescription] = React.useState(rule.description);
   const [errorMessage, setErrorMessage] = React.useState(rule.errorMessage);
   const [predicate, setPredicate] = React.useState(rule.predicate || getNewCriteria());
@@ -55,6 +55,7 @@ export default function Rule(props) {
   }, [rule]);
 
   const handleClickOpen = () => {
+    onEdit(rule);
     setOpen(true);
   };
 

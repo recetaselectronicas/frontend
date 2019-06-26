@@ -122,6 +122,7 @@ function ModificableNorm(props) {
   const [states, setStates] = React.useState(norm.states);
   const [activeState, setActiveState] = React.useState('');
   const [ttl, setTTL] = React.useState(norm.ttl);
+  const [buckUpRule, setBuckUpRule] = React.useState({});
 
   React.useEffect(() => {
     setStates(norm.states);
@@ -156,12 +157,21 @@ function ModificableNorm(props) {
   }
 
   function handleOnUpdateRule(index, newRule) {
-    states.find(state => state.state === activeState.state).rules[index] = newRule;
-    setStates(deepCopy(states));
+    if (canModify) {
+      states.find(state => state.state === activeState.state).rules[index] = newRule;
+      setStates(deepCopy(states));
+    }
   }
 
   function handleOnCancelRule() {
-    setStates(deepCopy(states));
+    if (canModify) {
+      states.find(_state => _state.state === activeState.state).rules[buckUpRule.index] = buckUpRule.rule;
+      setStates(deepCopy(states));
+    }
+  }
+
+  function hanldeBuckUpRule(index, _rule) {
+    setBuckUpRule(deepCopy({ index, rule: _rule }));
   }
 
   return (
@@ -194,10 +204,11 @@ function ModificableNorm(props) {
                       <Rule
                         updatable={canModify}
                         debug={debug}
-                        rule={deepCopy(_rule)}
+                        rule={_rule}
                         title={(canModify && 'Editar Regla') || 'Ver Regla'}
                         onSave={newRule => handleOnUpdateRule(index, newRule)}
                         onCancel={handleOnCancelRule}
+                        onEdit={aRule => hanldeBuckUpRule(index, aRule)}
                       />
                     </Grid>
                     <Grid item xs={1}>
