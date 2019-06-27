@@ -38,6 +38,14 @@ const useStyles = makeStyles(theme => ({
     marginTop: '5px',
     fontSize: 20,
   },
+  issuedErrors: {
+    margin: theme.spacing(0),
+    color: theme.palette.error.dark,
+    textAlign: 'left',
+  },
+  errorsDivider: {
+    margin: theme.spacing(1),
+  },
 }));
 
 const Prescription = (props) => {
@@ -52,6 +60,7 @@ const Prescription = (props) => {
     prolongedTreatment,
     actionButtonItems,
     status,
+    actionErrors,
   } = props;
 
   const classes = useStyles();
@@ -175,6 +184,19 @@ Estado :
           </div>
         </Grid>
       </div>
+      {actionErrors.length > 0
+          && (
+          <>
+            <Divider className={classes.errorsDivider} />
+            <Grid container>
+              {actionErrors.map(error => (
+                <Grid item xs={12} className={classes.issuedErrors} justify="flex-start">
+                  <Typography variant="subtitle1">{`• ${error.message}`}</Typography>
+                </Grid>
+              ))}
+            </Grid>
+          </>
+          )}
     </Paper>
   );
 };

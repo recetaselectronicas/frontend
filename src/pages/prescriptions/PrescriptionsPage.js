@@ -33,7 +33,7 @@ const PrescriptionsPage = (props) => {
         setFilters({ filters, orders });
       }
     });
-  }, [selectedFilters]);
+  }, [selectedFilters, filtersValue]);
 
   const goToPrescriptionDetail = (prescriptionId) => {
     props.history.push(`/receta/${prescriptionId}`);

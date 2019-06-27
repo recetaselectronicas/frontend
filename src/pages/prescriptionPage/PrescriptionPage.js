@@ -12,6 +12,15 @@ const cancelModalInitialState = { open: false, reason: '' };
 const fillItemModalInitialState = { open: false, items: [] };
 const confirmAuditModalInitialState = { open: false };
 const snackbarInitialState = { open: false, variant: 'error', message: '' };
+const translations = {
+  'prescription itemsQuantity must not be 0': 'Debe ingresar al menos un medicamento para recepcionar',
+  'item received medicine drug must be equal to item precribed medicine drug.': 'Debe recepcionar items con la misma droga que el item recetado',
+  'item received quantity must be lesser or equal to item precribed quantity.': 'La cantidad ingresada debe ser menor o igual a la cantidad recetada',
+  'prescription status must be one of this CONFIRMED,PARTIALLY_RECEIVED': 'La receta se venció',
+  'Prescription item audited quantity must be equal to item receive quantity': 'La cantidad de items auditados debe coincidir con la cantidad de items recepcionados',
+  'item audited quantity must be equal to item received quantity.': 'La cantidad auditada debe ser igual a la recepcionada',
+  'item audited medicine must be equal to item received medicine.': 'El medicamente auditado debe coincidir con el recepcionado',
+};
 const PrescriptionsPage = (props) => {
   const [prescription, setPrescription] = useState(null);
   const [actions, setActions] = useState([]);
@@ -22,6 +31,8 @@ const PrescriptionsPage = (props) => {
   const [receiveItems, setReceiveItems] = useState([]);
   const [auditedItems, setAuditedItems] = useState([]);
   const [snackbar, setSnackbar] = useState(snackbarInitialState);
+  const [actionErrors, setActionErrors] = useState([]);
+
   const getPrescription = () => {
     PrescriptionService.getById(props.match.params.id).then(({ result, actions: actionsResponse }) => {
       setPrescription(result);
@@ -34,8 +45,46 @@ const PrescriptionsPage = (props) => {
     setCurrentAction('');
     setReceiveItems([]);
     setAuditedItems([]);
+    setActionErrors([]);
     await getPrescription();
   };
+
+  const translateErrors = errors => errors.map(error => (translations[error.message] && { ...error, message: translations[error.message] }) || error);
+
+  const handleReceiveError = (error) => {
+    if (error && error.code === '1-101' && error.cause) {
+      if (error.cause.length) {
+        const validationErrors = [...new Set(error.cause.filter(cause => cause.code === '1-002').map(cause => cause.message))].filter(message => !!message).map(message => ({ message }));
+        if (validationErrors.length) {
+          setActionErrors(translateErrors(validationErrors));
+          setSnackbar({
+            open: true,
+            message: 'Corrija los errores e intente nuevamente',
+            variant: 'error',
+          });
+          return;
+        }
+      } else if (error.cause.code === '1-004') {
+        setActionErrors(error.cause.message.map(message => ({ message })));
+        setSnackbar({
+          open: true,
+          message: 'Corrija los errores e intente nuevamente',
+          variant: 'error',
+        });
+        return;
+      }
+    }
+    setSnackbar({
+      open: true,
+      message: 'Algo pasó. Revise los datos ingresados e intente nuevamente',
+      variant: 'error',
+    });
+  };
+
+  const handleAuditError = (error) => {
+    handleReceiveError(error);
+  };
+
   const actionsMapper = {
     CANCEL: {
       label: 'Cancelar',
@@ -63,12 +112,7 @@ const PrescriptionsPage = (props) => {
           await getPrescription();
           clearAll();
         } catch (e) {
-          setSnackbar({
-            open: true,
-            message: 'Hubo un error en la recepcion',
-            variant: 'error',
-          });
-          console.log('error', e);
+          handleReceiveError(e);
         }
       },
       itemAction: {
@@ -119,6 +163,7 @@ const PrescriptionsPage = (props) => {
     actionsMapper[currentActionFlow].fillDataConfirmHandler(newItem);
     setFillItemModal({ ...fillItemModal, open: false });
   };
+
   const auditPrescription = async () => {
     try {
       await PrescriptionService.audit(prescription.id, { items: auditedItems });
@@ -131,14 +176,10 @@ const PrescriptionsPage = (props) => {
       await getPrescription();
       clearAll();
     } catch (e) {
-      setSnackbar({
-        open: true,
-        message: 'Hubo un error en la auditoria',
-        variant: 'error',
-      });
-      console.log('error', e);
+      handleAuditError(e);
     }
   };
+
   const onFinishFlow = async () => {
     await actionsMapper[currentActionFlow].finishFlowAction();
   };
@@ -161,13 +202,16 @@ const PrescriptionsPage = (props) => {
     }
     clearAll();
   };
+
   const handleCloseSnackbar = () => {
-    setSnackbar(snackbarInitialState);
+    setSnackbar({ ...snackbar, open: false });
   };
+
   const dispatchAction = (action) => {
     setCurrentAction(action);
     actionsMapper[action].action();
   };
+
   const areInFlow = ['AUDIT', 'RECEIVE'].includes(currentActionFlow);
   const actionButtonItems = areInFlow && actionsMapper[currentActionFlow].itemAction;
   return (
@@ -179,6 +223,7 @@ const PrescriptionsPage = (props) => {
               {...prescription}
               actionButtonItems={actionButtonItems}
               currentActionFlow={currentActionFlow}
+              actionErrors={actionErrors}
             />
           )}
         </Grid>
