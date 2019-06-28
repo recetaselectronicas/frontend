@@ -13,12 +13,13 @@ import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { DateRangePicker } from 'react-dates';
 import './FiltersSection.css';
+import moment from 'moment';
 
 const FiltersSection = (props) => {
   const [idPrescription, setIdPrescription] = useState('');
   const { filters, selectedFilters } = props;
   const {
-    status, institution, id, issueDateRange, receivedDateRange,
+    status, institution, id, issueDateRange,
   } = filters;
   const statusSelectedFilters = selectedFilters
     .filter(selectedFilter => selectedFilter.property === 'status')
@@ -45,6 +46,20 @@ const FiltersSection = (props) => {
     event.preventDefault();
     props.onSelectFilter({ property: 'id', value: idPrescription, label: `id: ${idPrescription}` });
     setIdPrescription('');
+  };
+  const onSelectRange = ({ startDate, endDate }) => {
+    if (startDate && endDate) {
+      const formatedStart = moment(startDate).format('DD/MM/YYYY HH:mm');
+      const formattedFinish = moment(endDate).format('DD/MM/YYYY HH:mm');
+      props.onSelectDateFilter([
+        {
+          property: 'fromIssueDate', value: formatedStart, label: `fecha emision desde: ${formatedStart}`, dontShow: true,
+        },
+        {
+          property: 'toIssueDate', value: formattedFinish, label: `fecha emision hasta: ${formattedFinish}`, dontShow: true,
+        },
+      ]);
+    }
   };
   return (
     <div>
@@ -100,16 +115,7 @@ const FiltersSection = (props) => {
           <div>
             <div style={{ marginBottom: '0.5em' }}>Fecha de emision :</div>
             <div>
-              <DateRangePickerWrapper />
-            </div>
-          </div>
-        )}
-
-        {receivedDateRange && (
-          <div>
-            <div style={{ marginBottom: '0.5em' }}>Fecha de recepcion :</div>
-            <div>
-              <DateRangePickerWrapper />
+              <DateRangePickerWrapper onSelectRange={onSelectRange} />
             </div>
           </div>
         )}
@@ -118,7 +124,7 @@ const FiltersSection = (props) => {
   );
 };
 
-const DateRangePickerWrapper = () => {
+const DateRangePickerWrapper = (props) => {
   const [dates, setDates] = useState({
     startDate: null,
     endDate: null,
@@ -131,7 +137,11 @@ const DateRangePickerWrapper = () => {
       endDateId="endDate"
       startDate={dates.startDate} // momentPropTypes.momentObj or null,
       endDate={dates.endDate}
-      onDatesChange={({ startDate, endDate }) => setDates({ startDate, endDate })} // PropTypes.func.isRequired,
+      onDatesChange={({ startDate, endDate }) => {
+        console.log('..', { startDate, endDate });
+        setDates({ startDate, endDate });
+        props.onSelectRange({ startDate, endDate });
+      }} // PropTypes.func.isRequired,
       onFocusChange={value => setFocusedInput(value)} // PropTypes.func.isRequired,
       focusedInput={focusedInput}
     />

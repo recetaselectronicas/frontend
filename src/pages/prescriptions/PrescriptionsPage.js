@@ -41,25 +41,34 @@ const PrescriptionsPage = (props) => {
   const onSelectFilter = (filter) => {
     setSelectedFilters([...selectedFilters, filter]);
   };
-  const onSelectUniqueFilter = (filter) => {
+  const applyUniqueFilter = (selectedFiltersState, filter) => {
     let filterIsInSelectedFilters = false;
-    let newSelectedFilters = selectedFilters.map((selectedFilter) => {
+    let newSelectedFilters = selectedFiltersState.map((selectedFilter) => {
       if (selectedFilter.property === filter.property) {
         filterIsInSelectedFilters = true;
-        return { property: selectedFilter.property, value: filter.value };
+        return filter;
       }
       return selectedFilter;
     });
     if (!filterIsInSelectedFilters) {
       newSelectedFilters = [...newSelectedFilters, filter];
     }
+    return newSelectedFilters;
+  };
+  const onSelectDateFilter = (filters) => {
+    const [dateFrom, dateTo] = filters;
+    const selectedFilterWithDateFrom = applyUniqueFilter(selectedFilters, dateFrom);
+    const fullSelectedFilters = applyUniqueFilter(selectedFilterWithDateFrom, dateTo);
+    setSelectedFilters(fullSelectedFilters);
+  };
+  const onSelectUniqueFilter = (filter) => {
+    const newSelectedFilters = applyUniqueFilter(selectedFilters, filter);
     setSelectedFilters(newSelectedFilters);
   };
   const removeSelectedFilter = (filter) => {
     const newSelectedFilters = selectedFilters.filter(
       selectedFilter => !(selectedFilter.property === filter.property && selectedFilter.value === filter.value),
     );
-    // console.log('newSelectedFilters', newSelectedFilters);
     setSelectedFilters(newSelectedFilters);
   };
   return (
@@ -75,12 +84,12 @@ const PrescriptionsPage = (props) => {
               alignItems: 'flex-end',
             }}
           >
-            {selectedFilters.map(selectedFilter => (
-              <Chip
-                label={`${selectedFilter.label}`}
-                onDelete={() => removeSelectedFilter(selectedFilter)}
-                style={{ margin: '3px' }}
-              />
+            {selectedFilters.map(selectedFilter => !selectedFilter.dontShow && (
+            <Chip
+              label={`${selectedFilter.label}`}
+              onDelete={() => removeSelectedFilter(selectedFilter)}
+              style={{ margin: '3px' }}
+            />
             ))}
           </div>
         </div>
@@ -88,7 +97,13 @@ const PrescriptionsPage = (props) => {
       </Grid>
       <Grid item xs={10}>
         {filtersValue && (
-          <FiltersSection {...filtersValue} onSelectFilter={onSelectFilter} selectedFilters={selectedFilters} />
+          <FiltersSection
+            {...filtersValue}
+            onSelectUniqueFilter={onSelectUniqueFilter}
+            onSelectFilter={onSelectFilter}
+            selectedFilters={selectedFilters}
+            onSelectDateFilter={onSelectDateFilter}
+          />
         )}
         <div>
           <PrescriptionsTable

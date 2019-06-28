@@ -13,50 +13,44 @@ import Typography from '@material-ui/core/Typography';
 const headRows = [
   {
     id: 'id',
-    numeric: false,
-    disablePadding: true,
+    sorteable: false,
     label: 'Id',
   },
   {
     id: 'issuedDate',
-    numeric: true,
-    disablePadding: false,
+    sorteable: true,
     label: 'Fecha emision',
   },
   {
     id: 'soldDate',
-    numeric: true,
+    sorteable: true,
     disablePadding: false,
     label: 'Fecha venta',
   },
   {
     id: 'os',
-    numeric: true,
+    sorteable: false,
     disablePadding: false,
     label: 'Obra social',
   },
   {
     id: 'ttl',
-    numeric: true,
-    disablePadding: false,
+    sorteable: false,
     label: 'Fecha vencimiento',
   },
   {
     id: 'institution',
-    numeric: true,
-    disablePadding: false,
+    sorteable: false,
     label: 'Institucion',
   },
   {
     id: 'status',
-    numeric: true,
-    disablePadding: false,
+    sorteable: false,
     label: 'Estados',
   },
   {
     id: 'items',
-    numeric: true,
-    disablePadding: false,
+    sorteable: false,
     label: 'Items',
   },
 ];
@@ -70,12 +64,18 @@ function EnhancedTableHead(props) {
     <TableHead>
       <TableRow>
         {headRows.map(row => (
-          <TableCell key={row.id} sortDirection={orderBy === row.id ? order : false}>
-            <TableSortLabel active={orderBy === row.id} direction={order} onClick={createSortHandler(row.id)}>
+
+          row.sorteable ? (
+            <TableCell key={row.id} sortDirection={orderBy === row.id ? order : false}>
+              <TableSortLabel active={orderBy === row.id} direction={order} onClick={createSortHandler(row.id)}>
+                {row.label}
+              </TableSortLabel>
+            </TableCell>
+          ) : (
+            <TableCell key={row.id}>
               {row.label}
-            </TableSortLabel>
-          </TableCell>
-        ))}
+            </TableCell>
+          )))}
       </TableRow>
     </TableHead>
   );
@@ -103,10 +103,6 @@ function EnhancedTable(props) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('id');
 
-  /* const [selected, setSelected] = React.useState([]);
-   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-   */
   const { prescriptions } = props;
   function handleRequestSort(event, property) {
     const isDesc = orderBy === property && order === 'desc';
@@ -116,14 +112,6 @@ function EnhancedTable(props) {
     props.onSelectFilter({ property: 'orderBy', value: `${property}-${newOrder}` });
   }
 
-  /* function handleChangePage(event, newPage) {
-    setPage(newPage);
-  }
-
-  function handleChangeRowsPerPage(event) {
-    setRowsPerPage(+event.target.value);
-  }
-*/
 
   const emptyValueHandler = value => value || '-';
   if (prescriptions.length > 0) {
@@ -159,21 +147,6 @@ function EnhancedTable(props) {
               </TableBody>
             </Table>
           </div>
-          {/* <TablePagination
-             rowsPerPageOptions={[5, 10, 25]}
-             component="div"
-             count={rows.length}
-             rowsPerPage={rowsPerPage}
-             page={page}
-             backIconButtonProps={{
-               'aria-label': 'Previous Page',
-             }}
-             nextIconButtonProps={{
-               'aria-label': 'Next Page',
-             }}
-             onChangePage={handleChangePage}
-             onChangeRowsPerPage={handleChangeRowsPerPage}
-           /> */}
         </Paper>
       </div>
     );
