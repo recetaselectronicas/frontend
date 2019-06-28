@@ -13,7 +13,7 @@ import Typography from '@material-ui/core/Typography';
 const headRows = [
   {
     id: 'id',
-    sorteable: false,
+    sorteable: true,
     label: 'Id',
   },
   {
@@ -36,7 +36,7 @@ const headRows = [
   {
     id: 'ttl',
     sorteable: false,
-    label: 'Fecha vencimiento',
+    label: 'Validez',
   },
   {
     id: 'institution',
@@ -109,7 +109,7 @@ function EnhancedTable(props) {
     const newOrder = isDesc ? 'asc' : 'desc';
     setOrder(newOrder);
     setOrderBy(property);
-    props.onSelectFilter({ property: 'orderBy', value: `${property}-${newOrder}` });
+    props.onSelectFilter({ property: 'orderBy', value: `${property}-${newOrder}`, dontShow: true });
   }
 
 
@@ -138,7 +138,11 @@ function EnhancedTable(props) {
                     <TableCell>{emptyValueHandler(prescription.issuedDate)}</TableCell>
                     <TableCell>{emptyValueHandler(prescription.soldDate)}</TableCell>
                     <TableCell>{emptyValueHandler(prescription.medicalInsurance.description)}</TableCell>
-                    <TableCell>{emptyValueHandler(prescription.ttl)}</TableCell>
+                    <TableCell>
+                      {emptyValueHandler(prescription.ttl)}
+                      {' '}
+Dias
+                    </TableCell>
                     <TableCell>{emptyValueHandler(prescription.institution.description)}</TableCell>
                     <TableCell>{emptyValueHandler(prescription.status)}</TableCell>
                     <TableCell>{emptyValueHandler(prescription.items.length)}</TableCell>

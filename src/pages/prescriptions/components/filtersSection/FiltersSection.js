@@ -144,6 +144,8 @@ const DateRangePickerWrapper = (props) => {
       }} // PropTypes.func.isRequired,
       onFocusChange={value => setFocusedInput(value)} // PropTypes.func.isRequired,
       focusedInput={focusedInput}
+      isOutsideRange={() => false}
+
     />
   );
 };
