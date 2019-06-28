@@ -63,7 +63,6 @@ function MenuAppBar(props) {
         setMenu(newMenu);
       });
     }
-    console.log('userIsLogged');
   }, [userIsLogged]);
   function handleMenu(event) {
     setAnchorEl(event.currentTarget);

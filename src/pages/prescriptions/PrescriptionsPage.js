@@ -15,7 +15,7 @@ const PrescriptionsPage = (props) => {
   const [selectedFilters, setSelectedFilters] = useState([]);
 
   useEffect(() => {
-    console.log(selectedFilters, 'selectedFilters');
+    //  console.log(selectedFilters, 'selectedFilters');
     const filterRequest = {};
     selectedFilters.forEach((selectedFilter) => {
       const selected = filterRequest[selectedFilter.property];
@@ -25,7 +25,7 @@ const PrescriptionsPage = (props) => {
         filterRequest[selectedFilter.property] = [...(selected || []), selectedFilter.value];
       }
     });
-    console.log('filterRequest', JSON.stringify(filterRequest));
+    // console.log('filterRequest', JSON.stringify(filterRequest));
     PrescriptionService.getPrescriptionsList(filterRequest).then(({ result, filters, orders }) => {
       setPrescriptions(result);
       console.table(result);
@@ -59,10 +59,9 @@ const PrescriptionsPage = (props) => {
     const newSelectedFilters = selectedFilters.filter(
       selectedFilter => !(selectedFilter.property === filter.property && selectedFilter.value === filter.value),
     );
-    console.log('newSelectedFilters', newSelectedFilters);
+    // console.log('newSelectedFilters', newSelectedFilters);
     setSelectedFilters(newSelectedFilters);
   };
-  console.log('los selected filter son selectedFilters', selectedFilters);
   return (
     <Grid container component="main" className="page">
       <CssBaseline />

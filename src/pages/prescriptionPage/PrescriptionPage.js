@@ -97,9 +97,7 @@ const PrescriptionsPage = (props) => {
     },
     RECEIVE: {
       label: 'Recepcionar',
-      action: () => {
-        console.log('go to recepcionar');
-      },
+      action: () => { },
       type: 'primary',
       finishFlowAction: async () => {
         try {
@@ -117,13 +115,11 @@ const PrescriptionsPage = (props) => {
       },
       itemAction: {
         onClick: (id) => {
-          console.log('el id es', id);
           setFillItemModal({ ...fillItemModal, open: true, id });
         },
         label: 'Recepcionar',
         isDisabled: (item) => {
           const receivedIds = receiveItems.map(receiveItem => receiveItem.id);
-          console.log('wtf', item, receivedIds, receiveItems);
           return !!item.received.quantity || receivedIds.includes(item.id);
         },
       },
@@ -134,16 +130,13 @@ const PrescriptionsPage = (props) => {
     },
     AUDIT: {
       label: 'Auditar',
-      action: () => {
-        console.log('auditar');
-      },
+      action: () => {},
       finishFlowAction: () => {
         setConfirmAuditModal({ ...confirmAuditModal, open: true });
       },
       type: 'primary',
       itemAction: {
         onClick: (id) => {
-          console.log('el id ', id);
           setFillItemModal({ ...fillItemModal, open: true, id });
         },
         label: 'Auditar',
