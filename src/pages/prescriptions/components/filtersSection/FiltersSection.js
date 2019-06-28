@@ -43,7 +43,8 @@ const FiltersSection = (props) => {
   };
   const searchById = (event) => {
     event.preventDefault();
-    props.onSelectFilter({ property: 'id', value: idPrescription });
+    props.onSelectFilter({ property: 'id', value: idPrescription, label: `id: ${idPrescription}` });
+    setIdPrescription('');
   };
   return (
     <div>
