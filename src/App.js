@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Navbar from './components/navbar/Navbar';
 import EmitRecipe from './pages/medic/EmitRecipe';
@@ -9,6 +9,7 @@ import LoginPage from './pages/loginPage/LoginPage';
 import HomePage from './pages/homePage/HomePage';
 import ReceivePage from './pages/receivePage/ReceivePage';
 import notFound from './404.png';
+import SessionService from '../src/services/SessionService';
 import './index.css';
 
 const NoMatch = ({ location }) => (
@@ -19,19 +20,29 @@ const NoMatch = ({ location }) => (
         La url
         {` ${location.pathname}`}
         {' '}
-no existe
+        no existe
       </h3>
     </div>
   </div>
 );
 function App() {
   const [type, setType] = useState('');
+  const [userIsLogged, setUserIsLogged] = useState(false);
+
+  useEffect(() => { 
+    const {id} = SessionService.getUserData()
+    setUserIsLogged(!!id);
+   },[]);
+
   return (
     <Router>
-      <Navbar />
+      <Navbar setUserIsLogged={setUserIsLogged} />
       <main>
-        <Route path="/" exact render={props => <HomePage {...props} setType={setType} />} />
-        <Route path="/login" exact render={props => <LoginPage {...props} type={type} />} />
+        {!userIsLogged && <>
+          <Route path="/" exact render={props => <HomePage {...props} setType={setType} />} />
+          <Route path="/login" exact render={props => <LoginPage {...props} type={type} setUserIsLogged={setUserIsLogged} />} />
+        </>
+        }
         <Switch>
           <Route path="/emitir" component={EmitRecipe} />
           <Route path="/recetas" component={PrescriptionsPage} />

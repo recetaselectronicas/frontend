@@ -81,6 +81,7 @@ function MenuAppBar(props) {
   };
   const logout = () => {
     SessionService.logout();
+    props.setUserIsLogged(false);
     props.history.push('/');
     handleClose();
   };
