@@ -224,6 +224,7 @@ const EmitRecipe = (props) => {
                 disabled={noMedicalInsuranceSelected}
                 value={selectedAffilate.code}
                 onChange={onChangeAffilateTexfield}
+                autoComplete="off"
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -285,6 +286,7 @@ const EmitRecipe = (props) => {
                 placeholder="Complete con el diagnostico del afiliado"
                 fullWidth
                 margin="normal"
+                autoComplete="off"
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -309,16 +311,16 @@ const EmitRecipe = (props) => {
             </div>
             {errorsStack.length > 0
               && (
-              <>
-                <Divider className={classes.errorsDivider} />
-                <Grid container>
-                  {errorsStack.map(error => (
-                    <Grid item xs={12} className={classes.issuedErrors} justify="flex-start">
-                      <Typography variant="subtitle1">{`• ${error.message}`}</Typography>
-                    </Grid>
-                  ))}
-                </Grid>
-              </>
+                <>
+                  <Divider className={classes.errorsDivider} />
+                  <Grid container>
+                    {errorsStack.map(error => (
+                      <Grid item xs={12} className={classes.issuedErrors} justify="flex-start">
+                        <Typography variant="subtitle1">{`• ${error.message}`}</Typography>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </>
               )}
           </Paper>
         </Grid>

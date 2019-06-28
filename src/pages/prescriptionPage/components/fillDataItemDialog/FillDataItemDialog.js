@@ -58,8 +58,15 @@ const ConfirmCancelPrescriptionDialog = (props) => {
                     onChange={onChangeTroquelInput}
                     error={troquelInput.error}
                     helperText={troquelInput.errorMessage}
+                    autoComplete="off"
                   />
-                  <TextField label="Cantidad" type="number" value={quantityInput} onChange={onChangeQuantityInput} />
+                  <TextField
+                    autoComplete="off"
+                    label="Cantidad"
+                    type="number"
+                    value={quantityInput}
+                    onChange={onChangeQuantityInput}
+                  />
                 </div>
               </div>
             </Grid>

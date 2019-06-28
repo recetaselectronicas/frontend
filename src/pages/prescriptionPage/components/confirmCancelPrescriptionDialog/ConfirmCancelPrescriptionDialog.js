@@ -32,7 +32,12 @@ const ConfirmCancelPrescriptionDialog = (props) => {
             <Grid item>
               <div className={classes.root}>
                 <div className={classes.container}>
-                  <TextField label="Motivo" value={reasonInput} onChange={onChangeReasonInput} />
+                  <TextField
+                    label="Motivo"
+                    value={reasonInput}
+                    onChange={onChangeReasonInput}
+                    autoComplete="off"
+                  />
                 </div>
               </div>
             </Grid>

@@ -71,6 +71,7 @@ const AddItemDialog = (props) => {
                     label="Medicamento"
                     className="add-item__item-texfield"
                     value={medicine.description}
+                    autoComplete="off"
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -97,6 +98,7 @@ const AddItemDialog = (props) => {
                 className="add-item__quantity-texfield"
                 value={itemQuantity}
                 type="number"
+                autoComplete="off"
                 onChange={event => setItemQuantity(event.target.value)}
               />
             </Grid>

@@ -119,6 +119,7 @@ const ReceivePage = (props) => {
               className="emit-recipe__medical-insurance-select"
               value={selectedMedicalInsurance}
               onChange={onChangeMedicalInsurance}
+              autoComplete={false}
             >
               {medicalInsurances.map(institution => (
                 <MenuItem value={institution.id}>{institution.description}</MenuItem>
@@ -139,6 +140,7 @@ const ReceivePage = (props) => {
             InputLabelProps={{
               shrink: true,
             }}
+            autoComplete="off"
           />
           {suggestionList.length > 0 && (
             <Paper className={classes.paper} square>
@@ -148,7 +150,7 @@ const ReceivePage = (props) => {
                   {' '}
                   {affiliate.surname}
                   {' '}
--
+                  -
                   {' '}
                   {affiliate.code}
                 </MenuItem>
@@ -163,7 +165,7 @@ const ReceivePage = (props) => {
               {' '}
               {selectedAffilate.surname}
               {' '}
-(
+              (
               {selectedAffilate.nicNumber}
               )
               <br />

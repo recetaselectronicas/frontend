@@ -82,6 +82,7 @@ const FiltersSection = (props) => {
                   <TextField
                     id="input-with-icon-grid"
                     label="Receta ID"
+                    autoComplete="off"
                     onChange={onChangeTexfieldPrescriptionId}
                     value={idPrescription}
                   />
