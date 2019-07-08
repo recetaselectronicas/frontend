@@ -4,6 +4,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import HomeBackground from './home_background.jpg';
 import './home.css';
 
@@ -39,17 +40,17 @@ export default function HomePage(props) {
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <Grid item xs={12} component={Paper} square className={classes.image}>
-        <div onClick={onClick('doctor')} className="login-link">
-          Soy un medico
-        </div>
-        <div onClick={onClick('medicalInsurance')} className="login-link">
-          Soy una obra social
-        </div>
         <div onClick={onClick('affiliate')} className="login-link">
-          Soy un paciente
+          <Typography variant="overline">Soy Paciente</Typography>
+        </div>
+        <div onClick={onClick('doctor')} className="login-link">
+          <Typography variant="overline">Soy Médico</Typography>
         </div>
         <div onClick={onClick('pharmacist')} className="login-link">
-          Soy un farmaceutico
+          <Typography variant="overline">Soy Farmacéutico</Typography>
+        </div>
+        <div onClick={onClick('medicalInsurance')} className="login-link">
+          <Typography variant="overline">Soy Obra Social</Typography>
         </div>
       </Grid>
     </Grid>
