@@ -22,7 +22,6 @@ import AffiliateService from '../../services/AffilateService';
 import PrescriptionService from '../../services/PrescriptionService';
 import PrescriptionRequest from '../../requestBuilders/PrescriptionRequest';
 import SnackbarWrapper from '../../components/snackbarWrapper/SnackbarWrapper';
-import SessionService from '../../services/SessionService';
 
 const useStyles = makeStyles(theme => ({
   root: {
