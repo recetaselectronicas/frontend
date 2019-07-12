@@ -63,7 +63,7 @@ export default function LoginPage(props) {
     const { type } = props;
     try {
       const userLogged = await UserService.login({ ...user, type });
-      SessionService.saveSessionData(userLogged.id, type);
+      SessionService.saveSessionData(userLogged.token, type);
       props.setUserIsLogged(true);
       props.history.push('/recetas');
     } catch ({ message }) {

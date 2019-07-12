@@ -98,8 +98,7 @@ const EmitRecipe = (props) => {
       .catch((e) => {
         console.log(e);
       });
-    const user = SessionService.getUserData();
-    MedicalInsuranceService.getByDoctor(user.id)
+    MedicalInsuranceService.getByDoctor()
       .then((data) => {
         setMedicalInsurances(data);
       })

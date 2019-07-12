@@ -9,7 +9,7 @@ import LoginPage from './pages/loginPage/LoginPage';
 import HomePage from './pages/homePage/HomePage';
 import ReceivePage from './pages/receivePage/ReceivePage';
 import notFound from './404.png';
-import SessionService from '../src/services/SessionService';
+import SessionService from './services/SessionService';
 import './index.css';
 
 const NoMatch = ({ location }) => (
@@ -29,28 +29,37 @@ function App() {
   const [type, setType] = useState('');
   const [userIsLogged, setUserIsLogged] = useState(false);
 
-  useEffect(() => { 
-    const {id} = SessionService.getUserData()
+  useEffect(() => {
+    const { id } = SessionService.getUserData();
     setUserIsLogged(!!id);
-   },[]);
+  }, []);
 
   return (
     <Router>
       <Navbar setUserIsLogged={setUserIsLogged} />
       <main>
-        {!userIsLogged && <>
-          <Route path="/" exact render={props => <HomePage {...props} setType={setType} />} />
-          <Route path="/login" exact render={props => <LoginPage {...props} type={type} setUserIsLogged={setUserIsLogged} />} />
+        {!userIsLogged && (
+        <>
+          <Switch>
+            <Route path="/" exact render={props => <HomePage {...props} setType={setType} />} />
+            <Route path="/login" exact render={props => <LoginPage {...props} type={type} setUserIsLogged={setUserIsLogged} />} />
+            <Route component={NoMatch} />
+          </Switch>
         </>
+        )
         }
-        <Switch>
-          <Route path="/emitir" component={EmitRecipe} />
-          <Route path="/recetas" component={PrescriptionsPage} />
-          <Route path="/receta/:id" exact component={PrescriptionPage} />
-          <Route path="/normas" exact component={Norm} />
-          <Route path="/recepcionar" exact component={ReceivePage} />
-          <Route component={NoMatch} />
-        </Switch>
+        {userIsLogged && (
+        <>
+          <Switch>
+            <Route path="/emitir" component={EmitRecipe} />
+            <Route path="/recetas" component={PrescriptionsPage} />
+            <Route path="/receta/:id" exact component={PrescriptionPage} />
+            <Route path="/normas" exact component={Norm} />
+            <Route path="/recepcionar" exact component={ReceivePage} />
+            <Route component={NoMatch} />
+          </Switch>
+        </>
+        )}
       </main>
     </Router>
   );

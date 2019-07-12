@@ -16,8 +16,8 @@ const errorRequestHandler = (error) => {
 };
 export default class RestclientService {
   static getHeaders(opts = {}) {
-    const userHeaders = SessionService.getUserData();
-    return { ...opts.headers, Authorization: `Bearer ${JSON.stringify(userHeaders)}` };
+    const { token } = SessionService.getUserData();
+    return { ...opts.headers, Authorization: `Bearer ${token}` };
   }
 
   static get(url, opts) {
