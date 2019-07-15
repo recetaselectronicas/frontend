@@ -17,7 +17,6 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
   },
   button: {
-    //marginTop: theme.spacing(1),
   },
   paragraph: {
     marginTop: theme.spacing(1),
