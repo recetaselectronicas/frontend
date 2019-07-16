@@ -15,6 +15,10 @@ export default class UserService extends RestclientService {
     return this.get('/session/configuration');
   }
 
+  static async updateConfiguration(data) {
+    return this.put('/session/configuration', data);
+  }
+
   static getTwoFactorKey() {
     return this.get('/session/authentication/two-factor');
   }
@@ -26,5 +30,12 @@ export default class UserService extends RestclientService {
       },
     };
     return this.post('/session/authentication/two-factor', data);
+  }
+
+  static changePassword(newPassword) {
+    const data = {
+      newPassword,
+    };
+    return this.put('/session/authentication/user-pass', data);
   }
 }
