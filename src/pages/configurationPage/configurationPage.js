@@ -7,6 +7,7 @@ import {
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { CheckRounded, CloseRounded, TurnedInRounded } from '@material-ui/icons';
 import QRCode from 'qrcode.react';
+import QrReader from 'react-qr-scanner';
 import UserService from '../../services/UserService';
 import SnackbarWrapper from '../../components/snackbarWrapper/SnackbarWrapper';
 
@@ -41,7 +42,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2),
   },
   codeInput: {
-    margin: theme.spacing(2),
+    // margin: theme.spacing(2),
   },
   codeInputInput: {
     fontSize: theme.typography.h3.fontSize,
@@ -74,7 +75,7 @@ const updateConfiguration = (setConfiguration) => {
 export default function ConfigurationPage(props) {
   const classes = useStyles();
   const [configuration, setConfiguration] = React.useState({});
-  const { userPass, twoFactor } = configuration;
+  const { userPass, twoFactor, dniPhoto } = configuration;
   const [snackbar, setSnackbar] = React.useState(snackbarInitialState);
 
   React.useEffect(() => {
@@ -128,6 +129,17 @@ export default function ConfigurationPage(props) {
       });
   };
 
+  const setUserPassAsDefault = () => {
+    UserService.updateConfiguration({ userPass: { isDefault: true } })
+      .then(() => {
+        showSuccessSnackbar('Usuario y Contraseña es ahora el default');
+        reload();
+      })
+      .catch((err) => {
+        showErrorSnackbar('Ups, algo salió mal. Intenta nuevamente');
+      });
+  };
+
   const setTwoFactorAsDefault = () => {
     UserService.updateConfiguration({ twoFactor: { isDefault: true } })
       .then(() => {
@@ -139,10 +151,10 @@ export default function ConfigurationPage(props) {
       });
   };
 
-  const setUserPassAsDefault = () => {
-    UserService.updateConfiguration({ userPass: { isDefault: true } })
+  const setDniPhotoAsDefault = () => {
+    UserService.updateConfiguration({ dniPhoto: { isDefault: true } })
       .then(() => {
-        showSuccessSnackbar('Usuario y Contraseña es ahora el default');
+        showSuccessSnackbar('Autenticación con DNI es ahora el default');
         reload();
       })
       .catch((err) => {
@@ -160,6 +172,10 @@ export default function ConfigurationPage(props) {
         {twoFactor
           && (
             <TwoFactor twoFactor={twoFactor} verifyTwoFactor={handleVerifyTwoFactor} reload={reload} setAsDefault={setTwoFactorAsDefault} />
+          )}
+        {dniPhoto
+          && (
+            <DniPhoto dniPhoto={dniPhoto} reload={reload} setAsDefault={setDniPhotoAsDefault} />
           )}
       </Container>
       <SnackbarWrapper
@@ -431,7 +447,7 @@ function TwoFactor(props) {
                     A continuación, escanee el siguiente código:
                   </Typography>
                   <Grid container justify="center">
-                    <QRCode className={classes.qr} value={qrData} size={300} level="H" />
+                    <QRCode className={classes.qr} value={qrData} size={280} level="H" />
                   </Grid>
                   <Typography className={classes.paragraph} variant="body2">
                     Una vez escaneado se generará un código. Este cógigo cambiará cada 30 segundos (puedes ver cuanto tiempo queda antes que cambie
@@ -515,8 +531,8 @@ function CodeInput(props) {
 
   return (
     <>
-      <Grid className={classes.code} container justify="center">
-        <Grid item xs={1}>
+      <Grid className={classes.code} container justify="center" spacing={4}>
+        <Grid item xs={2} md={1}>
           <TextField
             inputRef={code0Ref}
             className={classes.codeInput}
@@ -529,7 +545,7 @@ function CodeInput(props) {
             value={codeArray[0]}
           />
         </Grid>
-        <Grid item xs={1}>
+        <Grid item xs={2} md={1}>
           <TextField
             inputRef={code1Ref}
             className={classes.codeInput}
@@ -542,7 +558,7 @@ function CodeInput(props) {
             value={codeArray[1]}
           />
         </Grid>
-        <Grid item xs={1}>
+        <Grid item xs={2} md={1}>
           <TextField
             inputRef={code2Ref}
             className={classes.codeInput}
@@ -555,7 +571,7 @@ function CodeInput(props) {
             value={codeArray[2]}
           />
         </Grid>
-        <Grid item xs={1}>
+        <Grid item xs={2} md={1}>
           <TextField
             inputRef={code3Ref}
             className={classes.codeInput}
@@ -568,7 +584,7 @@ function CodeInput(props) {
             value={codeArray[3]}
           />
         </Grid>
-        <Grid item xs={1}>
+        <Grid item xs={2} md={1}>
           <TextField
             inputRef={code4Ref}
             className={classes.codeInput}
@@ -581,7 +597,7 @@ function CodeInput(props) {
             value={codeArray[4]}
           />
         </Grid>
-        <Grid item xs={1}>
+        <Grid item xs={2} md={1}>
           <TextField
             inputRef={code5Ref}
             className={classes.codeInput}
@@ -595,6 +611,79 @@ function CodeInput(props) {
           />
         </Grid>
       </Grid>
+    </>
+  );
+}
+
+function DniPhoto(props) {
+  const classes = useStyles();
+  const { reload, setAsDefault } = props;
+  const { dniPhoto } = props;
+  const { verified, isDefault } = dniPhoto;
+  const [isEnabling, setIsEnabling] = React.useState(false);
+
+  const reset = () => {
+    setIsEnabling(false);
+    reload();
+  };
+
+  const handleCancel = () => {
+    reset();
+  };
+
+  const handleErrorScan = (error) => {
+    console.log(error);
+  };
+
+  const handleScan = (scan) => {
+    console.log(scan);
+  };
+
+  const headerProps = { title: 'Autenticación con DNI', verified, isDefault, setAsDefault };
+
+  return (
+    <>
+      <ExpansionPanel>
+        <ExpansionPanelSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="dniPhotoContent"
+          id="dniPhoto"
+        >
+          <ConfigurationSummaryHeader {...headerProps} />
+        </ExpansionPanelSummary>
+        <Divider variant="middle" />
+        <ExpansionPanelDetails>
+          <Container>
+            <Typography className={classes.paragraph} variant="body2">
+              La autenticacion con DNI....
+            </Typography>
+            {isEnabling && !verified && (
+              <Container>
+                <Paper className={classes.twoFactorInstructions} elevation={2}>
+                  <Typography className={classes.paragraph} variant="subtitle1">
+                    Que bueno que quieras intentarlo!
+                  </Typography>
+                  <Typography className={classes.paragraph} variant="body2">
+                    Text de guia
+                  </Typography>
+                  <QrReader
+                    delay={300}
+                    onError={handleErrorScan}
+                    onScan={handleScan}
+                    style={{ width: '100%' }}
+                  />
+                </Paper>
+              </Container>
+            )}
+          </Container>
+        </ExpansionPanelDetails>
+        <ExpansionPanelActions>
+          {!verified && !isEnabling && <Button className={classes.button} color="primary" variant="contained" onClick={() => setIsEnabling(true)}>Habilitar</Button>}
+          {!verified && isEnabling && <Button className={classes.button} color="secondary" variant="contained" onClick={handleCancel}>Cancelar</Button>}
+          {verified && <Button className={classes.button} color="secondary" variant="contained">Deshabilitar</Button>}
+          {verified && <Button className={classes.button} color="primary" variant="contained">Revincular</Button>}
+        </ExpansionPanelActions>
+      </ExpansionPanel>
     </>
   );
 }
