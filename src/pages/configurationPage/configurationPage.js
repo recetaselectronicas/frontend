@@ -72,7 +72,7 @@ const updateConfiguration = (setConfiguration) => {
   });
 };
 
-export default function ConfigurationPage(props) {
+export default function ConfigurationPage() {
   const classes = useStyles();
   const [configuration, setConfiguration] = React.useState({});
   const { userPass, twoFactor, dniPhoto } = configuration;
@@ -124,7 +124,7 @@ export default function ConfigurationPage(props) {
         onSuccess();
         reload();
       })
-      .catch((err) => {
+      .catch(() => {
         showErrorSnackbar('Ups, algo salió mal. Intenta nuevamente');
       });
   };
@@ -135,7 +135,7 @@ export default function ConfigurationPage(props) {
         showSuccessSnackbar('Usuario y Contraseña es ahora el default');
         reload();
       })
-      .catch((err) => {
+      .catch(() => {
         showErrorSnackbar('Ups, algo salió mal. Intenta nuevamente');
       });
   };
@@ -146,7 +146,7 @@ export default function ConfigurationPage(props) {
         showSuccessSnackbar('Autenticación en Dos Pasos es ahora el default');
         reload();
       })
-      .catch((err) => {
+      .catch(() => {
         showErrorSnackbar('Ups, algo salió mal. Intenta nuevamente');
       });
   };
@@ -157,7 +157,7 @@ export default function ConfigurationPage(props) {
         showSuccessSnackbar('Autenticación con DNI es ahora el default');
         reload();
       })
-      .catch((err) => {
+      .catch(() => {
         showErrorSnackbar('Ups, algo salió mal. Intenta nuevamente');
       });
   };
