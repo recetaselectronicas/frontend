@@ -10,4 +10,8 @@ export default class UserService extends RestclientService {
   static getMenu() {
     return this.get('/session/menu');
   }
+
+  static getData() {
+    return this.get('/session/data');
+  }
 }
