@@ -84,6 +84,9 @@ function MenuAppBar(props) {
     props.history.push('/');
     handleClose();
   };
+  const goConfiguration = () => {
+    props.history.push('/configuracion');
+  };
 
   return (
     <div className={classes.root}>
@@ -129,6 +132,7 @@ function MenuAppBar(props) {
                 open={open}
                 onClose={handleClose}
               >
+                <MenuItem onClick={goConfiguration}>Configuración</MenuItem>
                 <MenuItem onClick={logout}>Log out</MenuItem>
               </Menu>
             </div>

@@ -11,6 +11,7 @@ import ReceivePage from './pages/receivePage/ReceivePage';
 import notFound from './404.png';
 import SessionService from './services/SessionService';
 import './index.css';
+import ConfigurationPage from './pages/configurationPage/configurationPage';
 
 const NoMatch = ({ location }) => (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -30,8 +31,8 @@ function App() {
   const [userIsLogged, setUserIsLogged] = useState(false);
 
   useEffect(() => {
-    const { id } = SessionService.getUserData();
-    setUserIsLogged(!!id);
+    const { token } = SessionService.getUserData();
+    setUserIsLogged(!!token);
   }, []);
 
   return (
@@ -56,6 +57,7 @@ function App() {
             <Route path="/receta/:id" exact component={PrescriptionPage} />
             <Route path="/normas" exact component={Norm} />
             <Route path="/recepcionar" exact component={ReceivePage} />
+            <Route path="/configuracion" exact component={ConfigurationPage} />
             <Route component={NoMatch} />
           </Switch>
         </>
