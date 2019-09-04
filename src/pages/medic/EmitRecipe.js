@@ -22,6 +22,7 @@ import AffiliateService from '../../services/AffilateService';
 import PrescriptionService from '../../services/PrescriptionService';
 import PrescriptionRequest from '../../requestBuilders/PrescriptionRequest';
 import SnackbarWrapper from '../../components/snackbarWrapper/SnackbarWrapper';
+import UserService from '../../services/UserService';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -75,6 +76,7 @@ const EmitRecipe = (props) => {
   const [suggestionList, setSuggestionList] = useState([]);
   const [diagnostic, setDiagnostic] = useState(null);
   const [snackbar, setSnackbar] = useState(snackbarInitialState);
+  const [loggedUser, setLoggedUser] = useState(null);
   // const [errorsStack, setErrorsStack] = useState([{ message: 'Debe indicar tratamiento prolongado' }, { message: 'Debe ingresar un diagnostico' }]);
   const [errorsStack, setErrorsStack] = useState([]);
 
@@ -100,6 +102,13 @@ const EmitRecipe = (props) => {
     MedicalInsuranceService.getByDoctor()
       .then((data) => {
         setMedicalInsurances(data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+    UserService.getData()
+      .then((data) => {
+        setLoggedUser(data);
       })
       .catch((e) => {
         console.log(e);
@@ -300,10 +309,13 @@ const EmitRecipe = (props) => {
               </Grid>
 
               <Grid container direction="row" justify="space-between">
-                <div>Fecha</div>
                 <div>
-                  Doctor : Gonzalo gras cantou
-                  <div>simulacion de la firma del doctor</div>
+                  Fecha:
+                  {` ${new Date().toLocaleDateString()}`}
+                </div>
+                <div>
+                  Doctor:
+                  {` ${loggedUser && loggedUser.name} ${loggedUser && loggedUser.lastName}`}
                 </div>
               </Grid>
             </div>

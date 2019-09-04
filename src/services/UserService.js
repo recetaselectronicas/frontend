@@ -11,6 +11,10 @@ export default class UserService extends RestclientService {
     return this.get('/session/menu');
   }
 
+  static getData() {
+    return this.get('/session/data');
+  }
+
   static async getConfiguration() {
     return this.get('/session/configuration');
   }
