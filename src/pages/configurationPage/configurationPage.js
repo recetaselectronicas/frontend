@@ -436,7 +436,7 @@ function TwoFactor(props) {
                     Que bueno que quieras intentarlo!
                   </Typography>
                   <Typography className={classes.paragraph} variant="body2">
-                    Lo primero que hay que hacer es descargarse una app de Google llamada 
+                    Lo primero que hay que hacer es descargarse una app de Google llamada
                     <Link href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=es_AR" target="_blank"> Google Authenticator</Link>
                   </Typography>
                   <Typography className={classes.paragraph} variant="body2">
