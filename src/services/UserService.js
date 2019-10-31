@@ -24,7 +24,7 @@ export default class UserService extends RestclientService {
   }
 
   static getTwoFactorKey() {
-    return this.get('/session/authentication/two-factor');
+    return this.post('/session/authentication/two-factor/generate');
   }
 
   static verifyTwoFactor(code) {
