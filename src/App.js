@@ -12,6 +12,8 @@ import notFound from './404.png';
 import SessionService from './services/SessionService';
 import './index.css';
 import ConfigurationPage from './pages/configurationPage/configurationPage';
+import CreateAccount from './pages/createAccount/CreateAccount';
+import CreateAccountCongrats from './pages/createAccount/CreateAccountCongrats';
 
 const NoMatch = ({ location }) => (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -44,6 +46,8 @@ function App() {
           <Switch>
             <Route path="/" exact render={props => <HomePage {...props} setType={setType} />} />
             <Route path="/login" exact render={props => <LoginPage {...props} type={type} setUserIsLogged={setUserIsLogged} />} />
+            <Route path="/create-account" exact render={props => <CreateAccount {...props} type={type} />} />
+            <Route path="/congrats" exact render={props => <CreateAccountCongrats {...props} type={type} />} />
             <Route component={NoMatch} />
           </Switch>
         </>

@@ -54,10 +54,13 @@ const initialStateUser = {
   username: '',
   password: '',
 };
+
 export default function LoginPage(props) {
   const classes = useStyles();
   const [user, setUserData] = useState(initialStateUser);
   const [error, setError] = useState('');
+  const { type } = props;
+
   const login = async (event) => {
     event.preventDefault();
     const { type } = props;
@@ -74,7 +77,12 @@ export default function LoginPage(props) {
   const onChangeInput = ({ target: { name, value } }) => {
     setUserData({ ...user, [name]: value });
   };
-  const { type } = props;
+
+  const goToCreateAccount = (event) => {
+    event.preventDefault();
+    props.history.push('/create-account');
+  };
+
   if (!type) {
     return (
       <Redirect
@@ -137,14 +145,14 @@ export default function LoginPage(props) {
             >
               Acceder
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link variant="body2">Olvidaste la contraseña?</Link>
+
+            {type !== 'medicalInsurance' && (
+              <Grid container>
+                <Grid item>
+                  <Link onClick={goToCreateAccount} href="#" variant="inherit">No tenés cuenta? Registrate</Link>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Link variant="body2">No tienes cuenta aun? Create una</Link>
-              </Grid>
-            </Grid>
+            )}
             <Box mt={5} />
           </form>
         </div>
