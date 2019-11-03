@@ -8,19 +8,20 @@ import { Paper } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import AccountService from '../../../services/AccountService';
 import {
   availableGenders,
   availableNationalities,
   availableNicTypes,
   calculateErrors,
-  getAffiliateData,
   getAffiliatePayload,
   getEmptyAffiliateData,
   hasError,
   parseAffiliateResponseError,
 } from './AccountsUtils';
-import CircularProgress from "@material-ui/core/CircularProgress";
+import ImageSelector from '../../../components/imageSelector';
+import withSnackbar from '../../../components/withSnackbar';
 
 const getGenderItems = genders => genders.map(option => (
   <MenuItem key={option.value} value={option.value}>
@@ -40,7 +41,8 @@ const getNicTypeItems = nicTypes => nicTypes.map(option => (
   </MenuItem>
 ));
 
-export default function CreateAffiliateAccount(props) {
+function CreateAffiliateAccount(props) {
+  const { showError } = props;
   const [accountData, setAccountData] = useState(getEmptyAffiliateData());
   const [creating, setCreating] = useState(false);
   const { name, surName, userName, password, birthDate, gender, contactNumber, email, address, nationality, nicNumber, nicType, nicPhoto } = accountData;
@@ -70,6 +72,7 @@ export default function CreateAffiliateAccount(props) {
         return setAccountData(parsedAccountData);
       }
       console.error(e);
+      showError('Ocurrió un error al crear la cuenta');
     }
     return null;
   };
@@ -139,7 +142,7 @@ export default function CreateAffiliateAccount(props) {
                   <TextField name={contactNumber.fieldName} fullWidth helperText={contactNumber.error} error={!!contactNumber.error} label="Telefono de Contacto" onChange={event => wrapOnChange(event.target, contactNumber)} value={contactNumber.value} />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField name={nicPhoto.fieldName} fullWidth helperText={nicPhoto.error} error={!!nicPhoto.error} label="Foto del Documento" onChange={event => wrapOnChange(event.target, nicPhoto)} value={nicPhoto.value} />
+                  <ImageSelector photo={nicPhoto.value} onSelect={value => wrapOnChange({ value }, nicPhoto)} onUnSelect={() => wrapOnChange({ value: '' }, nicPhoto)} />
                 </Grid>
               </Grid>
             </Grid>
@@ -164,3 +167,5 @@ export default function CreateAffiliateAccount(props) {
     </>
   );
 }
+
+export default withSnackbar(CreateAffiliateAccount);

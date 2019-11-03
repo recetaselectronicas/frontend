@@ -2,7 +2,7 @@ import React from 'react';
 import CreateAffiliateAccount from './CreateAffiliateAccount/CreatePatientAccount';
 
 const creationsMap = {
-  affiliate: (props) => <CreateAffiliateAccount {...props} />,
+  affiliate: props => <CreateAffiliateAccount {...props} />,
 };
 
 export default function CreateAccount(props) {
@@ -10,7 +10,7 @@ export default function CreateAccount(props) {
 
   return (
     <>
-      {creationsMap['affiliate'] && creationsMap['affiliate'](props)}
+      {creationsMap[type] && creationsMap[type](props)}
     </>
   );
 }
