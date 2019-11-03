@@ -42,20 +42,21 @@ const getNicTypeItems = nicTypes => nicTypes.map(option => (
 ));
 
 function CreateAffiliateAccount(props) {
-  const { showError } = props;
+  const { showError, onCreationSuccess, onCreationCancel } = props;
   const [accountData, setAccountData] = useState(getEmptyAffiliateData());
   const [creating, setCreating] = useState(false);
   const { name, surName, userName, password, birthDate, gender, contactNumber, email, address, nationality, nicNumber, nicType, nicPhoto } = accountData;
 
   const cancel = () => {
-    props.history.push('/login');
+    onCreationCancel();
   };
 
   const goToCongrats = () => {
-    props.history.push('/congrats');
+    onCreationSuccess(accountData);
   };
 
   const createAccount = async () => {
+    goToCongrats();
     const newAccountData = calculateErrors(accountData);
     if (hasError(newAccountData)) {
       return setAccountData(newAccountData);
