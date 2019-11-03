@@ -13,6 +13,7 @@ import SessionService from './services/SessionService';
 import './index.css';
 import ConfigurationPage from './pages/configurationPage/configurationPage';
 import CreateAccount from './pages/createAccount/CreateAccount';
+import VerifyAccount from './pages/veifyAccount/verifyAccount';
 
 const NoMatch = ({ location }) => (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -46,11 +47,11 @@ function App() {
             <Route path="/" exact render={props => <HomePage {...props} setType={setType} />} />
             <Route path="/login" exact render={props => <LoginPage {...props} type={type} setUserIsLogged={setUserIsLogged} />} />
             <Route path="/create-account" exact render={props => <CreateAccount {...props} type={type} />} />
+            <Route path="/verify-account" exact component={VerifyAccount} />
             <Route component={NoMatch} />
           </Switch>
         </>
-        )
-        }
+        )}
         {userIsLogged && (
         <>
           <Switch>

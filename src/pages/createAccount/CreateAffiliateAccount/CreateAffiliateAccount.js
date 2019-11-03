@@ -56,7 +56,6 @@ function CreateAffiliateAccount(props) {
   };
 
   const createAccount = async () => {
-    goToCongrats();
     const newAccountData = calculateErrors(accountData);
     if (hasError(newAccountData)) {
       return setAccountData(newAccountData);
