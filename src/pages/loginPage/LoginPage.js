@@ -63,7 +63,6 @@ export default function LoginPage(props) {
 
   const login = async (event) => {
     event.preventDefault();
-    const { type } = props;
     try {
       const userLogged = await UserService.login({ ...user, type });
       SessionService.saveSessionData(userLogged.token, type);
