@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardActions, CardContent, CardHeader, Container, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import withRouter from 'react-router-dom/es/withRouter';
+import { withRouter } from 'react-router-dom';
 
 function CreateAccountCongrats(props) {
   const { email, name, surName } = props;
