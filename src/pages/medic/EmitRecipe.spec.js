@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import EmitRecipe from './EmitRecipe';
+import { EmitRecipeComponent } from './EmitRecipe';
 
 const props = {};
 
@@ -10,7 +10,7 @@ const setup = (anotherProps = {}) => {
     ...props,
     ...anotherProps,
   };
-  const wrapper = shallow(<EmitRecipe {...newProps} />);
+  const wrapper = shallow(<EmitRecipeComponent {...newProps} />);
   return {
     wrapper,
     instance: wrapper.instance(),

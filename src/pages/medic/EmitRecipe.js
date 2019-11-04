@@ -58,7 +58,7 @@ const initialState = {
 };
 const isUndefinedOrNull = value => value === undefined || value === null;
 
-const EmitRecipe = (props) => {
+export const EmitRecipeComponent = (props) => {
   const classes = useStyles();
   const { showError, showSuccess } = props;
 
@@ -144,7 +144,7 @@ const EmitRecipe = (props) => {
         showError('Arregle los errores e intente nuevamente');
         setErrorsStack(issuedError.cause.message.map(message => ({ message })));
       } else {
-        console.error(error)
+        console.error(error);
         showError('Hubo un error en la generacion de la receta');
         setErrorsStack([]);
       }
@@ -165,7 +165,7 @@ const EmitRecipe = (props) => {
                   <MenuItem key={institution.id} value={institution.id}>{institution.description}</MenuItem>
                 ))}
               </TextField>
-              <TextField name="medical-insurance" fullWidth select label="Obra Social" onChange={onChangeMedicalInsurance} value={selectedMedicalInsurance}>
+              <TextField name="medical-insurance" className="emit-recipe__medical-insurance-select" fullWidth select label="Obra Social" onChange={onChangeMedicalInsurance} value={selectedMedicalInsurance}>
                 {medicalInsurances.map(medicalInsurance => (
                   <MenuItem key={medicalInsurance.id} value={medicalInsurance.id}>{medicalInsurance.description}</MenuItem>
                 ))}
@@ -290,4 +290,5 @@ const EmitRecipe = (props) => {
   );
 };
 
-export default withSnackbar(EmitRecipe);
+const EmitRecipe = withSnackbar(EmitRecipeComponent);
+export default EmitRecipe;
