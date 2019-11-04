@@ -9,6 +9,10 @@ export default class PrescriptionService extends RestclientService {
     });
   }
 
+  static validate(prescription) {
+    return this.post('/prescriptions/verify', { ...prescription });
+  }
+
   static async getById(prescriptionId, query = {}) {
     return this.get(`/prescriptions/${prescriptionId}`, {
       params: {

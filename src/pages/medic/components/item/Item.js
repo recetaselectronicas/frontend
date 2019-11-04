@@ -29,9 +29,6 @@ const Item = (props) => {
 
 Item.propTypes = {
   quantity: propTypes.number.isRequired,
-  item: propTypes.shape({
-    label: propTypes.string.isRequired,
-  }).isRequired,
   id: propTypes.number.isRequired,
   removeItem: propTypes.func.isRequired,
 };

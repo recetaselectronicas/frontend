@@ -4,9 +4,6 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -21,8 +18,8 @@ import MedicalInsuranceService from '../../services/MedicalInsuranceService';
 import AffiliateService from '../../services/AffilateService';
 import PrescriptionService from '../../services/PrescriptionService';
 import PrescriptionRequest from '../../requestBuilders/PrescriptionRequest';
-import SnackbarWrapper from '../../components/snackbarWrapper/SnackbarWrapper';
 import UserService from '../../services/UserService';
+import withSnackbar from '../../components/hocs/withSnackbar';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -60,24 +57,22 @@ const initialState = {
   },
 };
 const isUndefinedOrNull = value => value === undefined || value === null;
-const snackbarInitialState = { open: false, variant: 'error', message: '' };
 
 const EmitRecipe = (props) => {
   const classes = useStyles();
+  const { showError, showSuccess } = props;
 
   const [addItemDialogOpen, setVisibiltyOfAddItemDialog] = useState(false);
   const [prolongedTreatment, setProlongedTreatment] = useState(false);
   const [items, setItems] = useState([]);
   const [institutions, setInstitutions] = useState([]);
   const [medicalInsurances, setMedicalInsurances] = useState([]);
-  const [selectedMedicalInsurance, setSelectedMedicalInsurance] = useState(null);
-  const [selectedInstitution, setSelectedInstitution] = useState(null);
-  const [selectedAffilate, setSelectedAffilate] = useState(initialState.selectedAffilate);
+  const [selectedMedicalInsurance, setSelectedMedicalInsurance] = useState('');
+  const [selectedInstitution, setSelectedInstitution] = useState('');
+  const [selectedAffiliate, setSelectedAffiliate] = useState(initialState.selectedAffilate);
   const [suggestionList, setSuggestionList] = useState([]);
-  const [diagnostic, setDiagnostic] = useState(null);
-  const [snackbar, setSnackbar] = useState(snackbarInitialState);
+  const [diagnostic, setDiagnostic] = useState('');
   const [loggedUser, setLoggedUser] = useState(null);
-  // const [errorsStack, setErrorsStack] = useState([{ message: 'Debe indicar tratamiento prolongado' }, { message: 'Debe ingresar un diagnostico' }]);
   const [errorsStack, setErrorsStack] = useState([]);
 
   const debounderSearchAffiliate = useCallback(
@@ -92,32 +87,24 @@ const EmitRecipe = (props) => {
 
   // componentDidMount
   useEffect(() => {
-    InstitutionService.getAll()
-      .then((data) => {
-        setInstitutions(data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-    MedicalInsuranceService.getByDoctor()
-      .then((data) => {
-        setMedicalInsurances(data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-    UserService.getData()
-      .then((data) => {
-        setLoggedUser(data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    async function fetchData() {
+      const institutionsPromise = InstitutionService.getAll();
+      const medicalInsurancePromise = MedicalInsuranceService.getByDoctor();
+      const userDataPromise = UserService.getData();
+      try {
+        setInstitutions(await institutionsPromise);
+        setMedicalInsurances(await medicalInsurancePromise);
+        setLoggedUser(await userDataPromise);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    fetchData();
   }, []);
 
   const addItem = (item) => {
     const newListItem = [...items];
-    newListItem.push({ ...item, id: items.length });
+    newListItem.push({ ...item, quantity: +item.quantity, id: items.length });
     setItems(newListItem);
   };
   const removeItem = (id) => {
@@ -126,21 +113,21 @@ const EmitRecipe = (props) => {
   };
   const onSelectSuggestion = (affilate) => {
     setSuggestionList([]);
-    setSelectedAffilate(affilate);
+    setSelectedAffiliate(affilate);
   };
-  const onChangeAffilateTexfield = async (event) => {
-    const affilateNumber = event.target.value;
-    setSelectedAffilate({ code: affilateNumber });
-    debounderSearchAffiliate(affilateNumber, selectedMedicalInsurance);
+  const onChangeAffiliateTextField = async (event) => {
+    const affiliateNumber = event.target.value;
+    setSelectedAffiliate({ code: affiliateNumber });
+    debounderSearchAffiliate(affiliateNumber, selectedMedicalInsurance);
   };
   const onChangeMedicalInsurance = (event) => {
-    setSelectedAffilate(initialState.selectedAffilate);
+    setSelectedAffiliate(initialState.selectedAffilate);
     setSelectedMedicalInsurance(event.target.value);
   };
 
-  const emitRecipe = async () => {
+  const startPrescriptionEmitFlow = async () => {
     const prescriptionRequest = new PrescriptionRequest.Builder()
-      .withAffiliate(selectedAffilate.id)
+      .withAffiliate(selectedAffiliate.id)
       .withDiagnosis(diagnostic)
       .withInstitution(selectedInstitution)
       .withMedicalInsurance(selectedMedicalInsurance)
@@ -148,78 +135,41 @@ const EmitRecipe = (props) => {
       .withProlongedTreatment(prolongedTreatment)
       .build();
     try {
-      await PrescriptionService.create(prescriptionRequest);
-      setSnackbar({
-        message: 'Se genero correctamente la receta',
-        open: true,
-        variant: 'success',
-        onExit: () => {
-          props.history.push('/recetas');
-        },
-      });
+      await PrescriptionService.validate(prescriptionRequest);
+      showSuccess('Se genero correctamente la receta', () => props.history.push('/recetas'));
       setErrorsStack([]);
     } catch (error) {
       const issuedError = error;
       if (issuedError.code === '1-101' && issuedError.cause && issuedError.cause.code === '1-004') {
-        setSnackbar({
-          message: 'Arregle los errores e intente nuevamente',
-          open: true,
-          variant: 'error',
-          onExit: () => { },
-        });
+        showError('Arregle los errores e intente nuevamente');
         setErrorsStack(issuedError.cause.message.map(message => ({ message })));
       } else {
-        setSnackbar({
-          message: 'Hubo un error en la generacion de la receta',
-          open: true,
-          variant: 'error',
-          onExit: () => { },
-        });
+        console.error(error)
+        showError('Hubo un error en la generacion de la receta');
         setErrorsStack([]);
       }
     }
   };
 
   const noItemsAdded = items.length === 0;
-  const noMedicalInsuranceSelected = isUndefinedOrNull(selectedMedicalInsurance);
-  const cantEmitRecipe = noMedicalInsuranceSelected || isUndefinedOrNull(selectedAffilate.id) || noItemsAdded;
+  const noMedicalInsuranceSelected = isUndefinedOrNull(selectedMedicalInsurance) || !selectedMedicalInsurance;
+  const cantEmitRecipe = noMedicalInsuranceSelected || isUndefinedOrNull(selectedAffiliate.id) || noItemsAdded;
   return (
     <React.Fragment>
       <Grid container justify="center" spacing={3} className="page">
         <Grid item xs={9}>
           <Paper className={classes.paper}>
             <div>
-              <FormControl className={classes.formControlObraSocial} fullWidth>
-                <InputLabel htmlFor="institution">Institucion</InputLabel>
-                <Select
-                  inputProps={{
-                    name: 'age',
-                    id: 'institution',
-                  }}
-                  value={selectedInstitution}
-                  onChange={event => setSelectedInstitution(event.target.value)}
-                >
-                  {institutions.map(institution => (
-                    <MenuItem value={institution.id}>{institution.description}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl className={classes.formControlObraSocial} fullWidth>
-                <InputLabel htmlFor="medical-insurance">Obra social</InputLabel>
-                <Select
-                  inputProps={{
-                    name: 'age',
-                    id: 'medical-insurance',
-                  }}
-                  className="emit-recipe__medical-insurance-select"
-                  value={selectedMedicalInsurance}
-                  onChange={onChangeMedicalInsurance}
-                >
-                  {medicalInsurances.map(institution => (
-                    <MenuItem value={institution.id}>{institution.description}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <TextField name="institucion" fullWidth select label="Institucion" onChange={event => setSelectedInstitution(event.target.value)} value={selectedInstitution}>
+                {institutions.map(institution => (
+                  <MenuItem key={institution.id} value={institution.id}>{institution.description}</MenuItem>
+                ))}
+              </TextField>
+              <TextField name="medical-insurance" fullWidth select label="Obra Social" onChange={onChangeMedicalInsurance} value={selectedMedicalInsurance}>
+                {medicalInsurances.map(medicalInsurance => (
+                  <MenuItem key={medicalInsurance.id} value={medicalInsurance.id}>{medicalInsurance.description}</MenuItem>
+                ))}
+              </TextField>
               <TextField
                 id="standard-full-width"
                 label="Nro de afiliado"
@@ -229,8 +179,8 @@ const EmitRecipe = (props) => {
                 type="number"
                 className="emit-recipe__affilate-textfield"
                 disabled={noMedicalInsuranceSelected}
-                value={selectedAffilate.code}
-                onChange={onChangeAffilateTexfield}
+                value={selectedAffiliate.code}
+                onChange={onChangeAffiliateTextField}
                 autoComplete="off"
                 InputLabelProps={{
                   shrink: true,
@@ -239,32 +189,17 @@ const EmitRecipe = (props) => {
               {suggestionList.length > 0 && (
                 <Paper className={classes.paper} square>
                   {suggestionList.map(affiliate => (
-                    <MenuItem onClick={() => onSelectSuggestion(affiliate)}>
-                      {affiliate.name}
-                      {' '}
-                      {affiliate.surname}
-                      {' '}
-                      -
-                      {' '}
-                      {affiliate.code}
+                    <MenuItem key={affiliate.id} onClick={() => onSelectSuggestion(affiliate)}>
+                      {`${affiliate.name} ${affiliate.surname} - ${affiliate.code}`}
                     </MenuItem>
                   ))}
                 </Paper>
               )}
-              {!!selectedAffilate.id && (
+              {!!selectedAffiliate.id && (
                 <div style={{ textAlign: 'left', marginTop: 10, marginBottom: 10 }}>
-                  Nombre :
-                  {' '}
-                  {selectedAffilate.name}
-                  {' '}
-                  {selectedAffilate.surname}
-                  {' '}
-                  (
-                  {selectedAffilate.nicNumber}
-                  )
+                  {`Nombre : ${selectedAffiliate.name} ${selectedAffiliate.surname} (${selectedAffiliate.nicNumber})`}
                   <br />
-                  Categoria :
-                  {selectedAffilate.category}
+                  {`Categoria : ${selectedAffiliate.category}`}
                 </div>
               )}
             </div>
@@ -275,7 +210,7 @@ const EmitRecipe = (props) => {
               <List component="nav">
                 {noItemsAdded && <Paper style={{ padding: 25 }}>Aun no tiene items agregados</Paper>}
                 {items.map(item => (
-                  <Item {...item} removeItem={removeItem} />
+                  <Item key={item.id} {...item} removeItem={removeItem} />
                 ))}
               </List>
               <div
@@ -334,13 +269,13 @@ const EmitRecipe = (props) => {
               )}
           </Paper>
         </Grid>
-        <Grid container justify="flex-end" xs={9}>
+        <Grid container item justify="flex-end" xs={9}>
           <Button
             variant="contained"
             color="primary"
             className={`emit-recipe__button ${classes.button}`}
             disabled={cantEmitRecipe}
-            onClick={emitRecipe}
+            onClick={startPrescriptionEmitFlow}
           >
             Emitir
           </Button>
@@ -351,17 +286,8 @@ const EmitRecipe = (props) => {
           addItem={addItem}
         />
       </Grid>
-      <SnackbarWrapper
-        vertical="bottom"
-        horizontal="center"
-        open={snackbar.open}
-        onClose={() => setSnackbar({ ...snackbarInitialState, onExit: snackbar.onExit })}
-        variant={snackbar.variant}
-        message={snackbar.message}
-        onExit={snackbar.onExit}
-      />
     </React.Fragment>
   );
 };
 
-export default EmitRecipe;
+export default withSnackbar(EmitRecipe);

@@ -58,7 +58,7 @@ const SnackbarContentWrapper = (props) => {
           <Icon className={clsx(classes.icon, classes.iconVariant)} />
           {message}
         </span>
-)}
+      )}
       action={[
         <IconButton key="close" aria-label="Close" color="inherit" onClick={onClose}>
           <CloseIcon className={classes.icon} />

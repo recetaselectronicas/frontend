@@ -21,7 +21,7 @@ import {
   parseAffiliateResponseError,
 } from './AccountsUtils';
 import ImageSelector from '../../../components/imageSelector';
-import withSnackbar from '../../../components/withSnackbar';
+import withSnackbar from '../../../components/hocs/withSnackbar';
 
 const getGenderItems = genders => genders.map(option => (
   <MenuItem key={option.value} value={option.value}>

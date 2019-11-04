@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import SnackbarWrapper from './snackbarWrapper/SnackbarWrapper';
+import lang from 'lodash/lang';
+import SnackbarWrapper from '../snackbarWrapper/SnackbarWrapper';
 
 const snackbarInitialState = { open: false, variant: 'error', message: '' };
 const variants = {
@@ -10,31 +11,36 @@ const variants = {
 };
 
 export default function withSnackbar(Component) {
-  return function (props) {
+  return function WrappedComponent(props) {
     const [snackbar, setSnackbar] = useState(snackbarInitialState);
+    const [actions, setActions] = useState({ closeAction: () => {} });
 
     const handleCloseSnackbar = () => {
       setSnackbar({ ...snackbar, open: false });
+      if (lang.isFunction(actions.closeAction)) {
+        actions.closeAction();
+      }
     };
 
-    const show = (message, variant) => {
+    const show = (message, variant, closeAction) => {
+      setActions({ ...actions, closeAction });
       setSnackbar({ ...snackbar, open: true, message, variant });
     };
 
-    const showSuccess = (message) => {
-      show(message, variants.success);
+    const showSuccess = (message, closeAction) => {
+      show(message, variants.success, closeAction);
     };
 
-    const showInfo = (message) => {
-      show(message, variants.info);
+    const showInfo = (message, closeAction) => {
+      show(message, variants.info, closeAction);
     };
 
-    const showWarning = (message) => {
-      show(message, variants.warning);
+    const showWarning = (message, closeAction) => {
+      show(message, variants.warning, closeAction);
     };
 
-    const showError = (message) => {
-      show(message, variants.error);
+    const showError = (message, closeAction) => {
+      show(message, variants.error, closeAction);
     };
 
     return (
