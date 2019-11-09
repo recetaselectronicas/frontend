@@ -60,7 +60,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "CI=true echo '' || npm test && npm run lint"
+      "pre-push": "CI=true echo '' || (npm test && npm run lint)"
     }
   }
 }
