@@ -139,7 +139,6 @@ export default function LoginPage(props) {
               variant="contained"
               color="primary"
               className={classes.submit}
-              on
               disabled={user.password.length === 0 || user.username.length === 0}
             >
               Acceder

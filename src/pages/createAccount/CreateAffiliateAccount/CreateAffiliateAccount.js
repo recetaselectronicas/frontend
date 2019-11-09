@@ -20,7 +20,7 @@ import {
   hasError,
   parseAffiliateResponseError,
 } from './AccountsUtils';
-import ImageSelector from '../../../components/imageSelector';
+import ImageSelector from '../../../components/imageSelector/imageSelector';
 import withSnackbar from '../../../components/hocs/withSnackbar';
 
 const getGenderItems = genders => genders.map(option => (

@@ -20,6 +20,7 @@ import PrescriptionService from '../../services/PrescriptionService';
 import PrescriptionRequest from '../../requestBuilders/PrescriptionRequest';
 import UserService from '../../services/UserService';
 import withSnackbar from '../../components/hocs/withSnackbar';
+import AuthorizationProvider from "../../components/authorizationProvider/AuthorizationProvider";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -85,7 +86,6 @@ export const EmitRecipeComponent = (props) => {
     [],
   );
 
-  // componentDidMount
   useEffect(() => {
     async function fetchData() {
       const institutionsPromise = InstitutionService.getAll();
@@ -156,6 +156,7 @@ export const EmitRecipeComponent = (props) => {
   const cantEmitRecipe = noMedicalInsuranceSelected || isUndefinedOrNull(selectedAffiliate.id) || noItemsAdded;
   return (
     <React.Fragment>
+      <AuthorizationProvider />
       <Grid container justify="center" spacing={3} className="page">
         <Grid item xs={9}>
           <Paper className={classes.paper}>

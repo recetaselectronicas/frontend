@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Chip from '@material-ui/core/Chip';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
-import PhotoGallery from './photoGallery/PhotoGallery';
+import PhotoGallery from '../photoGallery/PhotoGallery';
 
 export default function ImageSelector(props) {
   const { onSelect, onUnSelect, photo } = props;
