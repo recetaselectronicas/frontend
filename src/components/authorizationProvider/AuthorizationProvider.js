@@ -1,5 +1,5 @@
-import React from 'react';
-import { Dialog } from '@material-ui/core';
+import React, { useState } from 'react';
+import { Dialog, Grid, TextField } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/core/SvgIcon/SvgIcon';
 import DialogContentText from '@material-ui/core/DialogContentText';
@@ -8,45 +8,43 @@ import PropTypes from 'prop-types';
 import DialogActions from '../dialog/dialogActions/DialogActions';
 import DialogContent from '../dialog/dialogContent/DialogContent';
 import DialogTitle from '../dialog/dialogTitle/DialogTitle';
+import { askForAuthorization, authenticationTypes, userTypes, authorizationTypes } from './AuthorizationUtils';
 
-const userTypes = {
-  affiliate: 'affiliate',
-  doctor: 'doctor',
-  pharmacist: 'pharmacist',
-};
-
-const authenticationTypes = {
-  userAndPass: 'userAndPass',
-  twoFactor: 'twoFactor',
-};
-
-const authorizationTypes = {
-  receive: 'receive',
-  authorizeReceive: 'authorizeReceive',
-  issue: 'issue',
-  authorizeIssue: 'authorizeIssue',
+const titleMap = {
+  [authenticationTypes.userAndPass]: 'Ingrese usuario y contraseña',
+  [authenticationTypes.twoFactor]: 'Ingrese autenticación en dos pasos',
 };
 
 export default function AuthorizationProvider(props) {
   const { authorizationType, authenticationType, userType, onConfirm, onCancel, data } = props;
+  const [authenticationData, setAuthenticationData] = useState({ type: authenticationType, username: '', password: '', code: '' });
+
+  const askAuthorization = () => {
+    askForAuthorization(authenticationData, authorizationType, data);
+  };
 
   return (
     <>
       <Dialog open>
         <DialogTitle>
+          {titleMap[authenticationType]}
           <IconButton style={{ float: 'right', top: '-10px' }} onClick={onCancel}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          {authenticationType === authenticationTypes.userAndPass && (
-
-          <DialogContentText>Si creés que la foto es clara, confirmala!</DialogContentText>
-          )}
+          <Grid container>
+            <Grid item xs={12}>
+              <TextField margin="normal" fullWidth label="Usuario" onChange={event => setAuthenticationData({ ...authenticationData, username: event.target.value })} value={authenticationData.username} />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField margin="normal" fullWidth label="Contraseña" type="password" autoComplete="new-password" onChange={event => setAuthenticationData({ ...authenticationData, password: event.target.value })} value={authenticationData.password} />
+            </Grid>
+          </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={onCancel} color="secondary">Cancelar</Button>
-          <Button onClick={onConfirm} color="primary">Autenticar</Button>
+          <Button onClick={askAuthorization} color="primary">Autenticar</Button>
         </DialogActions>
       </Dialog>
     </>

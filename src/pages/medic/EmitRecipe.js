@@ -20,7 +20,7 @@ import PrescriptionService from '../../services/PrescriptionService';
 import PrescriptionRequest from '../../requestBuilders/PrescriptionRequest';
 import UserService from '../../services/UserService';
 import withSnackbar from '../../components/hocs/withSnackbar';
-import AuthorizationProvider from "../../components/authorizationProvider/AuthorizationProvider";
+import AuthorizationProvider from '../../components/authorizationProvider/AuthorizationProvider';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -156,7 +156,7 @@ export const EmitRecipeComponent = (props) => {
   const cantEmitRecipe = noMedicalInsuranceSelected || isUndefinedOrNull(selectedAffiliate.id) || noItemsAdded;
   return (
     <React.Fragment>
-      <AuthorizationProvider />
+      <AuthorizationProvider authenticationType="userAndPass" authorizationType="issue" />
       <Grid container justify="center" spacing={3} className="page">
         <Grid item xs={9}>
           <Paper className={classes.paper}>
