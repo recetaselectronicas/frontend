@@ -3,10 +3,8 @@ import RestclientService from './RestclientService';
 const querystring = require('querystring');
 
 export default class PrescriptionService extends RestclientService {
-  static async create(prescription) {
-    return this.post('/prescriptions', {
-      ...prescription,
-    });
+  static async create(prescription, authorization, verification) {
+    return this.post('/prescriptions', { ...prescription }, { headers: { 'x-authorization-token': authorization, 'x-verification-token': verification } });
   }
 
   static validate(prescription) {

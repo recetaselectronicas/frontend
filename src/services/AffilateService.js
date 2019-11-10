@@ -36,4 +36,8 @@ export default class AffiliateService extends RestclientService {
       },
     });
   }
+
+  static getDefaultAuthenticationType(affiliateId) {
+    return this.get(`/affiliates/${affiliateId}/authentication/default`);
+  }
 }

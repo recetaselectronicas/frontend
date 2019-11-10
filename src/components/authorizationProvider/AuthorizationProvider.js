@@ -1,50 +1,87 @@
 import React, { useState } from 'react';
-import { Dialog, Grid, TextField } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/core/SvgIcon/SvgIcon';
-import DialogContentText from '@material-ui/core/DialogContentText';
+import { Dialog, DialogContentText, Grid, TextField } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import DialogActions from '../dialog/dialogActions/DialogActions';
 import DialogContent from '../dialog/dialogContent/DialogContent';
 import DialogTitle from '../dialog/dialogTitle/DialogTitle';
-import { askForAuthorization, authenticationTypes, userTypes, authorizationTypes } from './AuthorizationUtils';
+import { askForAuthorization, isAuthorizationDataComplete, authenticationTypes, userTypes, authorizationTypes } from './AuthorizationUtils';
 
-const titleMap = {
+const descriptionMap = {
   [authenticationTypes.userAndPass]: 'Ingrese usuario y contraseña',
-  [authenticationTypes.twoFactor]: 'Ingrese autenticación en dos pasos',
+  [authenticationTypes.twoFactor]: 'Ingrese a el código de autenticación en dos pasos',
+};
+
+const userTypeMap = {
+  [userTypes.affiliate]: 'Afiliado',
+  [userTypes.doctor]: 'Médico',
+  [userTypes.pharmacist]: 'Farmacéutico',
 };
 
 export default function AuthorizationProvider(props) {
   const { authorizationType, authenticationType, userType, onConfirm, onCancel, data } = props;
   const [authenticationData, setAuthenticationData] = useState({ type: authenticationType, username: '', password: '', code: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({ username: '', password: '', code: '' });
 
   const askAuthorization = () => {
-    askForAuthorization(authenticationData, authorizationType, data);
+    setIsLoading(true);
+    setTimeout(async () => {
+      try {
+        const authorization = await askForAuthorization(authenticationData, authorizationType, data);
+        console.log('authorization given ', authorization)
+        setIsLoading(false);
+        onConfirm(authorization);
+      } catch (e) {
+        setErrors({ username: 'Usuario inválido', password: 'Contraseña inválida', code: 'Código inválido' });
+        setIsLoading(false);
+      }
+    }, 500);
   };
+
+  const updateField = (event) => {
+    const field = event.target.name;
+    setAuthenticationData({ ...authenticationData, [field]: event.target.value });
+    setErrors({ ...errors, [field]: '' });
+  };
+
+  const isDataComplete = () => isAuthorizationDataComplete(authenticationData);
 
   return (
     <>
       <Dialog open>
         <DialogTitle>
-          {titleMap[authenticationType]}
-          <IconButton style={{ float: 'right', top: '-10px' }} onClick={onCancel}>
-            <CloseIcon />
-          </IconButton>
+          {`Se requiere autenticación del ${userTypeMap[userType]}`}
         </DialogTitle>
         <DialogContent>
-          <Grid container>
-            <Grid item xs={12}>
-              <TextField margin="normal" fullWidth label="Usuario" onChange={event => setAuthenticationData({ ...authenticationData, username: event.target.value })} value={authenticationData.username} />
+          <DialogContentText>
+            {descriptionMap[authenticationType]}
+          </DialogContentText>
+          {authenticationType === authenticationTypes.userAndPass && (
+            <Grid container>
+              <Grid item xs={12}>
+                <TextField name="username" helperText={errors.username} error={!!errors.username} fullWidth label="Usuario" onChange={updateField} value={authenticationData.username} />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField name="password" helperText={errors.password} error={!!errors.password} margin="normal" fullWidth label="Contraseña" type="password" autoComplete="new-password" onChange={updateField} value={authenticationData.password} />
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <TextField margin="normal" fullWidth label="Contraseña" type="password" autoComplete="new-password" onChange={event => setAuthenticationData({ ...authenticationData, password: event.target.value })} value={authenticationData.password} />
+          )}
+          {authenticationType === authenticationTypes.twoFactor && (
+            <Grid container>
+              <Grid item xs={12}>
+                <TextField name="code" helperText={errors.code} error={!!errors.code} fullWidth label="Código" autoComplete="one-time-code" onChange={updateField} value={authenticationData.code} />
+              </Grid>
             </Grid>
-          </Grid>
+          )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={onCancel} color="secondary">Cancelar</Button>
-          <Button onClick={askAuthorization} color="primary">Autenticar</Button>
+          <Button onClick={onCancel} color="secondary" disabled={isLoading} variant="contained">Cancelar</Button>
+          <Button onClick={askAuthorization} disabled={!isDataComplete() || isLoading} color="primary" variant="contained" style={{ minWidth: '120px' }}>
+            {!isLoading && 'Autenticar'}
+            {isLoading && (<CircularProgress size={24} />)}
+          </Button>
         </DialogActions>
       </Dialog>
     </>

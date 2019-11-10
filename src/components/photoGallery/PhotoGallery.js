@@ -78,8 +78,8 @@ export default function PhotoGallery(props) {
         {step.isStep(steps.confirmPicture)
           && (
           <DialogActions>
-            <Button onClick={handleTakePicture} color="primary">Sacar Otra</Button>
-            <Button onClick={handleConfirm} color="primary">Confirmar</Button>
+            <Button onClick={handleTakePicture} color="primary" variant="outlined">Sacar Otra</Button>
+            <Button onClick={handleConfirm} color="primary" variant="contained">Confirmar</Button>
           </DialogActions>
           )}
       </Dialog>

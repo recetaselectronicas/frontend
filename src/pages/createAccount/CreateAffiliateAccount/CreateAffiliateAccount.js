@@ -157,7 +157,7 @@ function CreateAffiliateAccount(props) {
               <Grid item xs={2}>
                 <Button onClick={createAccount} variant="contained" color="primary" style={{ minWidth: '150px' }} disabled={creating}>
                   {!creating && 'Crear Cuenta'}
-                  {creating && (<CircularProgress size={25} />)}
+                  {creating && (<CircularProgress size={24} />)}
                 </Button>
               </Grid>
             </Grid>

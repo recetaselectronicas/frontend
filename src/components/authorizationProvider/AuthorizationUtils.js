@@ -1,3 +1,5 @@
+import AuthorizationsService from '../../services/AuthorizationsService';
+
 export const userTypes = {
   affiliate: 'affiliate',
   doctor: 'doctor',
@@ -5,15 +7,15 @@ export const userTypes = {
 };
 
 export const authenticationTypes = {
-  userAndPass: 'userAndPass',
-  twoFactor: 'twoFactor',
+  userAndPass: 'usr_pass',
+  twoFactor: 'two_factor',
 };
 
 export const authorizationTypes = {
   receive: 'receive',
-  authorizeReceive: 'authorizeReceive',
+  authorizeReceive: 'authorize_receive',
   issue: 'issue',
-  authorizeIssue: 'authorizeIssue',
+  authorizeIssue: 'authorize_issue',
 };
 
 const getAuthenticationData = (authenticationData) => {
@@ -39,12 +41,24 @@ const askForIssueAuthorization = (authenticationData, data) => {
     authentication: getAuthenticationData(authenticationData),
     prescription: data,
   };
-  console.log(authorizationPayload);
+  console.log('asking issue authorization ', authorizationPayload)
+  return AuthorizationsService.authorize(authorizationPayload);
+};
+
+const askForAuthorizeIssueAuthorization = (authenticationData, data) => {
+  const authorizationPayload = {
+    action: authorizationTypes.authorizeIssue,
+    authentication: getAuthenticationData(authenticationData),
+    prescription: data,
+  };
+  console.log('asking authorizeIssue authorization ', authorizationPayload)
+  return AuthorizationsService.authorize(authorizationPayload);
 };
 
 const getAuthorizationProvider = (authorizationType) => {
   const mapper = {
     [authorizationTypes.issue]: askForIssueAuthorization,
+    [authorizationTypes.authorizeIssue]: askForAuthorizeIssueAuthorization,
   };
   if (!mapper[authorizationType]) {
     throw new Error('No authorization provider for this type');
@@ -53,5 +67,14 @@ const getAuthorizationProvider = (authorizationType) => {
 };
 
 export const askForAuthorization = (authenticationData, authorizationType, data) => {
-  getAuthorizationProvider(authorizationType)(authenticationData, data);
+  return getAuthorizationProvider(authorizationType)(authenticationData, data);
+};
+
+export const isAuthorizationDataComplete = (authenticationData) => {
+  const mapper = {
+    [authenticationTypes.userAndPass]: data => !!(data.username && data.password),
+    [authenticationTypes.twoFactor]: data => !!(data.code),
+  };
+
+  return mapper[authenticationData.type](getAuthenticationData(authenticationData));
 };

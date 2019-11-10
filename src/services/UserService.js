@@ -42,4 +42,8 @@ export default class UserService extends RestclientService {
     };
     return this.put('/session/authentication/user-pass', data);
   }
+
+  static getDefaultAuthenticationType() {
+    return this.get('/session/authentication/default');
+  }
 }

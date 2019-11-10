@@ -20,7 +20,7 @@ import PrescriptionService from '../../services/PrescriptionService';
 import PrescriptionRequest from '../../requestBuilders/PrescriptionRequest';
 import UserService from '../../services/UserService';
 import withSnackbar from '../../components/hocs/withSnackbar';
-import AuthorizationProvider from '../../components/authorizationProvider/AuthorizationProvider';
+import PrescriptionEmitFlow from "./components/prescriptionEmitFlow/prescriptionEmitFlow";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -75,6 +75,7 @@ export const EmitRecipeComponent = (props) => {
   const [diagnostic, setDiagnostic] = useState('');
   const [loggedUser, setLoggedUser] = useState(null);
   const [errorsStack, setErrorsStack] = useState([]);
+  const [onEmitFlow, setOnEmitFlow] = useState(false);
 
   const debounderSearchAffiliate = useCallback(
     _.debounce(async (code, medicalInsurance) => {
@@ -125,19 +126,20 @@ export const EmitRecipeComponent = (props) => {
     setSelectedMedicalInsurance(event.target.value);
   };
 
+  const buildPrescriptionRequest = () => new PrescriptionRequest.Builder()
+    .withAffiliate(selectedAffiliate.id)
+    .withDiagnosis(diagnostic)
+    .withInstitution(selectedInstitution)
+    .withMedicalInsurance(selectedMedicalInsurance)
+    .withItems(items)
+    .withProlongedTreatment(prolongedTreatment)
+    .build();
+
   const startPrescriptionEmitFlow = async () => {
-    const prescriptionRequest = new PrescriptionRequest.Builder()
-      .withAffiliate(selectedAffiliate.id)
-      .withDiagnosis(diagnostic)
-      .withInstitution(selectedInstitution)
-      .withMedicalInsurance(selectedMedicalInsurance)
-      .withItems(items)
-      .withProlongedTreatment(prolongedTreatment)
-      .build();
+    const prescriptionRequest = buildPrescriptionRequest();
     try {
       await PrescriptionService.validate(prescriptionRequest);
-      showSuccess('Se genero correctamente la receta', () => props.history.push('/recetas'));
-      setErrorsStack([]);
+      setOnEmitFlow(true);
     } catch (error) {
       const issuedError = error;
       if (issuedError.code === '1-101' && issuedError.cause && issuedError.cause.code === '1-004') {
@@ -151,12 +153,24 @@ export const EmitRecipeComponent = (props) => {
     }
   };
 
+  const onSuccessEmit = (prescription) => {
+    setOnEmitFlow(false);
+    showSuccess('Se genero correctamente la receta', () => props.history.push('/recetas'));
+    setErrorsStack([]);
+  };
+
+  const onFailureEmit = (error) => {
+    setOnEmitFlow(false);
+    console.error(error);
+    showError('Hubo un error en la generacion de la receta');
+  }
+
   const noItemsAdded = items.length === 0;
   const noMedicalInsuranceSelected = isUndefinedOrNull(selectedMedicalInsurance) || !selectedMedicalInsurance;
   const cantEmitRecipe = noMedicalInsuranceSelected || isUndefinedOrNull(selectedAffiliate.id) || noItemsAdded;
   return (
     <React.Fragment>
-      <AuthorizationProvider authenticationType="userAndPass" authorizationType="issue" />
+      {onEmitFlow && <PrescriptionEmitFlow affiliate={selectedAffiliate} prescription={buildPrescriptionRequest()} onFailure={onFailureEmit} onSuccess={onSuccessEmit} />}
       <Grid container justify="center" spacing={3} className="page">
         <Grid item xs={9}>
           <Paper className={classes.paper}>
