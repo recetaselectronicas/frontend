@@ -41,7 +41,6 @@ const askForIssueAuthorization = (authenticationData, data) => {
     authentication: getAuthenticationData(authenticationData),
     prescription: data,
   };
-  console.log('asking issue authorization ', authorizationPayload)
   return AuthorizationsService.authorize(authorizationPayload);
 };
 
@@ -51,7 +50,6 @@ const askForAuthorizeIssueAuthorization = (authenticationData, data) => {
     authentication: getAuthenticationData(authenticationData),
     prescription: data,
   };
-  console.log('asking authorizeIssue authorization ', authorizationPayload)
   return AuthorizationsService.authorize(authorizationPayload);
 };
 

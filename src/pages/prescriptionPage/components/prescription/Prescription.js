@@ -172,12 +172,8 @@ Estado :
             </span>
           </div>
           <div>
-            <div>
-              <img
-                width="100"
-                src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Marcela_Vacarezza_firma.png"
-                alt=""
-              />
+            <div style={{ fontFamily: 'Monsieur La Doulaise', transform: 'rotate(-20deg)', fontSize: '2rem', marginBottom: '2rem', marginTop: '1rem' }}>
+              <div>{` ${doctor.name} ${doctor.lastName}`}</div>
             </div>
             Doctor :
             {` ${doctor.name} ${doctor.lastName}`}

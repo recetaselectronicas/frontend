@@ -30,7 +30,6 @@ export default function AuthorizationProvider(props) {
     setTimeout(async () => {
       try {
         const authorization = await askForAuthorization(authenticationData, authorizationType, data);
-        console.log('authorization given ', authorization)
         setIsLoading(false);
         onConfirm(authorization);
       } catch (e) {

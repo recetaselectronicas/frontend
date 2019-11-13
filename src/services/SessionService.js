@@ -1,13 +1,13 @@
 export default class SessionService {
   static saveSessionData(token, type) {
-    localStorage.setItem('token', token);
-    localStorage.setItem('type', type);
+    sessionStorage.setItem('token', token);
+    sessionStorage.setItem('type', type);
   }
 
   static getUserData() {
     return {
-      token: localStorage.getItem('token'),
-      type: localStorage.getItem('type'),
+      token: sessionStorage.getItem('token'),
+      type: sessionStorage.getItem('type'),
     };
   }
 
@@ -17,7 +17,7 @@ export default class SessionService {
   }
 
   static logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('type');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('type');
   }
 }

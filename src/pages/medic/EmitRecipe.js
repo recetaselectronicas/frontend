@@ -20,7 +20,7 @@ import PrescriptionService from '../../services/PrescriptionService';
 import PrescriptionRequest from '../../requestBuilders/PrescriptionRequest';
 import UserService from '../../services/UserService';
 import withSnackbar from '../../components/hocs/withSnackbar';
-import PrescriptionEmitFlow from "./components/prescriptionEmitFlow/prescriptionEmitFlow";
+import PrescriptionEmitFlow from './components/prescriptionEmitFlow/prescriptionEmitFlow';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -76,6 +76,7 @@ export const EmitRecipeComponent = (props) => {
   const [loggedUser, setLoggedUser] = useState(null);
   const [errorsStack, setErrorsStack] = useState([]);
   const [onEmitFlow, setOnEmitFlow] = useState(false);
+  const [created, setCreated] = useState(false);
 
   const debounderSearchAffiliate = useCallback(
     _.debounce(async (code, medicalInsurance) => {
@@ -139,6 +140,7 @@ export const EmitRecipeComponent = (props) => {
     const prescriptionRequest = buildPrescriptionRequest();
     try {
       await PrescriptionService.validate(prescriptionRequest);
+      setErrorsStack([]);
       setOnEmitFlow(true);
     } catch (error) {
       const issuedError = error;
@@ -155,6 +157,7 @@ export const EmitRecipeComponent = (props) => {
 
   const onSuccessEmit = (prescription) => {
     setOnEmitFlow(false);
+    setCreated(true);
     showSuccess('Se genero correctamente la receta', () => props.history.push('/recetas'));
     setErrorsStack([]);
   };
@@ -163,7 +166,7 @@ export const EmitRecipeComponent = (props) => {
     setOnEmitFlow(false);
     console.error(error);
     showError('Hubo un error en la generacion de la receta');
-  }
+  };
 
   const noItemsAdded = items.length === 0;
   const noMedicalInsuranceSelected = isUndefinedOrNull(selectedMedicalInsurance) || !selectedMedicalInsurance;
@@ -273,9 +276,9 @@ export const EmitRecipeComponent = (props) => {
               && (
                 <>
                   <Divider className={classes.errorsDivider} />
-                  <Grid container>
+                  <Grid container justify="flex-start">
                     {errorsStack.map(error => (
-                      <Grid item xs={12} className={classes.issuedErrors} justify="flex-start">
+                      <Grid item xs={12} className={classes.issuedErrors} key={error.message}>
                         <Typography variant="subtitle1">{`• ${error.message}`}</Typography>
                       </Grid>
                     ))}
@@ -289,7 +292,7 @@ export const EmitRecipeComponent = (props) => {
             variant="contained"
             color="primary"
             className={`emit-recipe__button ${classes.button}`}
-            disabled={cantEmitRecipe}
+            disabled={!created && cantEmitRecipe}
             onClick={startPrescriptionEmitFlow}
           >
             Emitir
