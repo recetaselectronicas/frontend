@@ -14,6 +14,7 @@ import './index.css';
 import ConfigurationPage from './pages/configurationPage/configurationPage';
 import CreateAccount from './pages/createAccount/CreateAccount';
 import VerifyAccount from './pages/veifyAccount/verifyAccount';
+import MedicalInsurancesPage from './pages/medicalInsurances/MedicalInsurancesPage';
 
 const NoMatch = ({ location }) => (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -61,6 +62,7 @@ function App() {
             <Route path="/normas" exact component={Norm} />
             <Route path="/recepcionar" exact component={ReceivePage} />
             <Route path="/configuracion" exact component={ConfigurationPage} />
+            <Route path="/obras-sociales" exact component={MedicalInsurancesPage} />
             <Route component={NoMatch} />
           </Switch>
         </>
