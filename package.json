@@ -36,9 +36,6 @@
     "lint": "eslint ./src/components ./src/pages",
     "lint:fix": "eslint ./src/components ./src/pages --fix"
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
   "browserslist": {
     "production": [
       ">0.2%",
