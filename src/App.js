@@ -16,6 +16,7 @@ import ConfigurationPage from './pages/configurationPage/configurationPage';
 import CreateAccount from './pages/createAccount/CreateAccount';
 import VerifyAccount from './pages/veifyAccount/verifyAccount';
 import MedicalInsurancesPage from './pages/medicalInsurances/MedicalInsurancesPage';
+import ProfilePage from './pages/profile/ProfilePage';
 
 const NoMatch = ({ location }) => (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -44,30 +45,31 @@ function App() {
       <Navbar setUserIsLogged={setUserIsLogged} />
       <main>
         {!userIsLogged && (
-        <>
-          <Switch>
-            <Route path="/" exact render={props => <HomePage {...props} setType={setType} />} />
-            <Route path="/login" exact render={props => <LoginPage {...props} type={type} setUserIsLogged={setUserIsLogged} />} />
-            <Route path="/create-account" exact render={props => <CreateAccount {...props} type={type} />} />
-            <Route path="/verify-account" exact component={VerifyAccount} />
-            <Route component={NoMatch} />
-          </Switch>
-        </>
+          <>
+            <Switch>
+              <Route path="/" exact render={props => <HomePage {...props} setType={setType} />} />
+              <Route path="/login" exact render={props => <LoginPage {...props} type={type} setUserIsLogged={setUserIsLogged} />} />
+              <Route path="/create-account" exact render={props => <CreateAccount {...props} type={type} />} />
+              <Route path="/verify-account" exact component={VerifyAccount} />
+              <Route component={NoMatch} />
+            </Switch>
+          </>
         )}
         {userIsLogged && (
-        <>
-          <Switch>
-            <Route path="/emitir" component={EmitRecipe} />
-            <Route path="/recetas" component={PrescriptionsPage} />
-            <Route path="/receta/:id" exact component={PrescriptionPage} />
-            <Route path="/normas" exact component={Norm} />
-            <Route path="/recepcionar" exact component={ReceivePage} />
-            <Route path="/configuracion" exact component={ConfigurationPage} />
-            <Route path="/obras-sociales" exact component={MedicalInsurancesPage} />
-            <Route path="/solicitudes" exact component={LinkUpsPage} />
-            <Route component={NoMatch} />
-          </Switch>
-        </>
+          <>
+            <Switch>
+              <Route path="/emitir" component={EmitRecipe} />
+              <Route path="/recetas" component={PrescriptionsPage} />
+              <Route path="/receta/:id" exact component={PrescriptionPage} />
+              <Route path="/normas" exact component={Norm} />
+              <Route path="/recepcionar" exact component={ReceivePage} />
+              <Route path="/configuracion" exact component={ConfigurationPage} />
+              <Route path="/obras-sociales" exact component={MedicalInsurancesPage} />
+              <Route path="/solicitudes" exact component={LinkUpsPage} />
+              <Route path="/perfil" exact component={ProfilePage} />
+              <Route component={NoMatch} />
+            </Switch>
+          </>
         )}
       </main>
     </Router>
