@@ -84,9 +84,7 @@ const getAuthorizationProvider = (authorizationType) => {
   return mapper[authorizationType];
 };
 
-export const askForAuthorization = (authenticationData, authorizationType, data) => {
-  return getAuthorizationProvider(authorizationType)(authenticationData, data);
-};
+export const askForAuthorization = (authenticationData, authorizationType, data) => getAuthorizationProvider(authorizationType)(authenticationData, data);
 
 export const isAuthorizationDataComplete = (authenticationData) => {
   const mapper = {
