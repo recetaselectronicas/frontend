@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { Container } from '@material-ui/core';
 import useRequestsLinkups from '../../hooks/useRequestsLinkups';
 import RequestLinkupsList from '../../components/RequestLinkupsList/RequestLinkupsList';
 import ReasonDialog from '../../components/reasonDialog/ReasonDialog';
 import LinksService from '../../services/LinksService';
+import withSnackbar from '../../components/hocs/withSnackbar';
 
-export default () => {
+const LinkUpsPage = ({ showSuccess, showError }) => {
   const [requestsLinkups, refreshRequestsLinkups] = useRequestsLinkups();
   const [openDialog, setOpenDialog] = useState(false);
   const [declineId, setDeclineId] = useState(null);
@@ -13,8 +15,10 @@ export default () => {
       try {
         await LinksService.declineRequestLink(declineId, reason);
         await refreshRequestsLinkups();
+        showSuccess('La vinculación fue declinada con exito');
       } catch (e) {
-        console.error('no se pudo declinar la solicitud', e);
+        // TODO : preguntar que errores de negocio existen
+        showError('No se pudo declinar la vinculación');
       }
     }
   };
@@ -22,8 +26,10 @@ export default () => {
     try {
       await LinksService.acceptRequestLink(id, 'affiliate');
       await refreshRequestsLinkups();
+      showSuccess('La vinculación fue aceptada con exito');
     } catch (e) {
-      console.error('no se pudo aceptar la solicitud', e);
+      // TODO : preguntar que errores de negocio existen
+      showError('No se pudo aceptar la vinculación');
     }
   };
   const openDeclineModal = (id) => {
@@ -31,7 +37,7 @@ export default () => {
     setDeclineId(id);
   };
   return (
-    <div>
+    <Container>
       <RequestLinkupsList
         title="Solicitudes de afiliamiento"
         requests={requestsLinkups.affiliateRequests}
@@ -45,6 +51,8 @@ export default () => {
         handleClose={() => setOpenDialog(false)}
         onConfirm={onDecline}
       />
-    </div>
+    </Container>
   );
 };
+
+export default withSnackbar(LinkUpsPage);

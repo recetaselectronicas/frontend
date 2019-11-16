@@ -41,33 +41,43 @@ export default ({
         </ExpansionPanelSummary>
         <ExpansionPanelDetails style={{ display: 'initial' }}>
           {requests.map(request => (
-            <div style={{ border: '1px solid black', margin: '2em', marginTop: '0px', display: 'flex' }}>
-              <div style={{ minWidth: '100px', marginRight: '2em' }}>
-                <img width={100} src={request.imageCredential} />
+            <div style={{
+              border: '1px solid #c7b3b3',
+              margin: '2em',
+              marginTop: '0px',
+              display: 'flex',
+              borderRadius: '5px',
+              padding: '1em',
+              justifyContent: 'space-between',
+            }}
+            >
+              <div style={{ display: 'flex' }}>
+                <div style={{ minWidth: '100px', marginRight: '2em' }}>
+                  <img width={100} src={request.imageCredential} />
 
-              </div>
-              <div>
-                fecha :
-                {request.dateCreated}
-                <br />
-                codigo :
-                {request.code}
-                <br />
-                categoria:
-                {request.category}
-                <br />
+                </div>
+                <div>
+                  {statusLang[request.status]}
 
-                estado :
-                {statusLang[request.status]}
-                <br />
-                {Boolean(request.reason) && (
-                  <div>
-                    Motivo :
+
+                  <br />
+                  Codigo :
+                  {request.code}
+                  <br />
+                  Categoria:
+                  {request.category}
+                  <br />
+                  {request.dateCreated}
+                  {Boolean(request.reason) && (
+                    <div>
+                      Motivo :
                       {' '}
-                    {request.reason}
-                  </div>
-                )}
+                      {request.reason}
+                    </div>
+                  )}
+                </div>
               </div>
+
               <div>
                 {couldAccept(request.status) && onAccept && (
                   <Button onClick={() => onAccept(request.id)}>

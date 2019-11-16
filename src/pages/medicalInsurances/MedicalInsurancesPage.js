@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Paper } from '@material-ui/core';
+import { Paper, Container } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import LinksService from '../../services/LinksService';
 import MedicalInsuranceService from '../../services/MedicalInsuranceService';
 import ImageSelector from '../../components/imageSelector/imageSelector';
 import RequestLinkupsList from '../../components/RequestLinkupsList/RequestLinkupsList';
 import useRequestsLinkups from '../../hooks/useRequestsLinkups';
+import withSnackbar from '../../components/hocs/withSnackbar';
 
-export default () => {
+const translations = {
+  'patient has pending link-up requests': 'El paciente tiene vinculaciones pendientes',
+};
+
+const i18n = {
+  get: key => translations[key] || key,
+};
+const MedicalInsurancesPage = ({ showSuccess, showError }) => {
   const [requestsLinkups, refreshRequestsLinkups] = useRequestsLinkups();
   const [medicalInsurances, setMedicalInsurances] = useState([]);
   const [selectedmedicalInsurance, setSelectedMedicalInsurance] = useState(null);
@@ -23,7 +31,7 @@ export default () => {
       const dataMedicalInsurance = await MedicalInsuranceService.getAll();
       setMedicalInsurances(dataMedicalInsurance);
     } catch (error) {
-      console.error('error fetching data', error);
+      showError('Hubo un error inesperado lo sentimos !');
     }
   }
   useEffect(() => {
@@ -31,6 +39,14 @@ export default () => {
   }, []);
 
   const getPlans = () => selectedmedicalInsurance.plans || [];
+
+  const cleanInputs = () => {
+    setSelectedMedicalInsurance(null);
+    setSelectedPlan(null);
+    setImageCredential('');
+    setCode('');
+    setCategory('');
+  };
 
   const requestLink = async () => {
     try {
@@ -45,15 +61,15 @@ export default () => {
           },
         },
       });
-      setSelectedMedicalInsurance(null);
-      setSelectedPlan(null);
-      setImageCredential('');
-      setCode('');
-      setCategory('');
+      cleanInputs();
       await fetchData();
       await refreshRequestsLinkups();
+      showSuccess('Vinculación pedida con exito');
     } catch (error) {
-      console.error('error al querer soliticitar', error);
+      if (error.message) {
+        showError(i18n.get(error.message));
+      }
+      showError('Hubo un error inesperado lo sentimos !');
     }
   };
 
@@ -62,14 +78,20 @@ export default () => {
       await LinksService.cancelRequestLink(id);
       fetchData();
       await refreshRequestsLinkups();
+      showSuccess('Vinculación cancelada con exito');
     } catch (error) {
-      console.error('error al querer soliticitar', error);
+      if (error.message) {
+        // TODO : preguntar que errores de negocio existen
+
+        showError(i18n.get(error.message));
+      }
+      showError('Hubo un error inesperado lo sentimos !');
     }
   };
 
   const canRequestLink = selectedmedicalInsurance && selectedPlan && Boolean(imageCredential) && Boolean(code) && Boolean(category);
   return (
-    <div>
+    <Container>
 
       <RequestLinkupsList
         title="Solicitudes para unirse a obras sociales"
@@ -77,7 +99,7 @@ export default () => {
         onCancel={cancelRequestLink}
       />
 
-      <Paper>
+      <Paper style={{ padding: '2em' }}>
         <div>Obras sociales disponibles</div>
         <div>
           <TextField fullWidth select label="Obra social" onChange={event => setSelectedMedicalInsurance(event.target.value)} value={selectedmedicalInsurance}>
@@ -100,7 +122,7 @@ export default () => {
           }
         </div>
 
-        <div>
+        <div style={{ marginTop: '1em', marginBottom: '0.5em' }}>
           <ImageSelector
             photo={imageCredential}
             label="Sacale una foto al carnet"
@@ -110,23 +132,21 @@ export default () => {
           />
 
         </div>
-        <div>
-          <TextField fullWidth label="Codigo" onChange={event => setCode(event.target.value)} value={code} />
-        </div>
-        <div>
-          <TextField fullWidth label="Categoria" onChange={event => setCategory(event.target.value)} value={category} />
-        </div>
+        <TextField fullWidth label="Codigo" onChange={event => setCode(event.target.value)} value={code} />
+        <TextField fullWidth label="Categoria" onChange={event => setCategory(event.target.value)} value={category} />
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1em' }}>
 
           <Button variant="contained" color="primary" onClick={requestLink} disabled={!canRequestLink}>
-            Soliticitar
+            Solicitar
           </Button>
         </div>
 
       </Paper>
 
 
-    </div>
+    </Container>
   );
 };
+
+export default withSnackbar(MedicalInsurancesPage);
