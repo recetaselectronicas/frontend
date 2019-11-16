@@ -44,6 +44,15 @@ const askForIssueAuthorization = (authenticationData, data) => {
   return AuthorizationsService.authorize(authorizationPayload);
 };
 
+const askForReceiveAuthorization = (authenticationData, data) => {
+  const authorizationPayload = {
+    action: authorizationTypes.receive,
+    authentication: getAuthenticationData(authenticationData),
+    prescription: data,
+  };
+  return AuthorizationsService.authorize(authorizationPayload);
+};
+
 const askForAuthorizeIssueAuthorization = (authenticationData, data) => {
   const authorizationPayload = {
     action: authorizationTypes.authorizeIssue,
@@ -53,10 +62,21 @@ const askForAuthorizeIssueAuthorization = (authenticationData, data) => {
   return AuthorizationsService.authorize(authorizationPayload);
 };
 
+const askForAuthorizeReceiveAuthorization = (authenticationData, data) => {
+  const authorizationPayload = {
+    action: authorizationTypes.authorizeReceive,
+    authentication: getAuthenticationData(authenticationData),
+    prescription: data,
+  };
+  return AuthorizationsService.authorize(authorizationPayload);
+};
+
 const getAuthorizationProvider = (authorizationType) => {
   const mapper = {
     [authorizationTypes.issue]: askForIssueAuthorization,
+    [authorizationTypes.receive]: askForReceiveAuthorization,
     [authorizationTypes.authorizeIssue]: askForAuthorizeIssueAuthorization,
+    [authorizationTypes.authorizeReceive]: askForAuthorizeReceiveAuthorization,
   };
   if (!mapper[authorizationType]) {
     throw new Error('No authorization provider for this type');

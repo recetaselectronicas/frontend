@@ -13,6 +13,26 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 
+const statuses = {
+  ISSUED: 'Emitida',
+  CANCELLED: 'Cancelada',
+  CONFIRMED: 'Confirmada',
+  EXPIRED: 'Vencida',
+  RECEIVED: 'Recepcionada',
+  PARTIALLY_RECEIVED: 'Parcialmente Recepcionada',
+  INCOMPLETE: 'Incompleta',
+  AUDITED: 'Auditada',
+  REJECTED: 'Rechazada',
+  PARTIALLY_REJECTED: 'Parcialmente Rechazada',
+};
+
+const getTranslatedStatus = (status) => {
+  if (statuses[status]) {
+    return statuses[status];
+  }
+  return status;
+};
+
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -69,48 +89,30 @@ const Prescription = (props) => {
     <Paper className={classes.paper}>
       <div style={{ textAlign: 'end' }}>
         <Typography style={{ fontSize: 20 }}>
-Estado :
-          {` ${status}`}
+          {`Estado : ${getTranslatedStatus(status)}`}
         </Typography>
       </div>
       <div style={{ textAlign: 'start' }}>
         <div>
           <Typography style={{ fontSize: 20, color: 'black' }} gutterBottom variant="h4">
-            Institucion:
-            {' '}
-            {institution.description}
+            {`Institución: ${institution.description || '-'}`}
           </Typography>
         </div>
         <div>
           <Typography style={{ fontSize: 20, color: 'black' }} gutterBottom variant="h4">
-            Obra social:
-            {' '}
-            {medicalInsurance.description}
+            {`Obra social: ${medicalInsurance.description}`}
           </Typography>
         </div>
         <Divider />
-
         <div style={{ marginTop: '8px', marginBottom: '8px' }}>
           <Typography style={{ fontSize: 20, color: 'black' }} gutterBottom variant="h4">
-            {' '}
             Afiliado
-            {' '}
           </Typography>
-          Numero:
-          {affiliate.code}
+          {`Credencial: ${affiliate.code}/${affiliate.category}`}
           <br />
-          Nombre :
-          {affiliate.name}
-          {' '}
-          {affiliate.surname}
+          {`Nombre: ${affiliate.name} ${affiliate.surname}`}
           <br />
-          Plan :
-          {' '}
-          {affiliate.plan.description}
-          {' '}
--
-          {' '}
-          {affiliate.category}
+          {`Plan: ${affiliate.plan.description}`}
         </div>
       </div>
       <Divider />
@@ -127,7 +129,7 @@ Estado :
               prescribed: { quantity, medicine },
             } = item;
             return (
-              <React.Fragment>
+              <React.Fragment key={item.id}>
                 <ListItem button>
                   <ListItemText primary={`${quantity} x ${medicine.description}`} />
                   <ListItemSecondaryAction>
@@ -151,8 +153,7 @@ Estado :
       <div>
         <div style={{ textAlign: 'start', marginTop: '8px' }}>
           <Typography style={{ fontSize: 20 }}>
-            Diagnostico:
-            {diagnosis}
+            {`Diagnostico: ${diagnosis || '-'}`}
           </Typography>
         </div>
 
@@ -167,16 +168,16 @@ Estado :
         <Grid container direction="row" justify="space-between">
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <span>
-              Fecha:
-              {` ${issuedDate}`}
+              {`Fecha: ${issuedDate}`}
             </span>
           </div>
           <div>
-            <div style={{ fontFamily: 'Monsieur La Doulaise', transform: 'rotate(-20deg)', fontSize: '2rem', marginBottom: '2rem', marginTop: '1rem' }}>
-              <div>{` ${doctor.name} ${doctor.lastName}`}</div>
+            <div style={{ transform: 'rotate(-0deg)', marginBottom: '2rem', marginTop: '1rem' }}>
+              <div style={{ fontFamily: 'Monsieur La Doulaise', fontSize: '2rem', color: 'black' }}>{` ${doctor.name} ${doctor.lastName}`}</div>
+              {doctor.specialty && (<div style={{ fontSize: '0.8rem', position: 'relative', top: '-6px' }}>{`Esp.: ${doctor.specialty.description}`}</div>)}
+              {doctor.nationalMatriculation && (<div style={{ fontSize: '0.8rem', position: 'relative', top: '-6px' }}>{`M.N.: ${doctor.nationalMatriculation}`}</div>)}
+              {doctor.provincialMatriculation && (<div style={{ fontSize: '0.8rem', position: 'relative', top: '-6px' }}>{`M.P.: ${doctor.provincialMatriculation}`}</div>)}
             </div>
-            Doctor :
-            {` ${doctor.name} ${doctor.lastName}`}
           </div>
         </Grid>
       </div>

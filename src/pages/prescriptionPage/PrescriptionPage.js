@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import SnackbarWrapper from '../../components/snackbarWrapper/SnackbarWrapper';
 import ConfirmCancelPrescriptionDialog from './components/confirmCancelPrescriptionDialog/ConfirmCancelPrescriptionDialog';
 import FillDataItemDialog from './components/fillDataItemDialog/FillDataItemDialog';
 import PrescriptionService from '../../services/PrescriptionService';
+import UserService from '../../services/UserService'
 import Prescription from './components/prescription/Prescription';
 import ConfirmAuditDialog from './components/confirmAuditDialog/ConfirmAuditDialog';
+import withSnackbar from '../../components/hocs/withSnackbar';
+import AuthorizationProvider from '../../components/authorizationProvider/AuthorizationProvider';
 
 const cancelModalInitialState = { open: false, reason: '' };
 const fillItemModalInitialState = { open: false, items: [] };
 const confirmAuditModalInitialState = { open: false };
-const snackbarInitialState = { open: false, variant: 'error', message: '' };
 const translations = {
   'prescription itemsQuantity must not be 0': 'Debe ingresar al menos un medicamento para recepcionar',
   'item received medicine drug must be equal to item precribed medicine drug.': 'Debe recepcionar items con la misma droga que el item recetado',
@@ -22,6 +23,7 @@ const translations = {
   'item audited medicine must be equal to item received medicine.': 'El medicamente auditado debe coincidir con el recepcionado',
 };
 const PrescriptionsPage = (props) => {
+  const { location, showError, showSuccess } = props;
   const [prescription, setPrescription] = useState(null);
   const [actions, setActions] = useState([]);
   const [currentActionFlow, setCurrentAction] = useState('');
@@ -30,13 +32,21 @@ const PrescriptionsPage = (props) => {
   const [confirmAuditModal, setConfirmAuditModal] = useState(confirmAuditModalInitialState);
   const [receiveItems, setReceiveItems] = useState([]);
   const [auditedItems, setAuditedItems] = useState([]);
-  const [snackbar, setSnackbar] = useState(snackbarInitialState);
   const [actionErrors, setActionErrors] = useState([]);
+  const [authorizationObject, setAuthorizationObject] = useState('');
 
   const getPrescription = () => {
-    PrescriptionService.getById(props.match.params.id).then(({ result, actions: actionsResponse }) => {
+    let prescriptionPromise;
+    if (location.state && location.state.authorization) {
+      prescriptionPromise = PrescriptionService.getById(props.match.params.id, {}, location.state.authorization);
+    } else {
+      prescriptionPromise = PrescriptionService.getById(props.match.params.id);
+    }
+    prescriptionPromise.then(({ result, actions: actionsResponse }) => {
       setPrescription(result);
       setActions(actionsResponse);
+    }).catch(() => {
+      props.history.push('/404');
     });
   };
   useEffect(getPrescription, []);
@@ -57,28 +67,16 @@ const PrescriptionsPage = (props) => {
         const validationErrors = [...new Set(error.cause.filter(cause => cause.code === '1-002').map(cause => cause.message))].filter(message => !!message).map(message => ({ message }));
         if (validationErrors.length) {
           setActionErrors(translateErrors(validationErrors));
-          setSnackbar({
-            open: true,
-            message: 'Corrija los errores e intente nuevamente',
-            variant: 'error',
-          });
+          showError('Corrija los errores e intente nuevamente');
           return;
         }
       } else if (error.cause.code === '1-004') {
         setActionErrors(error.cause.message.map(message => ({ message })));
-        setSnackbar({
-          open: true,
-          message: 'Corrija los errores e intente nuevamente',
-          variant: 'error',
-        });
+        showError('Corrija los errores e intente nuevamente');
         return;
       }
     }
-    setSnackbar({
-      open: true,
-      message: 'Algo pasó. Revise los datos ingresados e intente nuevamente',
-      variant: 'error',
-    });
+    showError('Algo pasó. Revise los datos ingresados e intente nuevamente');
   };
 
   const handleAuditError = (error) => {
@@ -101,14 +99,9 @@ const PrescriptionsPage = (props) => {
       type: 'primary',
       finishFlowAction: async () => {
         try {
-          await PrescriptionService.receive(prescription.id, { items: receiveItems });
-          setSnackbar({
-            open: true,
-            message: 'Se Recepciono la receta con exito',
-            variant: 'success',
-          });
-          await getPrescription();
-          clearAll();
+          await PrescriptionService.checkReceive(prescription.id, { id: prescription.id, items: receiveItems });
+          const defaultAuthentication = await UserService.getDefaultAuthenticationType();
+          setAuthorizationObject(actionsMapper.RECEIVE.getAuthorizationObject(defaultAuthentication.default));
         } catch (e) {
           handleReceiveError(e);
         }
@@ -127,6 +120,12 @@ const PrescriptionsPage = (props) => {
         const newReceiveItems = [...receiveItems, newItem];
         setReceiveItems(newReceiveItems);
       },
+      getAuthorizationObject: authenticationType => ({
+        authenticationType,
+        authorizationType: 'receive',
+        data: { id: prescription.id, items: receiveItems },
+        userType: 'pharmacist',
+      }),
     },
     AUDIT: {
       label: 'Auditar',
@@ -160,11 +159,7 @@ const PrescriptionsPage = (props) => {
   const auditPrescription = async () => {
     try {
       await PrescriptionService.audit(prescription.id, { items: auditedItems });
-      setSnackbar({
-        open: true,
-        message: 'Se audito la receta con exito',
-        variant: 'success',
-      });
+      showSuccess('Se audito la receta con exito');
       setConfirmAuditModal({ ...confirmAuditModal, open: false });
       await getPrescription();
       clearAll();
@@ -180,24 +175,12 @@ const PrescriptionsPage = (props) => {
   const cancelPrescription = async (reason) => {
     try {
       await PrescriptionService.cancel(prescription.id, { reason });
-      setSnackbar({
-        open: true,
-        message: 'Su receta fue cancelada con exito',
-        variant: 'success',
-      });
+      showSuccess('Su receta fue cancelada con exito');
     } catch (e) {
-      setSnackbar({
-        open: true,
-        message: 'Hubo un error en la cancelacion',
-        variant: 'error',
-      });
+      showError('Hubo un error en la cancelacion');
       console.log('error', e);
     }
     clearAll();
-  };
-
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
   };
 
   const dispatchAction = (action) => {
@@ -205,107 +188,108 @@ const PrescriptionsPage = (props) => {
     actionsMapper[action].action();
   };
 
+  const successAuthorization = async (authorization) => {
+    setAuthorizationObject('');
+    try {
+      await PrescriptionService.receive(prescription.id, { id: prescription.id, items: receiveItems }, location.state.authorization, authorization.authorization);
+      showSuccess('Se Recepciono la receta con exito');
+      await getPrescription();
+      clearAll();
+    } catch (e) {
+      handleReceiveError(e);
+    }
+  };
+
+  const failureAuthorization = (err) => {
+    showError('No fue posible recepcionar la receta');
+  };
+
   const areInFlow = ['AUDIT', 'RECEIVE'].includes(currentActionFlow);
   const actionButtonItems = areInFlow && actionsMapper[currentActionFlow].itemAction;
   return (
     <React.Fragment>
+      {authorizationObject && (
+        <AuthorizationProvider
+          authenticationType={authorizationObject.authenticationType}
+          authorizationType={authorizationObject.authorizationType}
+          data={authorizationObject.data}
+          userType={authorizationObject.userType}
+          onConfirm={successAuthorization}
+          onCancel={failureAuthorization}
+        />
+      )}
       <Grid container className="page">
-        <Grid item xs={10}>
-          {prescription && (
-            <Prescription
-              {...prescription}
-              actionButtonItems={actionButtonItems}
-              currentActionFlow={currentActionFlow}
-              actionErrors={actionErrors}
-            />
-          )}
-        </Grid>
-        <Grid item xs={2}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexDirection: 'column',
-              height: '100%',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-              }}
-            >
-              {actions.map(({ id, disabled }) => (
-                <Button
-                  style={{ marginBottom: '12px' }}
-                  variant="contained"
-                  disabled={areInFlow || disabled}
-                  color={actionsMapper[id].type}
-                  className={`action-recipe__button ${id}`}
-                  onClick={() => dispatchAction(id)}
+        {prescription && (
+          <>
+            <Grid item xs={10}>
+              <Prescription
+                {...prescription}
+                actionButtonItems={actionButtonItems}
+                currentActionFlow={currentActionFlow}
+                actionErrors={actionErrors}
+              />
+            </Grid>
+            <Grid item xs={2}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexDirection: 'column',
+                  height: '100%',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                  }}
                 >
-                  {actionsMapper[id].label}
-                </Button>
-              ))}
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-evenly',
-                alignItems: 'center',
-                marginBottom: '15px',
-              }}
-            >
-              {areInFlow && (
-                <React.Fragment>
-                  <Button variant="contained" onClick={onFinishFlow} style={{ flexBasis: '45%' }}>
-                    Aceptar
-                  </Button>
-                  <Button variant="contained" onClick={clearAll} style={{ flexBasis: '45%' }}>
-                    Cancelar
-                  </Button>
-                </React.Fragment>
-              )}
-            </div>
-          </div>
-        </Grid>
+                  {actions.map(({ id, disabled }) => (
+                    <Button
+                      key={id}
+                      style={{ marginBottom: '12px' }}
+                      variant="contained"
+                      disabled={areInFlow || disabled}
+                      color={actionsMapper[id].type}
+                      className={`action-recipe__button ${id}`}
+                      onClick={() => dispatchAction(id)}
+                    >
+                      {actionsMapper[id].label}
+                    </Button>
+                  ))}
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-evenly',
+                    alignItems: 'center',
+                    marginBottom: '15px',
+                  }}
+                >
+                  {areInFlow && (
+                    <React.Fragment>
+                      <Button variant="contained" onClick={onFinishFlow} style={{ flexBasis: '45%' }}>
+                        Aceptar
+                      </Button>
+                      <Button variant="contained" onClick={clearAll} style={{ flexBasis: '45%' }}>
+                        Cancelar
+                      </Button>
+                    </React.Fragment>
+                  )}
+                </div>
+              </div>
+            </Grid>
+          </>
+        )}
       </Grid>
-      <ConfirmCancelPrescriptionDialog
-        open={cancelModal.open}
-        handleClose={() => {
-          setCancelModal(cancelModalInitialState);
-        }}
-        onConfirm={cancelPrescription}
-      />
-      <FillDataItemDialog
-        open={fillItemModal.open}
-        id={fillItemModal.id}
-        handleClose={() => {
-          setFillItemModal(fillItemModalInitialState);
-        }}
-        onConfirm={fillDataConfirmHandler}
-      />
-      <ConfirmAuditDialog
-        open={confirmAuditModal.open}
-        handleClose={() => {
-          setConfirmAuditModal(confirmAuditModalInitialState);
-        }}
-        items={auditedItems}
-        onConfirm={auditPrescription}
-      />
-      <SnackbarWrapper
-        vertical="bottom"
-        horizontal="center"
-        open={snackbar.open}
-        onClose={handleCloseSnackbar}
-        variant={snackbar.variant}
-        message={snackbar.message}
-      />
+      <ConfirmCancelPrescriptionDialog open={cancelModal.open} handleClose={() => setCancelModal(cancelModalInitialState)} onConfirm={cancelPrescription} />
+      <FillDataItemDialog open={fillItemModal.open} id={fillItemModal.id} handleClose={() => setFillItemModal(fillItemModalInitialState)} onConfirm={fillDataConfirmHandler} />
+      <ConfirmAuditDialog open={confirmAuditModal.open} handleClose={() => setConfirmAuditModal(confirmAuditModalInitialState)} items={auditedItems} onConfirm={auditPrescription} />
     </React.Fragment>
   );
 };
 
-export default PrescriptionsPage;
+export default withSnackbar(PrescriptionsPage);

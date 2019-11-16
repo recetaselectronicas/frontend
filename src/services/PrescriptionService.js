@@ -11,12 +11,8 @@ export default class PrescriptionService extends RestclientService {
     return this.post('/prescriptions/verify', { ...prescription });
   }
 
-  static async getById(prescriptionId, query = {}) {
-    return this.get(`/prescriptions/${prescriptionId}`, {
-      params: {
-        ...query,
-      },
-    });
+  static async getById(prescriptionId, query = {}, authorization) {
+    return this.get(`/prescriptions/${prescriptionId}`, { params: { ...query }, headers: { 'x-authorization-token': authorization } });
   }
 
   static async getPrescriptionsList(filters = {}) {
@@ -37,10 +33,23 @@ export default class PrescriptionService extends RestclientService {
     });
   }
 
-  static async receive(prescriptionId, data) {
+  static async checkReceive(prescriptionId, data) {
+    return this.put(`/prescriptions/${prescriptionId}/verify`, {
+      status: 'RECEIVE',
+      data,
+    });
+  }
+
+  static async receive(prescriptionId, data, authorization, verification) {
     return this.put(`/prescriptions/${prescriptionId}`, {
       status: 'RECEIVE',
       data,
+    },
+    {
+      headers: {
+        'x-authorization-token': authorization,
+        'x-verification-token': verification,
+      },
     });
   }
 
