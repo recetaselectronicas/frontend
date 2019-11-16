@@ -4,6 +4,7 @@ import Navbar from './components/navbar/Navbar';
 import EmitRecipe from './pages/medic/EmitRecipe';
 import PrescriptionsPage from './pages/prescriptions/PrescriptionsPage';
 import PrescriptionPage from './pages/prescriptionPage/PrescriptionPage';
+import LinkUpsPage from './pages/linkUps/LinkUpsPage';
 import Norm from './pages/norms/norms';
 import LoginPage from './pages/loginPage/LoginPage';
 import HomePage from './pages/homePage/HomePage';
@@ -63,6 +64,7 @@ function App() {
             <Route path="/recepcionar" exact component={ReceivePage} />
             <Route path="/configuracion" exact component={ConfigurationPage} />
             <Route path="/obras-sociales" exact component={MedicalInsurancesPage} />
+            <Route path="/solicitudes" exact component={LinkUpsPage} />
             <Route component={NoMatch} />
           </Switch>
         </>

@@ -50,8 +50,8 @@ export default () => {
       setImageCredential('');
       setCode('');
       setCategory('');
-      fetchData();
-      refreshRequestsLinkups();
+      await fetchData();
+      await refreshRequestsLinkups();
     } catch (error) {
       console.error('error al querer soliticitar', error);
     }
@@ -61,6 +61,7 @@ export default () => {
     try {
       await LinksService.cancelRequestLink(id);
       fetchData();
+      await refreshRequestsLinkups();
     } catch (error) {
       console.error('error al querer soliticitar', error);
     }
@@ -70,7 +71,11 @@ export default () => {
   return (
     <div>
 
-      <RequestLinkupsList requests={requestsLinkups} onCancel={cancelRequestLink} />
+      <RequestLinkupsList
+        title="Solicitudes para unirse a obras sociales"
+        requests={requestsLinkups}
+        onCancel={cancelRequestLink}
+      />
 
       <Paper>
         <div>Obras sociales disponibles</div>

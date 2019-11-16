@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import ConfirmCancelPrescriptionDialog from './components/confirmCancelPrescriptionDialog/ConfirmCancelPrescriptionDialog';
+import ReasonDialog from '../../components/reasonDialog/ReasonDialog';
 import FillDataItemDialog from './components/fillDataItemDialog/FillDataItemDialog';
 import PrescriptionService from '../../services/PrescriptionService';
-import UserService from '../../services/UserService'
+import UserService from '../../services/UserService';
 import Prescription from './components/prescription/Prescription';
 import ConfirmAuditDialog from './components/confirmAuditDialog/ConfirmAuditDialog';
 import withSnackbar from '../../components/hocs/withSnackbar';
@@ -89,9 +89,9 @@ const PrescriptionsPage = (props) => {
       action: () => {
         setCancelModal({ ...cancelModal, open: true });
       },
-      finishFlowAction: () => {},
+      finishFlowAction: () => { },
       type: 'secondary',
-      fillDataConfirmHandler: () => {},
+      fillDataConfirmHandler: () => { },
     },
     RECEIVE: {
       label: 'Recepcionar',
@@ -129,7 +129,7 @@ const PrescriptionsPage = (props) => {
     },
     AUDIT: {
       label: 'Auditar',
-      action: () => {},
+      action: () => { },
       finishFlowAction: () => {
         setConfirmAuditModal({ ...confirmAuditModal, open: true });
       },
@@ -285,7 +285,7 @@ const PrescriptionsPage = (props) => {
           </>
         )}
       </Grid>
-      <ConfirmCancelPrescriptionDialog open={cancelModal.open} handleClose={() => setCancelModal(cancelModalInitialState)} onConfirm={cancelPrescription} />
+      <ReasonDialog open={cancelModal.open} handleClose={() => setCancelModal(cancelModalInitialState)} onConfirm={cancelPrescription} />
       <FillDataItemDialog open={fillItemModal.open} id={fillItemModal.id} handleClose={() => setFillItemModal(fillItemModalInitialState)} onConfirm={fillDataConfirmHandler} />
       <ConfirmAuditDialog open={confirmAuditModal.open} handleClose={() => setConfirmAuditModal(confirmAuditModalInitialState)} items={auditedItems} onConfirm={auditPrescription} />
     </React.Fragment>

@@ -13,7 +13,21 @@ export default class LinksService extends RestclientService {
   static cancelRequestLink(id) {
     return this.put(`/session/link-up/requests/${id}`, {
       status: 'CANCELLED',
-      reason: null,
+    });
+  }
+
+  static declineRequestLink(id, reason) {
+    return this.put(`/session/link-up/requests/${id}`, {
+      status: 'DECLINED',
+      type: 'affiliate',
+      reason,
+    });
+  }
+
+  static acceptRequestLink(id, type) {
+    return this.put(`/session/link-up/requests/${id}`, {
+      status: 'ACCEPTED',
+      type,
     });
   }
 }
