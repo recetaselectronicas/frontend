@@ -86,6 +86,7 @@ function MenuAppBar(props) {
   };
   const goConfiguration = () => {
     props.history.push('/configuracion');
+    handleClose();
   };
 
   return (

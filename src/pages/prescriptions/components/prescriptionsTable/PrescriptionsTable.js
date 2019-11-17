@@ -126,10 +126,10 @@ function EnhancedTable(props) {
               <TableBody>
                 {props.prescriptions.map(prescription => (
                   <TableRow
+                    key={prescription.id}
                     hover
                     onClick={() => props.goToPrescriptionDetail(prescription.id)}
                     tabIndex={-1}
-                    key={prescription.name}
                     style={{ cursor: 'pointer' }}
                   >
                     <TableCell component="th" scope="row">

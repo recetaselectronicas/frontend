@@ -34,6 +34,7 @@ const PrescriptionsPage = (props) => {
   const [auditedItems, setAuditedItems] = useState([]);
   const [actionErrors, setActionErrors] = useState([]);
   const [authorizationObject, setAuthorizationObject] = useState('');
+  const [cancelReason, setCancelReason] = useState('');
 
   const getPrescription = () => {
     let prescriptionPromise;
@@ -89,9 +90,15 @@ const PrescriptionsPage = (props) => {
       action: () => {
         setCancelModal({ ...cancelModal, open: true });
       },
-      finishFlowAction: () => {},
+      finishFlowAction: async () => {},
       type: 'secondary',
       fillDataConfirmHandler: () => {},
+      getAuthorizationObject: authenticationType => ({
+        authenticationType,
+        authorizationType: 'cancel',
+        data: { id: prescription.id },
+        userType: 'doctor',
+      }),
     },
     RECEIVE: {
       label: 'Recepcionar',
@@ -173,9 +180,11 @@ const PrescriptionsPage = (props) => {
   };
 
   const cancelPrescription = async (reason) => {
+    setCancelReason(reason);
     try {
-      await PrescriptionService.cancel(prescription.id, { reason });
-      showSuccess('Su receta fue cancelada con exito');
+      await PrescriptionService.checkCancel(prescription.id, { reason });
+      const defaultAuthentication = await UserService.getDefaultAuthenticationType();
+      setAuthorizationObject(actionsMapper.CANCEL.getAuthorizationObject(defaultAuthentication.default));
     } catch (e) {
       showError('Hubo un error en la cancelacion');
       console.log('error', e);
@@ -190,18 +199,32 @@ const PrescriptionsPage = (props) => {
 
   const successAuthorization = async (authorization) => {
     setAuthorizationObject('');
-    try {
-      await PrescriptionService.receive(prescription.id, { id: prescription.id, items: receiveItems }, location.state.authorization, authorization.authorization);
-      showSuccess('Se Recepciono la receta con exito');
-      await getPrescription();
-      clearAll();
-    } catch (e) {
-      handleReceiveError(e);
+    console.log(currentActionFlow)
+    if (currentActionFlow === 'RECEIVE') {
+      try {
+        await PrescriptionService.receive(prescription.id, { id: prescription.id, items: receiveItems }, location.state.authorization, authorization.authorization);
+        showSuccess('Se Recepciono la receta con exito');
+        await getPrescription();
+        clearAll();
+      } catch (e) {
+        handleReceiveError(e);
+      }
+    } else {
+      try {
+        await PrescriptionService.cancel(prescription.id, { reason: cancelReason }, authorization.authorization);
+        showSuccess('Su receta fue cancelada con exito');
+        await getPrescription();
+        clearAll();
+      } catch (e) {
+        showError('Hubo un error en la cancelacion');
+        console.log('error', e);
+      }
     }
   };
 
   const failureAuthorization = (err) => {
     showError('No fue posible recepcionar la receta');
+    setAuthorizationObject('');
   };
 
   const areInFlow = ['AUDIT', 'RECEIVE'].includes(currentActionFlow);

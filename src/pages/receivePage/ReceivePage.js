@@ -129,7 +129,7 @@ const ReceivePage = (props) => {
       <Grid item xs={12}>
         <Paper className={classes.paper}>
           <Typography variant="h4">Recepcionar</Typography>
-          <TextField name="age" fullWidth select label="Obra social" onChange={onChangeMedicalInsurance} value={selectedMedicalInsurance}>
+          <TextField name="age" fullWidth select label="Obra social" onChange={onChangeMedicalInsurance} value={selectedMedicalInsurance || ''}>
             {medicalInsurances.map(institution => (
               <MenuItem key={institution.id} value={institution.id}>{institution.description}</MenuItem>
             ))}
@@ -141,7 +141,7 @@ const ReceivePage = (props) => {
             margin="normal"
             type="number"
             disabled={noMedicalInsuranceSelected}
-            value={selectedAffilate.code}
+            value={selectedAffilate.code || ''}
             onChange={onChangeAffilateTexfield}
           />
           {suggestionList.length > 0 && (
@@ -167,7 +167,7 @@ const ReceivePage = (props) => {
             margin="normal"
             type="number"
             disabled={!selectedAffilate.id}
-            value={selectedPrescription}
+            value={selectedPrescription || ''}
             onChange={({ target: { value } }) => setSelectedPrescription(value)}
           />
           {errorMessage && (

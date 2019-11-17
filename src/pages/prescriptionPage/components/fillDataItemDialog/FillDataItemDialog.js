@@ -64,7 +64,7 @@ const ConfirmCancelPrescriptionDialog = (props) => {
                     autoComplete="off"
                     label="Cantidad"
                     type="number"
-                    value={quantityInput}
+                    value={quantityInput || ''}
                     onChange={onChangeQuantityInput}
                   />
                 </div>

@@ -35,6 +35,7 @@ export default function AuthorizationProvider(props) {
       } catch (e) {
         setErrors({ username: 'Usuario inválido', password: 'Contraseña inválida', code: 'Código inválido' });
         setIsLoading(false);
+        console.error(e);
       }
     }, 500);
   };
@@ -92,7 +93,7 @@ AuthorizationProvider.defaultProps = {
 };
 
 AuthorizationProvider.propTypes = {
-  authorizationType: PropTypes.oneOf([authorizationTypes.receive, authorizationTypes.authorizeReceive, authorizationTypes.issue, authorizationTypes.authorizeIssue]).isRequired,
+  authorizationType: PropTypes.oneOf([authorizationTypes.receive, authorizationTypes.authorizeReceive, authorizationTypes.issue, authorizationTypes.authorizeIssue, authorizationTypes.cancel]).isRequired,
   authenticationType: PropTypes.oneOf([authenticationTypes.twoFactor, authenticationTypes.userAndPass]).isRequired,
   userType: PropTypes.oneOf([userTypes.affiliate, userTypes.doctor, userTypes.pharmacist]).isRequired,
   onConfirm: PropTypes.func.isRequired,

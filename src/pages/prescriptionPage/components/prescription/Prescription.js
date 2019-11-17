@@ -185,9 +185,9 @@ const Prescription = (props) => {
           && (
           <>
             <Divider className={classes.errorsDivider} />
-            <Grid container>
+            <Grid container justify="flex-start">
               {actionErrors.map(error => (
-                <Grid item xs={12} className={classes.issuedErrors} justify="flex-start">
+                <Grid key={error.message} item xs={12} className={classes.issuedErrors}>
                   <Typography variant="subtitle1">{`• ${error.message}`}</Typography>
                 </Grid>
               ))}

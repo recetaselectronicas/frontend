@@ -178,12 +178,12 @@ export const EmitRecipeComponent = (props) => {
         <Grid item xs={9}>
           <Paper className={classes.paper}>
             <div>
-              <TextField name="institucion" fullWidth select label="Institucion" onChange={event => setSelectedInstitution(event.target.value)} value={selectedInstitution}>
+              <TextField disabled={created} name="institucion" fullWidth select label="Institucion" onChange={event => setSelectedInstitution(event.target.value)} value={selectedInstitution}>
                 {institutions.map(institution => (
                   <MenuItem key={institution.id} value={institution.id}>{institution.description}</MenuItem>
                 ))}
               </TextField>
-              <TextField name="medical-insurance" className="emit-recipe__medical-insurance-select" fullWidth select label="Obra Social" onChange={onChangeMedicalInsurance} value={selectedMedicalInsurance}>
+              <TextField disabled={created} name="medical-insurance" className="emit-recipe__medical-insurance-select" fullWidth select label="Obra Social" onChange={onChangeMedicalInsurance} value={selectedMedicalInsurance}>
                 {medicalInsurances.map(medicalInsurance => (
                   <MenuItem key={medicalInsurance.id} value={medicalInsurance.id}>{medicalInsurance.description}</MenuItem>
                 ))}
@@ -196,7 +196,7 @@ export const EmitRecipeComponent = (props) => {
                 margin="normal"
                 type="number"
                 className="emit-recipe__affilate-textfield"
-                disabled={noMedicalInsuranceSelected}
+                disabled={created || noMedicalInsuranceSelected}
                 value={selectedAffiliate.code}
                 onChange={onChangeAffiliateTextField}
                 autoComplete="off"
@@ -227,10 +227,14 @@ export const EmitRecipeComponent = (props) => {
             <div>
               <List component="nav">
                 {noItemsAdded && <Paper style={{ padding: 25 }}>Aun no tiene items agregados</Paper>}
-                {items.map(item => (
-                  <Item key={item.id} {...item} removeItem={removeItem} />
-                ))}
+                {items.map((item) => {
+                  if (created) {
+                    return <Item key={item.id} {...item} />;
+                  }
+                  return <Item key={item.id} {...item} removeItem={removeItem} />;
+                })}
               </List>
+              {!created && (
               <div
                 style={{ textAlign: 'end', cursor: 'pointer' }}
                 className="emit-recipe__add-item"
@@ -238,6 +242,7 @@ export const EmitRecipeComponent = (props) => {
               >
                 Agregar...
               </div>
+              )}
             </div>
             <div>
               <TextField
@@ -252,12 +257,14 @@ export const EmitRecipeComponent = (props) => {
                 }}
                 value={diagnostic}
                 onChange={event => setDiagnostic(event.target.value)}
+                disabled={created}
               />
               <Grid container direction="row" justify="flex-end">
                 <FormControlLabel
                   control={<Checkbox color="primary" onChange={event => setProlongedTreatment(event.target.checked)} />}
                   labelPlacement="start"
                   label="Tratamiento prolongado"
+                  disabled={created}
                 />
               </Grid>
 
@@ -292,7 +299,7 @@ export const EmitRecipeComponent = (props) => {
             variant="contained"
             color="primary"
             className={`emit-recipe__button ${classes.button}`}
-            disabled={!created && cantEmitRecipe}
+            disabled={created || cantEmitRecipe}
             onClick={startPrescriptionEmitFlow}
           >
             Emitir

@@ -16,6 +16,7 @@ export const authorizationTypes = {
   authorizeReceive: 'authorize_receive',
   issue: 'issue',
   authorizeIssue: 'authorize_issue',
+  cancel: 'cancel',
 };
 
 const getAuthenticationData = (authenticationData) => {
@@ -71,15 +72,25 @@ const askForAuthorizeReceiveAuthorization = (authenticationData, data) => {
   return AuthorizationsService.authorize(authorizationPayload);
 };
 
+const askForCancelAuthorization = (authenticationData, data) => {
+  const authorizationPayload = {
+    action: authorizationTypes.cancel,
+    authentication: getAuthenticationData(authenticationData),
+    prescription: data,
+  };
+  return AuthorizationsService.authorize(authorizationPayload);
+};
+
 const getAuthorizationProvider = (authorizationType) => {
   const mapper = {
     [authorizationTypes.issue]: askForIssueAuthorization,
     [authorizationTypes.receive]: askForReceiveAuthorization,
     [authorizationTypes.authorizeIssue]: askForAuthorizeIssueAuthorization,
     [authorizationTypes.authorizeReceive]: askForAuthorizeReceiveAuthorization,
+    [authorizationTypes.cancel]: askForCancelAuthorization,
   };
   if (!mapper[authorizationType]) {
-    throw new Error('No authorization provider for this type');
+    throw new Error(`No authorization provider for ${authorizationType} type`);
   }
   return mapper[authorizationType];
 };

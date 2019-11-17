@@ -285,7 +285,7 @@ function UserPass(props) {
             <Grid container className={classes.userPass}>
               <Grid item xs={12} container justify="flex-start">
                 <Grid item xs={12} sm={8} md={6}>
-                  <TextField fullwidth className={classes.userPassInput} value={username} disabled label="Usuario" />
+                  <TextField fullWidth className={classes.userPassInput} value={username} disabled label="Usuario" />
                 </Grid>
               </Grid>
               <Grid item xs={12} container justify="flex-start">

@@ -26,10 +26,22 @@ export default class PrescriptionService extends RestclientService {
     });
   }
 
-  static async cancel(prescriptionId, data) {
+  static async checkCancel(prescriptionId, data) {
+    return this.put(`/prescriptions/${prescriptionId}/verify`, {
+      status: 'CANCELLED',
+      data,
+    });
+  }
+
+  static async cancel(prescriptionId, data, authorization) {
     return this.put(`/prescriptions/${prescriptionId}`, {
       status: 'CANCELLED',
       data,
+    },
+    {
+      headers: {
+        'x-verification-token': authorization,
+      },
     });
   }
 

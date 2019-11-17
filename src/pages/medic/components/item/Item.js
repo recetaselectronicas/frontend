@@ -27,10 +27,15 @@ const Item = (props) => {
   );
 };
 
+Item.defaultProps = {
+  removeItem: false,
+};
+
 Item.propTypes = {
   quantity: propTypes.number.isRequired,
   id: propTypes.number.isRequired,
-  removeItem: propTypes.func.isRequired,
+  removeItem: propTypes.oneOfType([propTypes.func, propTypes.bool]),
 };
+
 
 export default Item;

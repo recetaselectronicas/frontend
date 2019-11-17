@@ -85,6 +85,7 @@ const PrescriptionsPage = (props) => {
           >
             {selectedFilters.map(selectedFilter => !selectedFilter.dontShow && (
             <Chip
+              key={selectedFilter.label}
               label={`${selectedFilter.label}`}
               onDelete={() => removeSelectedFilter(selectedFilter)}
               style={{ margin: '3px' }}
