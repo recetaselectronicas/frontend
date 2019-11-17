@@ -9,8 +9,13 @@ const restclient = axios.create({
 const sucessfullRequestHandler = request => request.data;
 const errorRequestHandler = (error) => {
   // TODO : ver como hacer handlers de los errores una vez este mas avanzado el backend
-  if (error.response) {
-    throw error.response.data;
+  const { response } = error;
+  if (response) {
+    if (response.status === 403) {
+      SessionService.logout();
+      window.location.href = '/';
+    }
+    throw response.data;
   }
   throw error;
 };
