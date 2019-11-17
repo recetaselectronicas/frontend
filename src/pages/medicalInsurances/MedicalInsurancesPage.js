@@ -9,6 +9,8 @@ import ImageSelector from '../../components/imageSelector/imageSelector';
 import RequestLinkupsList from '../../components/RequestLinkupsList/RequestLinkupsList';
 import useRequestsLinkups from '../../hooks/useRequestsLinkups';
 import withSnackbar from '../../components/hocs/withSnackbar';
+import SessionService from '../../services/SessionService';
+
 
 const translations = {
   'patient has pending link-up requests': 'El paciente tiene vinculaciones pendientes',
@@ -25,7 +27,8 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
   const [imageCredential, setImageCredential] = useState('');
   const [code, setCode] = useState('');
   const [category, setCategory] = useState('');
-
+  const { type } = SessionService.getUserData();
+  const isAffiliate = type === 'affiliate';
   async function fetchData() {
     try {
       const dataMedicalInsurance = await MedicalInsuranceService.getAll();
@@ -48,19 +51,33 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
     setCategory('');
   };
 
+  const buildMedicalInsuranceRequest = () => {
+    let response = {
+      id: selectedmedicalInsurance.id,
+    };
+    if (selectedPlan) {
+      response = {
+        ...response,
+        plan: {
+          id: selectedPlan.id,
+        },
+      };
+    }
+    return response;
+  };
+
   const requestLink = async () => {
     try {
-      await LinksService.requestLink({
-        imageCredential,
-        code,
-        category,
-        medicalInsurance: {
-          id: selectedmedicalInsurance.id,
-          plan: {
-            id: selectedPlan.id,
-          },
-        },
-      });
+      let request = { medicalInsurance: buildMedicalInsuranceRequest() };
+      if (isAffiliate) {
+        request = {
+          ...request,
+          imageCredential,
+          code,
+          category,
+        };
+      }
+      await LinksService.requestLink(request);
       cleanInputs();
       await fetchData();
       await refreshRequestsLinkups();
@@ -68,10 +85,12 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
     } catch (error) {
       if (error.message) {
         showError(i18n.get(error.message));
+      } else {
+        showError('Hubo un error inesperado lo sentimos !');
       }
-      showError('Hubo un error inesperado lo sentimos !');
     }
   };
+
 
   const cancelRequestLink = async (id) => {
     try {
@@ -89,7 +108,10 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
     }
   };
 
-  const canRequestLink = selectedmedicalInsurance && selectedPlan && Boolean(imageCredential) && Boolean(code) && Boolean(category);
+  const canRequestLink = selectedmedicalInsurance
+    || (isAffiliate && selectedmedicalInsurance && selectedPlan && Boolean(imageCredential) && Boolean(code) && Boolean(category));
+
+
   return (
     <Container>
 
@@ -110,7 +132,7 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
             ))}
           </TextField>
 
-          {selectedmedicalInsurance && (
+          {selectedmedicalInsurance && isAffiliate && (
             <TextField fullWidth select label="Plan" onChange={event => setSelectedPlan(event.target.value)} value={selectedPlan}>
               {getPlans().map(plan => (
                 <MenuItem key={plan.id} value={plan}>
@@ -121,19 +143,24 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
           )
           }
         </div>
+        {isAffiliate && (
+          <>
+            <div style={{ marginTop: '1em', marginBottom: '0.5em' }}>
+              <ImageSelector
+                photo={imageCredential}
+                label="Sacale una foto al carnet"
+                placeholder="Foto Carnet.jpg"
+                onSelect={value => setImageCredential(value)}
+                onUnSelect={() => setImageCredential('')}
+              />
 
-        <div style={{ marginTop: '1em', marginBottom: '0.5em' }}>
-          <ImageSelector
-            photo={imageCredential}
-            label="Sacale una foto al carnet"
-            placeholder="Foto Carnet.jpg"
-            onSelect={value => setImageCredential(value)}
-            onUnSelect={() => setImageCredential('')}
-          />
+            </div>
+            <TextField fullWidth label="Codigo" onChange={event => setCode(event.target.value)} value={code} />
+            <TextField fullWidth label="Categoria" onChange={event => setCategory(event.target.value)} value={category} />
 
-        </div>
-        <TextField fullWidth label="Codigo" onChange={event => setCode(event.target.value)} value={code} />
-        <TextField fullWidth label="Categoria" onChange={event => setCategory(event.target.value)} value={category} />
+          </>
+        )}
+
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1em' }}>
 
