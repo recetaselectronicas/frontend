@@ -185,6 +185,10 @@ export const parseAffiliateResponseError = (accountData, response) => {
       newAccountData.userName.error = 'Usuario en uso';
       return newAccountData;
     }
+    if (response.cause.field === newAccountData.nicNumber.fieldName) {
+      newAccountData.nicNumber.error = 'Documento ya registrado';
+      return newAccountData;
+    }
   }
   if (response.code === '1-101') {
     if (response.cause && response.cause.length) {
@@ -203,6 +207,10 @@ export const parseDoctorResponseError = (accountData, response) => {
   if (response.code === '1-000') {
     if (response.cause.field === newAccountData.userName.fieldName) {
       newAccountData.userName.error = 'Usuario en uso';
+      return newAccountData;
+    }
+    if (response.cause.field === newAccountData.nicNumber.fieldName) {
+      newAccountData.nicNumber.error = 'Documento ya registrado';
       return newAccountData;
     }
     if (response.cause.field === newAccountData.nationalMatriculation.fieldName) {
@@ -227,6 +235,10 @@ export const parsePharmacistResponseError = (accountData, response) => {
   if (response.code === '1-000') {
     if (response.cause.field === newAccountData.userName.fieldName) {
       newAccountData.userName.error = 'Usuario en uso';
+      return newAccountData;
+    }
+    if (response.cause.field === newAccountData.nicNumber.fieldName) {
+      newAccountData.nicNumber.error = 'Documento ya registrado';
       return newAccountData;
     }
     if (response.cause.field === newAccountData.matriculation.fieldName) {
