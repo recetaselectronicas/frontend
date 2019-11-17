@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import DateFnsUtils from '@date-io/date-fns';
@@ -15,13 +15,14 @@ import {
   availableNationalities,
   availableNicTypes,
   calculateErrors,
-  getAffiliatePayload,
-  getEmptyAffiliateData,
+  getDoctorPayload,
+  getEmptyDoctorData,
   hasError,
-  parseAffiliateResponseError,
+  parseDoctorResponseError,
 } from '../AccountsUtils';
 import ImageSelector from '../../../components/imageSelector/imageSelector';
 import withSnackbar from '../../../components/hocs/withSnackbar';
+import SpecialtyService from '../../../services/SpecialtyService';
 
 const getGenderItems = genders => genders.map(option => (
   <MenuItem key={option.value} value={option.value}>
@@ -41,11 +42,27 @@ const getNicTypeItems = nicTypes => nicTypes.map(option => (
   </MenuItem>
 ));
 
-function CreateAffiliateAccount(props) {
+const getSpecialtyItems = specialties => specialties.map(option => (
+  <MenuItem key={option.id} value={option.id}>
+    {option.description}
+  </MenuItem>
+));
+
+function CreateDoctorAccount(props) {
   const { showError, onCreationSuccess, onCreationCancel } = props;
-  const [accountData, setAccountData] = useState(getEmptyAffiliateData());
+  const [accountData, setAccountData] = useState(getEmptyDoctorData());
   const [creating, setCreating] = useState(false);
-  const { name, surName, userName, password, birthDate, gender, contactNumber, email, address, nationality, nicNumber, nicType, nicPhoto } = accountData;
+  const [availableSpecialties, setAvailableSpecialties] = useState([]);
+  const { name, lastName, userName, password, birthDate, gender, contactNumber, email, address, nationality, nicNumber, nicType, nicPhoto, nationalMatriculation, provincialMatriculation, specialty } = accountData;
+
+  useEffect(() => {
+    SpecialtyService.getSpecialties().then((specialties) => {
+      setAvailableSpecialties(specialties);
+    }).catch((err) => {
+      console.error(err);
+      setAvailableSpecialties(SpecialtyService.getFallbackSpecialties());
+    });
+  }, []);
 
   const cancel = () => {
     onCreationCancel();
@@ -62,12 +79,12 @@ function CreateAffiliateAccount(props) {
     }
     try {
       setCreating(true);
-      await AccountService.createAffiliateAccount(getAffiliatePayload(accountData));
+      await AccountService.createDoctorAccount(getDoctorPayload(accountData));
       setCreating(false);
       goToCongrats();
     } catch (e) {
       setCreating(false);
-      const parsedAccountData = parseAffiliateResponseError(accountData, e);
+      const parsedAccountData = parseDoctorResponseError(accountData, e);
       if (parsedAccountData) {
         return setAccountData(parsedAccountData);
       }
@@ -96,7 +113,7 @@ function CreateAffiliateAccount(props) {
                   <TextField name={name.fieldName} margin="normal" fullWidth helperText={name.error} error={!!name.error} label="Nombre" onChange={event => wrapOnChange(event.target, name)} value={name.value} />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField name={surName.fieldName} fullWidth helperText={surName.error} error={!!surName.error} label="Apellido" onChange={event => wrapOnChange(event.target, surName)} value={surName.value} />
+                  <TextField name={lastName.fieldName} fullWidth helperText={lastName.error} error={!!lastName.error} label="Apellido" onChange={event => wrapOnChange(event.target, lastName)} value={lastName.value} />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField name={email.fieldName} fullWidth helperText={email.error} error={!!email.error} label="Email" onChange={event => wrapOnChange(event.target, email)} value={email.value} />
@@ -135,14 +152,25 @@ function CreateAffiliateAccount(props) {
                 <Grid item xs={6}>
                   <TextField name={nicNumber.fieldName} fullWidth helperText={nicNumber.error} error={!!nicNumber.error} label="Número de Documento" onChange={event => wrapOnChange(event.target, nicNumber)} value={nicNumber.value} />
                 </Grid>
+                <Grid item xs={12}>
+                  <ImageSelector photo={nicPhoto.value} onSelect={value => wrapOnChange({ value }, nicPhoto)} onUnSelect={() => wrapOnChange({ value: '' }, nicPhoto)} />
+                </Grid>
                 <Grid item xs={6}>
                   <TextField name={address.fieldName} fullWidth helperText={address.error} error={!!address.error} label="Dirección" onChange={event => wrapOnChange(event.target, address)} value={address.value} />
                 </Grid>
                 <Grid item xs={6}>
                   <TextField name={contactNumber.fieldName} fullWidth helperText={contactNumber.error} error={!!contactNumber.error} label="Telefono de Contacto" onChange={event => wrapOnChange(event.target, contactNumber)} value={contactNumber.value} />
                 </Grid>
+                <Grid item xs={6}>
+                  <TextField name={nationalMatriculation.fieldName} fullWidth helperText={nationalMatriculation.error} error={!!nationalMatriculation.error} label="Matricula Nacional" onChange={event => wrapOnChange(event.target, nationalMatriculation)} value={nationalMatriculation.value} />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField name={provincialMatriculation.fieldName} fullWidth helperText={provincialMatriculation.error} error={!!provincialMatriculation.error} label="Matrícula Provincial" onChange={event => wrapOnChange(event.target, provincialMatriculation)} value={provincialMatriculation.value} />
+                </Grid>
                 <Grid item xs={12}>
-                  <ImageSelector photo={nicPhoto.value} onSelect={value => wrapOnChange({ value }, nicPhoto)} onUnSelect={() => wrapOnChange({ value: '' }, nicPhoto)} />
+                  <TextField name={specialty.fieldName} fullWidth helperText={specialty.error} error={!!specialty.error} select label="Especialidad" onChange={event => wrapOnChange(event.target, specialty)} value={specialty.value}>
+                    {getSpecialtyItems(availableSpecialties)}
+                  </TextField>
                 </Grid>
               </Grid>
             </Grid>
@@ -168,4 +196,4 @@ function CreateAffiliateAccount(props) {
   );
 }
 
-export default withSnackbar(CreateAffiliateAccount);
+export default withSnackbar(CreateDoctorAccount);
