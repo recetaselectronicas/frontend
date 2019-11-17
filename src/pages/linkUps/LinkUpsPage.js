@@ -9,11 +9,11 @@ import withSnackbar from '../../components/hocs/withSnackbar';
 const LinkUpsPage = ({ showSuccess, showError }) => {
   const [requestsLinkups, refreshRequestsLinkups] = useRequestsLinkups();
   const [openDialog, setOpenDialog] = useState(false);
-  const [declineId, setDeclineId] = useState(null);
+  const [declineData, setDeclineData] = useState({});
   const onDecline = async (reason) => {
-    if (declineId) {
+    if (declineData) {
       try {
-        await LinksService.declineRequestLink(declineId, reason);
+        await LinksService.declineRequestLink(declineData.id, declineData.type, reason);
         await refreshRequestsLinkups();
         showSuccess('La vinculación fue declinada con exito');
       } catch (e) {
@@ -22,9 +22,9 @@ const LinkUpsPage = ({ showSuccess, showError }) => {
       }
     }
   };
-  const acceptRequestLinkup = async (id) => {
+  const acceptRequestLinkup = type => async (id) => {
     try {
-      await LinksService.acceptRequestLink(id, 'affiliate');
+      await LinksService.acceptRequestLink(id, type);
       await refreshRequestsLinkups();
       showSuccess('La vinculación fue aceptada con exito');
     } catch (e) {
@@ -32,22 +32,29 @@ const LinkUpsPage = ({ showSuccess, showError }) => {
       showError('No se pudo aceptar la vinculación');
     }
   };
-  const openDeclineModal = (id) => {
+  const openDeclineModal = type => (id) => {
     setOpenDialog(true);
-    setDeclineId(id);
+    setDeclineData({ id, type });
   };
   return (
     <Container>
       <RequestLinkupsList
-        title="Solicitudes de afiliamiento"
+        title="Solicitudes de pacientes"
         requests={requestsLinkups.affiliateRequests}
         isMedicalInsurance
-        onDecline={openDeclineModal}
-        onAccept={acceptRequestLinkup}
+        onDecline={openDeclineModal('affiliate')}
+        onAccept={acceptRequestLinkup('affiliate')}
+      />
+      <RequestLinkupsList
+        title="Solicitudes de doctores"
+        requests={requestsLinkups.doctorRequests}
+        isMedicalInsurance
+        onDecline={openDeclineModal('doctor')}
+        onAccept={acceptRequestLinkup('doctor')}
       />
       <ReasonDialog
         open={openDialog}
-        title={`¿ Esta seguro que quiere declinar la solicitud ${declineId}?`}
+        title={`¿ Esta seguro que quiere declinar la solicitud ${declineData.id}?`}
         handleClose={() => setOpenDialog(false)}
         onConfirm={onDecline}
       />

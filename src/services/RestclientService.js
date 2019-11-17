@@ -11,7 +11,7 @@ const errorRequestHandler = (error) => {
   // TODO : ver como hacer handlers de los errores una vez este mas avanzado el backend
   const { response } = error;
   if (response) {
-    if (response.status === 403) {
+    if (response.status === 403 && response.data.code === '2-002') {
       SessionService.logout();
       window.location.href = '/';
     }
