@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import { withRouter } from 'react-router-dom';
 
 function CreateAccountCongrats(props) {
-  const { email, name, surName } = props;
+  const { email, name, surName, lastName } = props;
 
   const login = () => {
     props.history.push('/login');
@@ -14,7 +14,7 @@ function CreateAccountCongrats(props) {
     <>
       <Container style={{ marginTop: '20px' }} maxWidth="md">
         <Card>
-          <CardHeader title={`Felicidades, ${surName.value} ${name.value}!`} titleTypographyProps={{ variant: 'h6', color: 'textPrimary' }} style={{ textAlign: 'center' }} />
+          <CardHeader title={`Felicidades, ${surName ? surName.value : lastName.value} ${name.value}!`} titleTypographyProps={{ variant: 'h6', color: 'textPrimary' }} style={{ textAlign: 'center' }} />
           <CardContent>
             <Typography paragraph align="center">
               Gracias por crear una cuenta en UNIFY. Solo falta que verifique su dirección de correro. Enviamos un mail a
