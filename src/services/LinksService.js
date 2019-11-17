@@ -16,10 +16,10 @@ export default class LinksService extends RestclientService {
     });
   }
 
-  static declineRequestLink(id, reason) {
+  static declineRequestLink(id, type, reason) {
     return this.put(`/session/link-up/requests/${id}`, {
       status: 'DECLINED',
-      type: 'affiliate',
+      type,
       reason,
     });
   }
