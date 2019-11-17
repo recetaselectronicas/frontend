@@ -27,7 +27,6 @@ export default function CreateAccount(props) {
     <>
       {accountData && (<CreateAccountCongrats {...accountData} />)}
       {!accountData && creationsMap[type] && creationsMap[type](onCreationSuccess, onCreationCancel)}
-      {creationsMap.pharmacist(onCreationSuccess, onCreationCancel)}
     </>
   );
 }
