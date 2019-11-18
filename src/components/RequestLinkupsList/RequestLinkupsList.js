@@ -40,7 +40,7 @@ export default ({
           <Typography>{title}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails style={{ display: 'initial' }}>
-          {requests.map(({ imageCredential, status, code, category, dateCreated, reason, id }) => (
+          {requests.map(({ imageCredential, status, code, category, dateCreated, reason, id, corporateName }) => (
             <div style={{
               border: '1px solid #c7b3b3',
               margin: '2em',
@@ -59,6 +59,14 @@ export default ({
                 )}
 
                 <div>
+                  {Boolean(corporateName) && !isMedicalInsurance && (
+                    <>
+                      Obra social :
+                      {' '}
+                      {corporateName}
+                      <br />
+                    </>
+                  )}
                   {statusLang[status]}
 
                   {Boolean(code) && (
@@ -77,7 +85,6 @@ export default ({
                     </>
                   )}
                   <br />
-                  {dateCreated}
                   {Boolean(reason) && (
                     <div>
                       Motivo :
@@ -85,6 +92,7 @@ export default ({
                       {reason}
                     </div>
                   )}
+                  {dateCreated}
                 </div>
               </div>
 
