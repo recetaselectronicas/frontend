@@ -72,8 +72,9 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
   const handleError = (error) => {
     if (error.message) {
       showError(i18n.get(error.message));
+    } else {
+      showError('Hubo un error inesperado lo sentimos !');
     }
-    showError('Hubo un error inesperado lo sentimos !');
   };
   const requestLink = async () => {
     try {
@@ -111,16 +112,31 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
   const canRequestLink = selectedmedicalInsurance
     || (isAffiliate && selectedmedicalInsurance && selectedPlan && Boolean(imageCredential) && Boolean(code) && Boolean(category));
 
-  const unlikMedicalInsurance = async (medicalInsurance) => {
-    try {
-      const request = {
+  const buildUnlikRequest = (medicalInsurance) => {
+    let request = {
+      medicalInsurance: {
+        id: medicalInsurance.id,
+      },
+    };
+    if (isAffiliate) {
+      request = {
+        ...request,
         medicalInsurance: {
-          id: medicalInsurance.id,
+          ...request.medicalInsurance,
+          plan: {
+            id: medicalInsurance.plans[0].id,
+          },
         },
       };
-      await LinksService.unlink(request);
+    }
+
+    return request;
+  };
+  const unlikMedicalInsurance = async (medicalInsurance) => {
+    try {
+      await LinksService.unlink(buildUnlikRequest(medicalInsurance));
       showSuccess('Se desvinculo con exito de la obra social !');
-      fetchData();
+      await fetchData();
     } catch (error) {
       handleError(error);
     }
