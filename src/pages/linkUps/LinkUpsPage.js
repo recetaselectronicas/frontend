@@ -52,6 +52,14 @@ const LinkUpsPage = ({ showSuccess, showError }) => {
         onDecline={openDeclineModal('doctor')}
         onAccept={acceptRequestLinkup('doctor')}
       />
+      <RequestLinkupsList
+        title="Solicitudes de farmaceuticos"
+        requests={requestsLinkups.pharmacistRequests}
+        isMedicalInsurance
+        onDecline={openDeclineModal('pharmacist')}
+        onAccept={acceptRequestLinkup('pharmacist')}
+      />
+
       <ReasonDialog
         open={openDialog}
         title={`¿ Esta seguro que quiere declinar la solicitud ${declineData.id}?`}

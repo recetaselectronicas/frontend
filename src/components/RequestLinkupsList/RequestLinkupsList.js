@@ -40,7 +40,7 @@ export default ({
           <Typography>{title}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails style={{ display: 'initial' }}>
-          {requests.map(request => (
+          {requests.map(({ imageCredential, status, code, category, dateCreated, reason, id }) => (
             <div style={{
               border: '1px solid #c7b3b3',
               margin: '2em',
@@ -52,45 +52,55 @@ export default ({
             }}
             >
               <div style={{ display: 'flex' }}>
-                <div style={{ minWidth: '100px', marginRight: '2em' }}>
-                  <img width={100} src={request.imageCredential} />
+                {Boolean(imageCredential) && (
+                  <div style={{ minWidth: '100px', marginRight: '2em' }}>
+                    <img width={100} src={imageCredential} />
+                  </div>
+                )}
 
-                </div>
                 <div>
-                  {statusLang[request.status]}
+                  {statusLang[status]}
 
+                  {Boolean(code) && (
+                    <>
+                      <br />
+                      Codigo :
+                      {code}
+                    </>
+                  )}
 
+                  {Boolean(category) && (
+                    <>
+                      <br />
+                      Categoria :
+                      {category}
+                    </>
+                  )}
                   <br />
-                  Codigo :
-                  {request.code}
-                  <br />
-                  Categoria:
-                  {request.category}
-                  <br />
-                  {request.dateCreated}
-                  {Boolean(request.reason) && (
+                  {dateCreated}
+                  {Boolean(reason) && (
                     <div>
                       Motivo :
                       {' '}
-                      {request.reason}
+                      {reason}
                     </div>
                   )}
                 </div>
               </div>
 
               <div>
-                {couldAccept(request.status) && onAccept && (
-                  <Button onClick={() => onAccept(request.id)}>
+                {couldAccept(status) && onAccept && (
+                  <Button onClick={() => onAccept(id)}>
                     Aceptar
                   </Button>
                 )}
-                {couldCancel(request.status) && onCancel && (
-                  <Button onClick={() => onCancel(request.id)}>
+                {couldCancel(status) && onCancel && (
+                  <Button onClick={() => onCancel(id)}>
                     CANCELAR
                   </Button>
                 )}
-                {couldDecline(request.status) && onDecline && (
-                  <Button onClick={() => onDecline(request.id)}>
+                {couldDecline(status) && onDecline && (
+                  <Button onClick={() => onDecline(id)}>
                     DECLINAR
                   </Button>
                 )}
