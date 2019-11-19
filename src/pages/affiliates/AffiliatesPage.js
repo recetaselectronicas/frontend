@@ -49,7 +49,7 @@ const AffiliatesPage = ({ showSuccess, showError }) => {
     };
     return (
         <Container>
-            <UsersList users={affiliates} unlink={unlink} />
+            <UsersList users={affiliates} unlink={unlink} emptyState='No tienes afiliados asociados' />
         </Container>
     );
 };

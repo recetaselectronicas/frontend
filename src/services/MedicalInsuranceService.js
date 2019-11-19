@@ -14,8 +14,8 @@ export default class MedicalInsuranceService extends RestclientService {
     return this.get('/medical-insurances/affiliates');
   }
 
-  static getPharmacits() {
-    return this.get('/medical-insurances/pharmacits');
+  static getPharmacists() {
+    return this.get('/medical-insurances/pharmacists');
   }
 
   static getByDoctor() {

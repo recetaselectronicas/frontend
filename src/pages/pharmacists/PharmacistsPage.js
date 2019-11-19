@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Container } from '@material-ui/core';
 import MedicalInsuranceService from '../../services/MedicalInsuranceService';
-import LinksService from '../../services/LinksService';
 import withSnackbar from '../../components/hocs/withSnackbar';
+import LinksService from '../../services/LinksService';
 import { UsersList } from '../../components/usersList/UsersList';
 
-const DoctorsPage = ({ showSuccess, showError }) => {
-    const [doctors, setDoctors] = useState([]);
+const PharmacistsPage = ({ showSuccess, showError }) => {
+    const [pharmacists, setPharmacists] = useState([]);
 
     async function fetchData() {
         try {
-            const data = await MedicalInsuranceService.getDoctors();
-            setDoctors(data);
+            const data = await MedicalInsuranceService.getPharmacists();
+            setPharmacists(data);
         } catch (error) {
             showError('Hubo un error inesperado lo sentimos !');
         }
     }
-
     useEffect(() => {
         fetchData();
     }, []);
@@ -29,14 +28,14 @@ const DoctorsPage = ({ showSuccess, showError }) => {
         }
     };
 
-    const unlink = async (doctor) => {
+    const unlink = async (pharmacist) => {
         try {
             await LinksService.unlink({
-                doctor: {
-                    id: doctor.id
+                pharmacist: {
+                    id: pharmacist.id
                 }
             })
-            showSuccess('Se desvinculo con exito el doctor !')
+            showSuccess('Se desvinculo con exito el farmaceutico !')
             await fetchData();
         } catch (error) {
             handleError(error)
@@ -45,9 +44,9 @@ const DoctorsPage = ({ showSuccess, showError }) => {
 
     return (
         <Container>
-            <UsersList users={doctors} unlink={unlink} emptyState='No tienes doctores asociados' />
+            <UsersList users={pharmacists} unlink={unlink} emptyState='No tienes farmaceuticos asociados' />
         </Container>
     );
 };
 
-export default withSnackbar(DoctorsPage);
+export default withSnackbar(PharmacistsPage);

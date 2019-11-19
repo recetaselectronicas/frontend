@@ -1,10 +1,11 @@
 import React from 'react';
-import { Paper, Button } from '@material-ui/core';
+import { Paper, Button, Typography } from '@material-ui/core';
 
 
-export const UsersList = ({ users, unlink }) => {
+export const UsersList = ({ users, unlink, emptyState }) => {
+    const isEmpty = users.length === 0
     return <div>
-        {users.map((user) => {
+        {!isEmpty ? users.map((user) => {
             const { name, lastName, birthDate, contactNumber, nationality, address, email, nationalMatriculation, nicNumber, gender } = user
             return (
                 <Paper style={{ padding: '2em', marginBottom: '2em', display: 'flex', justifyContent: 'space-between' }}>
@@ -28,7 +29,12 @@ export const UsersList = ({ users, unlink }) => {
                     </div>
                 </Paper>
             )
-        })
+        }) :
+            <Paper style={{ padding: '2em' }}>
+                <Typography variant="h5">
+                    {emptyState}
+                </Typography>
+            </Paper>
         }
     </div>
 
