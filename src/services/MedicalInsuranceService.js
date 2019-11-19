@@ -6,6 +6,18 @@ export default class MedicalInsuranceService extends RestclientService {
     return this.get('/medical-insurances');
   }
 
+  static getDoctors() {
+    return this.get('/medical-insurances/doctors');
+  }
+
+  static getAffiliates() {
+    return this.get('/medical-insurances/affiliates');
+  }
+
+  static getPharmacits() {
+    return this.get('/medical-insurances/pharmacits');
+  }
+
   static getByDoctor() {
     // return new Promise(res => res([{ id: 0, label: 'OSDE' }, { id: 1, label: 'Swiss medical' }, { id: 2, label: 'ACA Salud' }]));
     return this.get('/doctors/medical-insurances');
