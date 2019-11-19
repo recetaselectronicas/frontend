@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Paper, Container } from '@material-ui/core';
+import { Paper, Container, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import LinksService from '../../services/LinksService';
 import MedicalInsuranceService from '../../services/MedicalInsuranceService';
@@ -22,6 +22,7 @@ const i18n = {
 const MedicalInsurancesPage = ({ showSuccess, showError }) => {
   const [requestsLinkups, refreshRequestsLinkups] = useRequestsLinkups();
   const [medicalInsurances, setMedicalInsurances] = useState([]);
+  const [linkedMedicalInsurances, setLinkedMedicalInsurances] = useState([]);
   const [selectedmedicalInsurance, setSelectedMedicalInsurance] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [imageCredential, setImageCredential] = useState('');
@@ -29,10 +30,13 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
   const [category, setCategory] = useState('');
   const { type } = SessionService.getUserData();
   const isAffiliate = type === 'affiliate';
+
   async function fetchData() {
     try {
       const dataMedicalInsurance = await MedicalInsuranceService.getAll();
+      const medicalInsurancesLinked = await MedicalInsuranceService.getLinkedMedicalInsurances();
       setMedicalInsurances(dataMedicalInsurance);
+      setLinkedMedicalInsurances(medicalInsurancesLinked);
     } catch (error) {
       showError('Hubo un error inesperado lo sentimos !');
     }
@@ -65,7 +69,13 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
     }
     return response;
   };
-
+  const handleError = (error) => {
+    if (error.message) {
+      showError(i18n.get(error.message));
+    } else {
+      showError('Hubo un error inesperado lo sentimos !');
+    }
+  };
   const requestLink = async () => {
     try {
       let request = { medicalInsurance: buildMedicalInsuranceRequest() };
@@ -83,11 +93,7 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
       await refreshRequestsLinkups();
       showSuccess('Vinculación pedida con exito');
     } catch (error) {
-      if (error.message) {
-        showError(i18n.get(error.message));
-      } else {
-        showError('Hubo un error inesperado lo sentimos !');
-      }
+      handleError(error);
     }
   };
 
@@ -99,22 +105,76 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
       await refreshRequestsLinkups();
       showSuccess('Vinculación cancelada con exito');
     } catch (error) {
-      if (error.message) {
-        // TODO : preguntar que errores de negocio existen
-
-        showError(i18n.get(error.message));
-      }
-      showError('Hubo un error inesperado lo sentimos !');
+      handleError(error);
     }
   };
 
   const canRequestLink = selectedmedicalInsurance
     || (isAffiliate && selectedmedicalInsurance && selectedPlan && Boolean(imageCredential) && Boolean(code) && Boolean(category));
 
+  const buildUnlikRequest = (medicalInsurance) => {
+    let request = {
+      medicalInsurance: {
+        id: medicalInsurance.id,
+      },
+    };
+    if (isAffiliate) {
+      request = {
+        ...request,
+        medicalInsurance: {
+          ...request.medicalInsurance,
+          plan: {
+            id: medicalInsurance.plans[0].id,
+          },
+        },
+      };
+    }
 
+    return request;
+  };
+  const unlikMedicalInsurance = async (medicalInsurance) => {
+    try {
+      await LinksService.unlink(buildUnlikRequest(medicalInsurance));
+      showSuccess('Se desvinculo con exito de la obra social !');
+      await fetchData();
+    } catch (error) {
+      handleError(error);
+    }
+  };
+  const hasMedicalInsurancesLinked = linkedMedicalInsurances.length > 0;
   return (
     <Container>
 
+      <Paper style={{ padding: '2em', marginBottom: '1em' }}>
+        <Typography variant="h5"> Obras sociales vinculadas</Typography>
+        {hasMedicalInsurancesLinked ? linkedMedicalInsurances.map((medicalInsurance) => {
+          const { description, corporateName, contactNumber, address, email } = medicalInsurance;
+          return (
+            <div style={{
+              border: '1px solid #c7b3b3',
+              marginBottom: '2em',
+              marginTop: '0px',
+              display: 'flex',
+              borderRadius: '5px',
+              padding: '1em',
+              justifyContent: 'space-between',
+            }}
+            >
+              <div>
+                {description}
+                (
+                {corporateName}
+                )
+              </div>
+              <div>{address}</div>
+              <div>{contactNumber}</div>
+              <div>{email}</div>
+
+              <Button onClick={() => unlikMedicalInsurance(medicalInsurance)}> Desvincularse </Button>
+            </div>
+          );
+        }) : <Typography>No tienes obras sociales vinculadas</Typography>}
+      </Paper>
       <RequestLinkupsList
         title="Solicitudes para unirse a obras sociales"
         requests={requestsLinkups}

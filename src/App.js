@@ -17,6 +17,9 @@ import CreateAccount from './pages/createAccount/CreateAccount';
 import VerifyAccount from './pages/veifyAccount/verifyAccount';
 import MedicalInsurancesPage from './pages/medicalInsurances/MedicalInsurancesPage';
 import ProfilePage from './pages/profile/ProfilePage';
+import DoctorsPage from './pages/doctors/DoctorsPage';
+import AffiliatesPage from './pages/affiliates/AffiliatesPage';
+import PharmacitsPage from './pages/pharmacits/PharmacitsPage';
 
 const NoMatch = ({ location }) => (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -56,6 +59,7 @@ function App() {
           </>
         )}
         {userIsLogged && (
+          // estaria bueno scopear las urls
           <>
             <Switch>
               <Route path="/emitir" component={EmitRecipe} />
@@ -67,6 +71,9 @@ function App() {
               <Route path="/obras-sociales" exact component={MedicalInsurancesPage} />
               <Route path="/solicitudes" exact component={LinkUpsPage} />
               <Route path="/perfil" exact component={ProfilePage} />
+              <Route path="/afiliados" exact component={AffiliatesPage} />
+              <Route path="/doctores" exact component={DoctorsPage} />
+              <Route path="/farmaceuticos" exact component={PharmacitsPage} />
               <Route component={NoMatch} />
             </Switch>
           </>

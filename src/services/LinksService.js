@@ -30,4 +30,8 @@ export default class LinksService extends RestclientService {
       type,
     });
   }
+
+  static unlink(data) {
+    return this.post('/session/unlink', data);
+  }
 }
