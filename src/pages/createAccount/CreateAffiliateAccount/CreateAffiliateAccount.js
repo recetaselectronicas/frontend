@@ -89,23 +89,24 @@ function CreateAffiliateAccount(props) {
       <div style={{ paddingTop: '50px' }}>
         <Container maxWidth="md">
           <Paper>
+            <input type="hidden" value="justForDisablingAutocomplete" />
             <Grid container spacing={3}>
               <Grid item xs={1} />
               <Grid item container spacing={3} xs={4}>
                 <Grid item xs={12}>
-                  <TextField name={name.fieldName} margin="normal" fullWidth helperText={name.error} error={!!name.error} label="Nombre" onChange={event => wrapOnChange(event.target, name)} value={name.value} />
+                  <TextField name={name.fieldName} margin="normal" fullWidth helperText={name.error} error={!!name.error} label="Nombre" onChange={event => wrapOnChange(event.target, name)} value={name.value} autoComplete="off" />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField name={surName.fieldName} fullWidth helperText={surName.error} error={!!surName.error} label="Apellido" onChange={event => wrapOnChange(event.target, surName)} value={surName.value} />
+                  <TextField name={surName.fieldName} fullWidth helperText={surName.error} error={!!surName.error} label="Apellido" onChange={event => wrapOnChange(event.target, surName)} value={surName.value} autoComplete="off" />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField name={email.fieldName} fullWidth helperText={email.error} error={!!email.error} label="Email" onChange={event => wrapOnChange(event.target, email)} value={email.value} />
+                  <TextField name={email.fieldName} fullWidth helperText={email.error} error={!!email.error} label="Email" onChange={event => wrapOnChange(event.target, email)} value={email.value} autoComplete="off" />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField name={userName.fieldName} fullWidth helperText={userName.error} error={!!userName.error} label="Usuario" onChange={event => wrapOnChange(event.target, userName)} value={userName.value} />
+                  <TextField name={userName.fieldName} fullWidth helperText={userName.error} error={!!userName.error} label="Usuario" onChange={event => wrapOnChange(event.target, userName)} value={userName.value} autoComplete="off" />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField name={password.fieldName} fullWidth helperText={password.error} error={!!password.error} type="password" autoComplete="new-password" label="Password" onChange={event => wrapOnChange(event.target, password)} value={password.value} />
+                  <TextField name={password.fieldName} fullWidth helperText={password.error} error={!!password.error} type="password" label="Password" onChange={event => wrapOnChange(event.target, password)} value={password.value} autoComplete="new-password" />
                 </Grid>
               </Grid>
               <Grid item xs={1}>
@@ -114,35 +115,35 @@ function CreateAffiliateAccount(props) {
               <Grid item container spacing={3} xs={6}>
                 <Grid item xs={12}>
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <KeyboardDatePicker name={birthDate.fieldName} margin="normal" helperText={birthDate.error} error={!!birthDate.error} format="dd/MM/yyyy" label="Fecha de Nacimiento" onChange={value => wrapOnChange({ value }, birthDate)} value={birthDate.value} />
+                    <KeyboardDatePicker name={birthDate.fieldName} margin="normal" helperText={birthDate.error} error={!!birthDate.error} format="dd/MM/yyyy" label="Fecha de Nacimiento" onChange={value => wrapOnChange({ value }, birthDate)} value={birthDate.value} autoComplete="off" />
                   </MuiPickersUtilsProvider>
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField name={gender.fieldName} fullWidth helperText={gender.error} error={!!gender.error} select label="Sexo" onChange={event => wrapOnChange(event.target, gender)} value={gender.value}>
+                  <TextField name={gender.fieldName} fullWidth helperText={gender.error} error={!!gender.error} select label="Sexo" onChange={event => wrapOnChange(event.target, gender)} value={gender.value} autoComplete="off">
                     {getGenderItems(availableGenders)}
                   </TextField>
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField name={nationality.fieldName} fullWidth helperText={nationality.error} error={!!nationality.error} select label="Nacionalidad" onChange={event => wrapOnChange(event.target, nationality)} value={nationality.value}>
+                  <TextField name={nationality.fieldName} fullWidth helperText={nationality.error} error={!!nationality.error} select label="Nacionalidad" onChange={event => wrapOnChange(event.target, nationality)} value={nationality.value} autoComplete="off">
                     {getNationalityItems(availableNationalities)}
                   </TextField>
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField name={nicType.fieldName} fullWidth helperText={nicType.error} error={!!nicType.error} select label="Tipo de Documento" onChange={event => wrapOnChange(event.target, nicType)} value={nicType.value}>
+                  <TextField name={nicType.fieldName} fullWidth helperText={nicType.error} error={!!nicType.error} select label="Tipo de Documento" onChange={event => wrapOnChange(event.target, nicType)} value={nicType.value} autoComplete="off">
                     {getNicTypeItems(availableNicTypes)}
                   </TextField>
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField name={nicNumber.fieldName} fullWidth helperText={nicNumber.error} error={!!nicNumber.error} label="Número de Documento" onChange={event => wrapOnChange(event.target, nicNumber)} value={nicNumber.value} />
+                  <TextField name={nicNumber.fieldName} fullWidth helperText={nicNumber.error} error={!!nicNumber.error} label="Número de Documento" onChange={event => wrapOnChange(event.target, nicNumber)} value={nicNumber.value} autoComplete="off" />
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField name={address.fieldName} fullWidth helperText={address.error} error={!!address.error} label="Dirección" onChange={event => wrapOnChange(event.target, address)} value={address.value} />
+                  <TextField name={address.fieldName} fullWidth helperText={address.error} error={!!address.error} label="Dirección" onChange={event => wrapOnChange(event.target, address)} value={address.value} autoComplete="off" />
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField name={contactNumber.fieldName} fullWidth helperText={contactNumber.error} error={!!contactNumber.error} label="Telefono de Contacto" onChange={event => wrapOnChange(event.target, contactNumber)} value={contactNumber.value} />
+                  <TextField name={contactNumber.fieldName} fullWidth helperText={contactNumber.error} error={!!contactNumber.error} label="Telefono de Contacto" onChange={event => wrapOnChange(event.target, contactNumber)} value={contactNumber.value} autoComplete="off" />
                 </Grid>
                 <Grid item xs={12}>
-                  <ImageSelector photo={nicPhoto.value} onSelect={value => wrapOnChange({ value }, nicPhoto)} onUnSelect={() => wrapOnChange({ value: '' }, nicPhoto)} />
+                  <ImageSelector photo={nicPhoto.value} onSelect={value => wrapOnChange({ value }, nicPhoto)} onUnSelect={() => wrapOnChange({ value: '' }, nicPhoto)} autoComplete="off" />
                 </Grid>
               </Grid>
             </Grid>

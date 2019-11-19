@@ -15,6 +15,14 @@ export default class UserService extends RestclientService {
     return this.get('/session/data');
   }
 
+  static getDataFields() {
+    return this.get('/session/data/fields');
+  }
+
+  static updateDataFields(data) {
+    return this.put('/session/data/fields', data);
+  }
+
   static async getConfiguration() {
     return this.get('/session/configuration');
   }
