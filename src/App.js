@@ -19,7 +19,7 @@ import MedicalInsurancesPage from './pages/medicalInsurances/MedicalInsurancesPa
 import ProfilePage from './pages/profile/ProfilePage';
 import DoctorsPage from './pages/doctors/DoctorsPage';
 import AffiliatesPage from './pages/affiliates/AffiliatesPage';
-import PharmacitsPage from './pages/pharmacits/PharmacitsPage';
+import PharmacistsPage from './pages/pharmacists/PharmacistsPage';
 
 const NoMatch = ({ location }) => (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -73,7 +73,7 @@ function App() {
               <Route path="/perfil" exact component={ProfilePage} />
               <Route path="/afiliados" exact component={AffiliatesPage} />
               <Route path="/doctores" exact component={DoctorsPage} />
-              <Route path="/farmaceuticos" exact component={PharmacitsPage} />
+              <Route path="/farmaceuticos" exact component={PharmacistsPage} />
               <Route component={NoMatch} />
             </Switch>
           </>
