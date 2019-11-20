@@ -2,7 +2,7 @@ import React from 'react';
 import { Paper, Button, Typography } from '@material-ui/core';
 
 
-export const UsersList = ({ users, unlink, emptyState }) => {
+export const UsersList = ({ users, onClick, emptyState, labelButton }) => {
     const isEmpty = users.length === 0
     return <div>
         {!isEmpty ? users.map((user) => {
@@ -25,7 +25,7 @@ export const UsersList = ({ users, unlink, emptyState }) => {
                         {Boolean(gender) && <div>{gender}</div>}
                     </div>
                     <div>
-                        <Button onClick={() => unlink(user)} >Desvincular </Button>
+                        <Button onClick={() => onClick(user)} > {labelButton} </Button>
                     </div>
                 </Paper>
             )

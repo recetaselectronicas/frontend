@@ -26,4 +26,8 @@ export default class MedicalInsuranceService extends RestclientService {
   static getLinkedMedicalInsurances() {
     return this.get('/session/medical-insurances');
   }
+
+  static getPlans() {
+    return this.get('/medical-insurances/plans');
+  }
 }

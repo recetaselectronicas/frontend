@@ -44,7 +44,7 @@ const PharmacistsPage = ({ showSuccess, showError }) => {
 
     return (
         <Container>
-            <UsersList users={pharmacists} unlink={unlink} emptyState='No tienes farmaceuticos asociados' />
+            <UsersList users={pharmacists} onClick={unlink} emptyState='No tienes farmaceuticos asociados' labelButton="Desvincular" />
         </Container>
     );
 };
