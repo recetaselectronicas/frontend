@@ -30,7 +30,7 @@ const AffiliatesPage = ({ showSuccess, showError }) => {
     } catch (error) {
       showError('Hubo un error inesperado lo sentimos !');
     }
-  });
+  }, []);
   useEffect(() => {
     fetchData();
   }, []);
