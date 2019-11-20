@@ -112,7 +112,26 @@ const ProfilePage = (props) => {
       </Container>
     );
   }
-  const { profileImage, name, surname, userName, birthDate, gender, contactNumber, email, address, nationality, nicType, nicNumber, nicPhoto } = profile;
+  const {
+    profileImage,
+    name,
+    surname,
+    lastName,
+    userName,
+    birthDate,
+    gender,
+    contactNumber,
+    email,
+    address,
+    nationality,
+    nicType,
+    nicNumber,
+    nicPhoto,
+    nationalMatriculation,
+    provincialMatriculation,
+    matriculation,
+    specialty,
+  } = profile;
   return (
     <Container maxWidth="md" fixed style={{ marginTop: '16px' }}>
       <input type="hidden" value="justForDisablingAutocomplete" />
@@ -134,7 +153,7 @@ const ProfilePage = (props) => {
               <SimpleInput field={name} disabled={isDisabled(name)} onChange={onFieldChange} />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <SimpleInput field={surname} disabled={isDisabled(surname)} onChange={onFieldChange} />
+              <SimpleInput field={surname || lastName} disabled={isDisabled(surname || lastName)} onChange={onFieldChange} />
             </Grid>
             <Grid item xs={12} sm={4}>
               <SelectInput field={nationality} disabled={isDisabled(nationality)} onChange={onFieldChange} />
@@ -171,6 +190,26 @@ const ProfilePage = (props) => {
             <Grid item xs={12} sm={12}>
               <SimpleInput field={email} disabled={isDisabled(email)} onChange={onFieldChange} />
             </Grid>
+            {nationalMatriculation && (
+              <Grid item xs={12} sm={6}>
+                <SimpleInput field={nationalMatriculation} disabled={isDisabled(nationalMatriculation)} onChange={onFieldChange} />
+              </Grid>
+            )}
+            {provincialMatriculation && (
+              <Grid item xs={12} sm={6}>
+                <SimpleInput field={provincialMatriculation} disabled={isDisabled(provincialMatriculation)} onChange={onFieldChange} />
+              </Grid>
+            )}
+            {matriculation && (
+              <Grid item xs={12} sm={6}>
+                <SimpleInput field={matriculation} disabled={isDisabled(matriculation)} onChange={onFieldChange} />
+              </Grid>
+            )}
+            {specialty && (
+              <Grid item xs={12} sm={6}>
+                <SelectInput field={specialty} disabled={isDisabled(specialty)} onChange={onFieldChange} />
+              </Grid>
+            )}
             <Grid container item justify="flex-end" spacing={3}>
               {editing && (
                 <>

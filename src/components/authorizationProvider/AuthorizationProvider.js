@@ -50,6 +50,7 @@ export default function AuthorizationProvider(props) {
 
   return (
     <>
+      <input type="hidden" value="justForDisablingAutocomplete" />
       <Dialog open>
         <DialogTitle>
           {`Se requiere autenticación del ${userTypeMap[userType]}`}
@@ -61,17 +62,17 @@ export default function AuthorizationProvider(props) {
           {authenticationType === authenticationTypes.userAndPass && (
             <Grid container>
               <Grid item xs={12}>
-                <TextField name="username" helperText={errors.username} error={!!errors.username} fullWidth label="Usuario" onChange={updateField} value={authenticationData.username} />
+                <TextField name="username" helperText={errors.username} error={!!errors.username} fullWidth label="Usuario" onChange={updateField} value={authenticationData.username} autoComplete="off" />
               </Grid>
               <Grid item xs={12}>
-                <TextField name="password" helperText={errors.password} error={!!errors.password} margin="normal" fullWidth label="Contraseña" type="password" autoComplete="new-password" onChange={updateField} value={authenticationData.password} />
+                <TextField name="password" helperText={errors.password} error={!!errors.password} margin="normal" fullWidth label="Contraseña" type="password" onChange={updateField} value={authenticationData.password} autoComplete="new-password" />
               </Grid>
             </Grid>
           )}
           {authenticationType === authenticationTypes.twoFactor && (
             <Grid container>
               <Grid item xs={12}>
-                <TextField name="code" helperText={errors.code} error={!!errors.code} fullWidth label="Código" autoComplete="one-time-code" onChange={updateField} value={authenticationData.code} />
+                <TextField name="code" helperText={errors.code} error={!!errors.code} fullWidth label="Código" onChange={updateField} value={authenticationData.code} autoComplete="off" />
               </Grid>
             </Grid>
           )}
