@@ -35,8 +35,9 @@ export const translateProfileErrors = (profile) => {
     'Field is not editable': 'Campo no editable',
     'Field is required': 'Campo requerido',
     'Invalid field value': 'Valor inválido',
-    'NicNumber allready registered': 'Número ya registrado',
-    'NicNumber allready registered for this type': 'Tipo+Número ya registrados',
+    'NicNumber already registered': 'Número ya registrado',
+    'NicNumber already registered for this type': 'Tipo+Número ya registrados',
+    'Matriculation already registered': 'Matrícula ya registrada',
   };
   Object.keys(profile).forEach((key) => {
     if (profile[key] && profile[key].error && translates[profile[key].error]) {
