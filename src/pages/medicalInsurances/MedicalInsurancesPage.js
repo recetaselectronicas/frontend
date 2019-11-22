@@ -137,6 +137,7 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
       await LinksService.unlink(buildUnlikRequest(medicalInsurance));
       showSuccess('Se desvinculo con exito de la obra social !');
       await fetchData();
+      await refreshRequestsLinkups();
     } catch (error) {
       handleError(error);
     }

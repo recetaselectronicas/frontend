@@ -17,6 +17,8 @@ const statusLang = {
   ACCEPTED: 'Aceptada',
 };
 
+const Shower = ({ label, attribute }) => Boolean(attribute) && <>{label}: {attribute} <br /></>
+
 export default ({
   requests = [],
   onCancel = false,
@@ -28,7 +30,6 @@ export default ({
   const couldCancel = status => isPending(status) && !isMedicalInsurance;
   const couldDecline = status => isPending(status) && isMedicalInsurance;
   const couldAccept = status => isPending(status) && isMedicalInsurance;
-
   return (
     <Paper style={{ marginBottom: '2em' }}>
       <ExpansionPanel>
@@ -40,86 +41,94 @@ export default ({
           <Typography>{title}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails style={{ display: 'initial' }}>
-          {requests.map(({ imageCredential, status, code, category, dateCreated, reason, id, corporateName }) => (
-            <div style={{
-              border: '1px solid #c7b3b3',
-              margin: '2em',
-              marginTop: '0px',
-              display: 'flex',
-              borderRadius: '5px',
-              padding: '1em',
-              justifyContent: 'space-between',
-            }}
-            >
-              <div style={{ display: 'flex' }}>
-                {Boolean(imageCredential) && (
-                  <div style={{ minWidth: '100px', marginRight: '2em' }}>
-                    <img width={100} src={imageCredential} />
-                  </div>
-                )}
+          {
+            requests.map(
+              ({
+                imageCredential,
+                status,
+                code,
+                category,
+                dateCreated,
+                reason,
+                corporateName,
+                name,
+                lastName,
+                nicNumber,
+                contactNumber,
+                email,
+                matriculation,
+                nationalMatriculation,
+                idRequest
+              }) => {
+                const medicalIsuranceData = isMedicalInsurance && (
+                  <>
+                    {Boolean(name) && Boolean(lastName) &&
+                      (
+                        <>
+                          Nombre: {name}, {lastName}
+                          <br />
+                        </>
+                      )
+                    }
+                    <Shower label="Numero de documento" attribute={nicNumber} />
+                    <Shower label="Numero de contacto" attribute={contactNumber} />
+                    <Shower label="Email" attribute={email} />
+                    <Shower label="Matricula" attribute={matriculation} />
+                    <Shower label="Matricula nacional" attribute={nationalMatriculation} />
 
-                <div>
-                  {Boolean(corporateName) && !isMedicalInsurance && (
-                    <>
-                      Obra social :
-                      {' '}
-                      {corporateName}
-                      <br />
-                    </>
-                  )}
-                  {statusLang[status]}
+                  </>)
 
-                  {Boolean(code) && (
-                    <>
-                      <br />
-                      Codigo :
-                      {code}
-                    </>
-                  )}
+                return <div style={{
+                  border: '1px solid #c7b3b3',
+                  margin: '2em',
+                  marginTop: '0px',
+                  display: 'flex',
+                  borderRadius: '5px',
+                  padding: '1em',
+                  justifyContent: 'space-between',
+                }}
+                >
+                  <div style={{ display: 'flex' }}>
+                    {Boolean(imageCredential) && (
+                      <div style={{ minWidth: '100px', marginRight: '2em' }}>
+                        <img width={100} src={imageCredential} />
+                      </div>
+                    )}
 
-                  {Boolean(category) && (
-                    <>
-                      <br />
-                      Categoria :
-                      {category}
-                    </>
-                  )}
-                  <br />
-                  {Boolean(reason) && (
                     <div>
-                      Motivo :
-                      {' '}
-                      {reason}
+                      <Shower label="Id" attribute={idRequest} />
+
+                      Estado: {statusLang[status]}
+                      <br />
+                      {!isMedicalInsurance && <Shower label="Obra social" attribute={corporateName} />}
+                      {medicalIsuranceData}
+                      <Shower label="Codigo" attribute={code} />
+                      <Shower label="Categoria" attribute={category} />
+                      <Shower label="Motivo" attribute={reason} />
+                      {dateCreated}
                     </div>
-                  )}
-                  {dateCreated}
+                  </div>
+
+                  <div>
+                    {couldAccept(status) && onAccept && (
+                      <Button onClick={() => onAccept(idRequest)}>
+                        Aceptar
+                    </Button>)}
+                    {couldCancel(status) && onCancel && (
+                      <Button onClick={() => onCancel(idRequest)}>
+                        CANCELAR
+                      </Button>)}
+                    {couldDecline(status) && onDecline && (
+                      <Button onClick={() => onDecline(idRequest)}>
+                        DECLINAR
+                       </Button>)}
+                  </div>
                 </div>
-              </div>
-
-              <div>
-                {couldAccept(status) && onAccept && (
-                  <Button onClick={() => onAccept(id)}>
-                    Aceptar
-                  </Button>
-                )}
-                {couldCancel(status) && onCancel && (
-                  <Button onClick={() => onCancel(id)}>
-                    CANCELAR
-                  </Button>
-                )}
-                {couldDecline(status) && onDecline && (
-                  <Button onClick={() => onDecline(id)}>
-                    DECLINAR
-                  </Button>
-                )}
-              </div>
+              })}
 
 
-            </div>
-          ))}
         </ExpansionPanelDetails>
       </ExpansionPanel>
-      <div />
 
     </Paper>
   );
