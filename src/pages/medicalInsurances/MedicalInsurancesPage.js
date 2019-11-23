@@ -109,8 +109,7 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
     }
   };
 
-  const canRequestLink = selectedmedicalInsurance
-    || (isAffiliate && selectedmedicalInsurance && selectedPlan && Boolean(imageCredential) && Boolean(code) && Boolean(category));
+
 
   const buildUnlikRequest = (medicalInsurance) => {
     let request = {
@@ -143,6 +142,9 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
     }
   };
   const hasMedicalInsurancesLinked = linkedMedicalInsurances.length > 0;
+
+  const canRequestLink = (!isAffiliate && selectedmedicalInsurance)
+    || (isAffiliate && selectedmedicalInsurance && selectedPlan && Boolean(imageCredential) && Boolean(code) && Boolean(category));
   return (
     <Container>
 

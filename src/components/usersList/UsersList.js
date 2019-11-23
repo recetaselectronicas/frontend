@@ -1,40 +1,44 @@
 import React from 'react';
 import { Paper, Button, Typography } from '@material-ui/core';
+import { Shower } from '../shower/Shower';
 
 
 export const UsersList = ({ users, onClick, emptyState, labelButton }) => {
+    if (!users) {
+        return null
+    }
     const isEmpty = users.length === 0
     return <div>
         {!isEmpty ? users.map((user) => {
-            const { name, lastName, birthDate, contactNumber, nationality, address, email, nationalMatriculation, nicNumber, gender } = user
+            const { id, name, lastName, birthDate, contactNumber, nationality, address, email, nationalMatriculation, nicNumber, gender } = user
             return (
-                <Paper style={{ padding: '2em', marginBottom: '2em', display: 'flex', justifyContent: 'space-between' }}>
+                <Paper key={id} style={{ padding: '2em', marginBottom: '2em', display: 'flex', justifyContent: 'space-between' }}>
                     <div>
                         {Boolean(name) && Boolean(lastName) && (
                             <div>
-                                {name}, {lastName}
+                                Nombre: {name}, {lastName}
                             </div>
                         )}
-                        {Boolean(birthDate) && <div>{birthDate}</div>}
-                        {Boolean(contactNumber) && <div>{contactNumber}</div>}
-                        {Boolean(nationality) && <div>{nationality}</div>}
-                        {Boolean(address) && <div>{address}</div>}
-                        {Boolean(email) && <div>{email}</div>}
-                        {Boolean(nationalMatriculation) && <div>{nationalMatriculation}</div>}
-                        {Boolean(nicNumber) && <div>{}</div>}
-                        {Boolean(gender) && <div>{gender}</div>}
+                        <Shower label="Fecha de nacimiento" attribute={birthDate} />
+                        <Shower label="Numero de contacto" attribute={contactNumber} />
+                        <Shower label="Nacionalidad" attribute={nationality} />
+                        <Shower label="Dirección" attribute={address} />
+                        <Shower label="Email" attribute={email} />
+                        <Shower label="Matricula nacional" attribute={nationalMatriculation} />
+                        <Shower label="Numero de documento" attribute={nicNumber} />
+                        <Shower label="Sexo" attribute={gender} />
                     </div>
                     <div>
                         <Button onClick={() => onClick(user)} > {labelButton} </Button>
                     </div>
                 </Paper>
             )
-        }) :
+        }) : (emptyState &&
             <Paper style={{ padding: '2em' }}>
                 <Typography variant="h5">
                     {emptyState}
                 </Typography>
-            </Paper>
+            </Paper>)
         }
     </div>
 

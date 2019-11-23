@@ -7,6 +7,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Shower } from '../shower/Shower';
 
 const PENDING = 'PENDING';
 const isPending = status => status === 'PENDING';
@@ -17,7 +18,6 @@ const statusLang = {
   ACCEPTED: 'Aceptada',
 };
 
-const Shower = ({ label, attribute }) => Boolean(attribute) && <>{label}: {attribute} <br /></>
 
 export default ({
   requests = [],
@@ -64,10 +64,9 @@ export default ({
                   <>
                     {Boolean(name) && Boolean(lastName) &&
                       (
-                        <>
+                        <div>
                           Nombre: {name}, {lastName}
-                          <br />
-                        </>
+                        </div>
                       )
                     }
                     <Shower label="Numero de documento" attribute={nicNumber} />
@@ -97,9 +96,7 @@ export default ({
 
                     <div>
                       <Shower label="Id" attribute={idRequest} />
-
-                      Estado: {statusLang[status]}
-                      <br />
+                      <Shower label="Estado" attribute={statusLang[status]} />
                       {!isMedicalInsurance && <Shower label="Obra social" attribute={corporateName} />}
                       {medicalIsuranceData}
                       <Shower label="Codigo" attribute={code} />
