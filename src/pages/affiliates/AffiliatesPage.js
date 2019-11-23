@@ -31,10 +31,11 @@ const AffiliatesPage = ({ showSuccess, showError }) => {
     } catch (error) {
       showError('Hubo un error inesperado lo sentimos !');
     }
-  }, []);
+  }, [showError]);
+
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const unlink = async (affiliate) => {
     try {
@@ -112,8 +113,8 @@ const AffiliatesPage = ({ showSuccess, showError }) => {
   }
   const linkupButtonDisabled = !code || !category || !imageCredential || !selectedPlan || !selectedPatient
   return (
-    <Container>
-      <Paper style={{ padding: '2em' }}>
+    <Container className="page">
+      <Paper style={{ padding: '2em', marginBottom: '2em' }}>
         <div>
           {!affiliateFlow && <Button onClick={() => setAddAffiliateFlow(true)}>Agregar a un afiliado</Button>}
           {affiliateFlow && <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -171,7 +172,7 @@ const AffiliatesPage = ({ showSuccess, showError }) => {
           </div>
         )}
       </Paper>
-      <Typography variant="h5">Usuarios afiliados</Typography>
+      <Typography variant="h5" style={{ marginBottom: '1em' }}>Usuarios afiliados</Typography>
       <UsersList users={affiliates} onClick={unlink} emptyState="No tienes afiliados asociados" labelButton="Desvincular" />
     </Container>
   );

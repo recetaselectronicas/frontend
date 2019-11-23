@@ -77,7 +77,7 @@ export default ({
 
                   </>)
 
-                return <div style={{
+                return <div key={idRequest} style={{
                   border: '1px solid #c7b3b3',
                   margin: '2em',
                   marginTop: '0px',
@@ -90,7 +90,7 @@ export default ({
                   <div style={{ display: 'flex' }}>
                     {Boolean(imageCredential) && (
                       <div style={{ minWidth: '100px', marginRight: '2em' }}>
-                        <img width={100} src={imageCredential} />
+                        <img width={100} src={imageCredential} alt="Foto de la credencial" />
                       </div>
                     )}
 

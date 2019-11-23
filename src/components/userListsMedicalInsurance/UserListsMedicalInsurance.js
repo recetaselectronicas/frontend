@@ -28,7 +28,7 @@ const UserListsMedicalInsurance = ({ showSuccess, showError, findUsers, entity, 
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [fetchData]);
 
     const cleanInputs = () => {
         setNicnumber('')
@@ -93,7 +93,7 @@ const UserListsMedicalInsurance = ({ showSuccess, showError, findUsers, entity, 
     }
 
     return (
-        <Container>
+        <Container className="page">
             <Paper style={{ padding: '2em', marginBottom: '2em' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Typography variant="h5">Agregar un {label}</Typography>

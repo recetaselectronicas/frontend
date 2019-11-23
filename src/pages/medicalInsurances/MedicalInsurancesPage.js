@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Paper, Container, Typography } from '@material-ui/core';
@@ -31,7 +31,7 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
   const { type } = SessionService.getUserData();
   const isAffiliate = type === 'affiliate';
 
-  async function fetchData() {
+  const fetchData = useCallback(async () => {
     try {
       const dataMedicalInsurance = await MedicalInsuranceService.getAll();
       const medicalInsurancesLinked = await MedicalInsuranceService.getLinkedMedicalInsurances();
@@ -40,10 +40,10 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
     } catch (error) {
       showError('Hubo un error inesperado lo sentimos !');
     }
-  }
+  }, [showError])
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const getPlans = () => selectedmedicalInsurance.plans || [];
 
@@ -146,14 +146,14 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
   const canRequestLink = (!isAffiliate && selectedmedicalInsurance)
     || (isAffiliate && selectedmedicalInsurance && selectedPlan && Boolean(imageCredential) && Boolean(code) && Boolean(category));
   return (
-    <Container>
+    <Container className="page">
 
       <Paper style={{ padding: '2em', marginBottom: '1em' }}>
         <Typography variant="h5"> Obras sociales vinculadas</Typography>
         {hasMedicalInsurancesLinked ? linkedMedicalInsurances.map((medicalInsurance) => {
-          const { description, corporateName, contactNumber, address, email } = medicalInsurance;
+          const { id, description, corporateName, contactNumber, address, email } = medicalInsurance;
           return (
-            <div style={{
+            <div key={id} style={{
               border: '1px solid #c7b3b3',
               marginBottom: '2em',
               marginTop: '0px',
