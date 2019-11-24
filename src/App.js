@@ -76,6 +76,7 @@ function App() {
               <Route path="/doctores" exact component={DoctorsPage} />
               <Route path="/farmaceuticos" exact component={PharmacistsPage} />
               <Route path="/statistics" exact component={StatisticsPage} />
+              <Route path="/verify-account" exact component={VerifyAccount} />
               <Route component={NoMatch} />
             </Switch>
           </>
