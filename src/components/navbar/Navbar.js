@@ -39,7 +39,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function MenuAppBar(props) {
+const localRoutes = [
+  {
+    url: '/configuracion',
+    label: 'Configuración'
+  },
+  {
+    url: '/',
+    label: 'Home'
+  }
+]
+
+function MenuAppBar({ history, location, setUserIsLogged }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -73,21 +84,31 @@ function MenuAppBar(props) {
   }
   const onSelectedItem = (item) => {
     setState({ ...state, open: false });
-    props.history.push(item.url);
+    history.push(item.url);
   };
   const goHome = () => {
-    props.history.push(userIsLogged ? '/recetas' : '/');
+    history.push(userIsLogged ? '/recetas' : '/');
   };
   const logout = () => {
     SessionService.logout();
-    props.setUserIsLogged(false);
-    props.history.push('/');
+    setUserIsLogged(false);
+    history.push('/');
     handleClose();
   };
   const goConfiguration = () => {
-    props.history.push('/configuracion');
+    history.push('/configuracion');
     handleClose();
   };
+
+  const getActualPage = () => {
+    const searchUrl = menuItem => menuItem.url === location.pathname
+    const page = menu.find(searchUrl) || localRoutes.find(searchUrl)
+    if (page) {
+      return page.label
+    } else {
+      return location.pathname.replace("/", "")
+    }
+  }
 
   return (
     <div className={classes.root}>
@@ -106,7 +127,7 @@ function MenuAppBar(props) {
           )}
           <img src={unifyLogo} alt="" width={25} onClick={goHome} style={{ cursor: 'pointer' }} />
           <Typography variant="h6" className={classes.title} onClick={goHome}>
-            Unify
+            Unify - <span style={{ textTransform: 'capitalize' }}>{getActualPage()}</span>
           </Typography>
 
           {userIsLogged && (

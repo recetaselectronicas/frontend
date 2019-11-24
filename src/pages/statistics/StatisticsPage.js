@@ -6,7 +6,7 @@ import SortableHeader from './components/SortableHeader';
 import { rows, getStatusTraduction, getNewDebouncer } from './StatisticsUtils';
 import StatisticFilter from './components/StatisticFilter';
 
-let updateStatisticsWithDebounce = getNewDebouncer(() => {});
+let updateStatisticsWithDebounce = getNewDebouncer(() => { });
 
 export default function StatisticsPage() {
   const [results, setResults] = useState([]);
@@ -57,9 +57,8 @@ export default function StatisticsPage() {
       })
       .catch(err => console.error(err));
   };
-
+  const hasResults = results.length > 0
   return (
-    <>
       <Container maxWidth="lg" fixed style={{ padding: '16px' }}>
         <Paper style={{ padding: '16px', marginBottom: '8px' }}>
           <Grid container>
@@ -104,7 +103,13 @@ export default function StatisticsPage() {
                 <Typography variant="button">
                   Descargar como
                   {['csv', 'xml', 'json'].map(type => (
-                    <Button key={type} color="primary" variant="outlined" onClick={() => downloadStatistics(type)} style={{ margin: '8px' }}>{type}</Button>
+                    <Button 
+                     disabled={!hasResults}
+                     key={type}
+                     color="primary" 
+                     variant="outlined" 
+                     onClick={() => downloadStatistics(type)} 
+                     style={{ margin: '8px' }}>{type}</Button>
                   ))}
                 </Typography>
               </Grid>
@@ -112,6 +117,5 @@ export default function StatisticsPage() {
           </Grid>
         </Paper>
       </Container>
-    </>
   );
 }
