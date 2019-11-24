@@ -182,6 +182,7 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
         title="Solicitudes para unirse a obras sociales"
         requests={requestsLinkups}
         onCancel={cancelRequestLink}
+        emptyState="Aun no has hecho ninguna solicitud"
       />
 
       <Paper style={{ padding: '2em' }}>
