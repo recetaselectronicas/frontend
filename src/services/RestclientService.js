@@ -1,9 +1,9 @@
 import axios from 'axios';
-import config from '../config/default';
 import SessionService from './SessionService';
 
+const { REACT_APP_API_URL, REACT_APP_PORT } = process.env
 const restclient = axios.create({
-  baseURL: config.baseUrl,
+  baseURL: `${REACT_APP_API_URL}:${REACT_APP_PORT}`,
   timeout: 1000,
 });
 const sucessfullRequestHandler = request => request.data;

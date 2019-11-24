@@ -1,7 +1,7 @@
 
 
 import React, { useState } from 'react';
-import { Paper, Button, FormControlLabel } from '@material-ui/core';
+import { Paper, Button, FormControlLabel, Grid } from '@material-ui/core';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -130,14 +130,17 @@ const RequestCard = ({
     justifyContent: 'space-between',
   }}
   >
-    <div style={{ display: 'flex' }}>
+    <Grid container>
       {Boolean(imageCredential) && (
-        <div style={{ minWidth: '100px', marginRight: '2em' }}>
-          <img width={100} src={imageCredential} alt="Foto de la credencial" />
-        </div>
+        <Grid item xs={12} sm={2} style={{ textAlign: 'center' }}>
+          <div style={{ marginRight: '2em' }}>
+            <img width={100} src={imageCredential} alt="Foto de la credencial" />
+          </div>
+        </Grid>
       )}
 
-      <div>
+      <Grid item xs={12} sm={8} style={{ paddingLeft: '1em' }}>
+
         <Shower label="Id" attribute={idRequest} />
         <Shower label="Estado" attribute={statusLang[status]} />
         {!isMedicalInsurance && <Shower label="Obra social" attribute={corporateName} />}
@@ -146,22 +149,23 @@ const RequestCard = ({
         <Shower label="Categoria" attribute={category} />
         <Shower label="Motivo" attribute={reason} />
         {dateCreated}
-      </div>
-    </div>
+      </Grid>
 
-    <div>
-      {couldAccept(status) && onAccept && (
-        <Button onClick={() => onAccept(idRequest)}>
-          Aceptar
+      <Grid item xs={12} sm={2}>
+        {couldAccept(status) && onAccept && (
+          <Button onClick={() => onAccept(idRequest)}>
+            Aceptar
       </Button>)}
-      {couldCancel(status) && onCancel && (
-        <Button onClick={() => onCancel(idRequest)}>
-          CANCELAR
+        {couldCancel(status) && onCancel && (
+          <Button onClick={() => onCancel(idRequest)}>
+            CANCELAR
         </Button>)}
-      {couldDecline(status) && onDecline && (
-        <Button onClick={() => onDecline(idRequest)}>
-          DECLINAR
+        {couldDecline(status) && onDecline && (
+          <Button onClick={() => onDecline(idRequest)}>
+            DECLINAR
          </Button>)}
-    </div>
+
+      </Grid>
+    </Grid>
   </div>
 }

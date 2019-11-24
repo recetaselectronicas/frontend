@@ -39,7 +39,7 @@ export default function HomePage(props) {
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
-      <Grid item xs={12} component={Paper} square className={classes.image}>
+      <Grid item xs={12} component={Paper} square className={`${classes.image} image`}>
         <div onClick={onClick('affiliate')} className="login-link">
           <Typography variant="overline">Soy Paciente</Typography>
         </div>
