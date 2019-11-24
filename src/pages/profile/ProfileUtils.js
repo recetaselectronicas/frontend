@@ -2,14 +2,14 @@
 export const getCheckedField = (field, value) => {
   const newField = { ...field };
   newField.value = value;
-  newField.error = newField.required && !value ? 'Campo obligatorio' : '';
+  newField.error = newField.editable && newField.required && !value ? 'Campo obligatorio' : '';
   return newField;
 };
 
 export const getCheckedDateField = (field, value) => {
   const newField = getCheckedField(field, value);
   // eslint-disable-next-line no-restricted-globals
-  if (!newField.error) newField.error = !(newField.value instanceof Date) || isNaN(newField.value.getTime()) ? 'Fecha inválida' : '';
+  if (!newField.error) newField.error = newField.editable && (!(newField.value instanceof Date) || isNaN(newField.value.getTime())) ? 'Fecha inválida' : '';
   return newField;
 };
 

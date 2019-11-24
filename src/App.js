@@ -20,6 +20,7 @@ import ProfilePage from './pages/profile/ProfilePage';
 import DoctorsPage from './pages/doctors/DoctorsPage';
 import AffiliatesPage from './pages/affiliates/AffiliatesPage';
 import PharmacistsPage from './pages/pharmacists/PharmacistsPage';
+import StatisticsPage from './pages/statistics/StatisticsPage';
 
 const NoMatch = ({ location }) => (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -74,6 +75,7 @@ function App() {
               <Route path="/afiliados" exact component={AffiliatesPage} />
               <Route path="/doctores" exact component={DoctorsPage} />
               <Route path="/farmaceuticos" exact component={PharmacistsPage} />
+              <Route path="/statistics" exact component={StatisticsPage} />
               <Route component={NoMatch} />
             </Switch>
           </>

@@ -11,7 +11,7 @@ const errorRequestHandler = (error) => {
   // TODO : ver como hacer handlers de los errores una vez este mas avanzado el backend
   const { response } = error;
   if (response) {
-    if (response.status === 403 && response.data.code === '2-002') {
+    if (response.status === 403 && response.data.code === '2-001') {
       SessionService.logout();
       window.location.href = '/';
     }
@@ -51,5 +51,10 @@ export default class RestclientService {
       .delete(url, { ...opts, headers: this.getHeaders(opts) })
       .then(sucessfullRequestHandler)
       .catch(errorRequestHandler);
+  }
+
+  static cleanPost(url, data, opts) {
+    return restclient
+      .post(url, data, { ...opts, headers: this.getHeaders(opts) });
   }
 }

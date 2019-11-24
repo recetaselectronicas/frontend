@@ -20,7 +20,7 @@ import SessionService from '../../services/SessionService';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    height: '100vh',
+    height: '92vh',
   },
   image: {
     backgroundImage: `url(${loginBackground})`,

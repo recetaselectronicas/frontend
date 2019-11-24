@@ -10,7 +10,7 @@ import './home.css';
 
 const useStyles = makeStyles(() => ({
   root: {
-    height: '100vh',
+    height: '92vh',
   },
   image: {
     backgroundImage: `url(${HomeBackground})`,
@@ -55,4 +55,29 @@ export default function HomePage(props) {
       </Grid>
     </Grid>
   );
+
+  // return (
+  //   <Grid container style={{ height: '92vh', textAlign: 'center' }} justify="center" alignItems="center">
+  //     <Grid item xs={12} sm={6}>
+  //       <Paper onClick={onClick('affiliate')}>
+  //         <Typography variant="overline">Soy Paciente</Typography>
+  //       </Paper>
+  //     </Grid>
+  //     <Grid item xs={12} sm={6}>
+  //       <Paper onClick={onClick('doctor')}>
+  //         <Typography variant="overline">Soy Médico</Typography>
+  //       </Paper>
+  //     </Grid>
+  //     <Grid item xs={12} sm={6}>
+  //       <Paper onClick={onClick('doctor')}>
+  //         <Typography variant="overline">Soy Médico</Typography>
+  //       </Paper>
+  //     </Grid>
+  //     <Grid item xs={12} sm={6}>
+  //       <Paper onClick={onClick('medicalInsurance')}>
+  //         <Typography variant="overline">Soy Obra Social</Typography>
+  //       </Paper>
+  //     </Grid>
+  //   </Grid>
+  // );
 }

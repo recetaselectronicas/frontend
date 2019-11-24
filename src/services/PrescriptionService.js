@@ -71,4 +71,12 @@ export default class PrescriptionService extends RestclientService {
       data,
     });
   }
+
+  static async getStatistics(query) {
+    return this.post('/prescriptions/statistics', query);
+  }
+
+  static async downloadStatistics(type, query) {
+    return this.cleanPost(`/prescriptions/statistics/download?type=${type}`, query);
+  }
 }

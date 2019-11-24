@@ -56,6 +56,7 @@ const ProfilePage = (props) => {
   const saveEdition = async () => {
     const newProfile = getValidatedProfileData(profile);
     if (hasError(newProfile)) {
+      setProfile(newProfile);
       return showError('Corrija los errores e intente nuevamente');
     }
     try {
@@ -103,6 +104,10 @@ const ProfilePage = (props) => {
     }
   };
 
+  const canEditProfile = () => {
+    return Object.keys(initialProfile).some(key => initialProfile[key].editable);
+  }
+
   if (!profile) {
     return (
       <Container maxWidth="md">
@@ -131,6 +136,8 @@ const ProfilePage = (props) => {
     provincialMatriculation,
     matriculation,
     specialty,
+    corporateName,
+    description,
   } = profile;
   return (
     <Container maxWidth="md" fixed style={{ marginTop: '16px' }}>
@@ -149,47 +156,77 @@ const ProfilePage = (props) => {
             </Grid>
           </Grid>
           <Grid container item xs={12} sm={9} spacing={5}>
-            <Grid item xs={12} sm={6}>
-              <SimpleInput field={name} disabled={isDisabled(name)} onChange={onFieldChange} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <SimpleInput field={surname || lastName} disabled={isDisabled(surname || lastName)} onChange={onFieldChange} />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <SelectInput field={nationality} disabled={isDisabled(nationality)} onChange={onFieldChange} />
-            </Grid>
-            <Grid item xs={12} sm={8}>
-              <SelectInput field={gender} disabled={isDisabled(gender)} onChange={onFieldChange} />
-            </Grid>
-            <Grid item xs={12} sm={12} md={4}>
-              <DateInput field={birthDate} disabled={isDisabled(birthDate)} onChange={onDateChange} />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <SelectInput field={nicType} disabled={isDisabled(nicType)} onChange={onFieldChange} />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <SimpleInput
-                field={nicNumber}
-                disabled={isDisabled(nicNumber)}
-                onChange={onFieldChange}
-                inputProps={{ endAdornment: nicPhoto.value && (
-                  <InputAdornment position="end">
-                    <Tooltip title={<img alt={nicPhoto.fieldName} name={nicPhoto.fieldName} src={nicPhoto.value} style={{ maxWidth: 'inherit', maxHeight: 'inherit' }} />}>
-                      <TagFaces />
-                    </Tooltip>
-                  </InputAdornment>
-                ) }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <SimpleInput field={address} disabled={isDisabled(address)} onChange={onFieldChange} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <SimpleInput field={contactNumber} disabled={isDisabled(contactNumber)} onChange={onFieldChange} />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <SimpleInput field={email} disabled={isDisabled(email)} onChange={onFieldChange} />
-            </Grid>
+            {name && (
+              <Grid item xs={12} sm={6}>
+                <SimpleInput field={name} disabled={isDisabled(name)} onChange={onFieldChange} />
+              </Grid>
+            )}
+            {(surname || lastName) && (
+              <Grid item xs={12} sm={6}>
+                <SimpleInput field={surname || lastName} disabled={isDisabled(surname || lastName)} onChange={onFieldChange} />
+              </Grid>
+            )}
+            {corporateName && (
+              <Grid item xs={12} sm={6}>
+                <SimpleInput field={corporateName} disabled={isDisabled(corporateName)} onChange={onFieldChange} />
+              </Grid>
+            )}
+            {description && (
+              <Grid item xs={12} sm={6}>
+                <SimpleInput field={description} disabled={isDisabled(description)} onChange={onFieldChange} />
+              </Grid>
+            )}
+            {nationality && (
+              <Grid item xs={12} sm={4}>
+                <SelectInput field={nationality} disabled={isDisabled(nationality)} onChange={onFieldChange} />
+              </Grid>
+            )}
+            {gender && (
+              <Grid item xs={12} sm={8}>
+                <SelectInput field={gender} disabled={isDisabled(gender)} onChange={onFieldChange} />
+              </Grid>
+            )}
+            {birthDate && (
+              <Grid item xs={12} sm={12} md={4}>
+                <DateInput field={birthDate} disabled={isDisabled(birthDate)} onChange={onDateChange} />
+              </Grid>
+            )}
+            {nicType && (
+              <Grid item xs={12} sm={6} md={4}>
+                <SelectInput field={nicType} disabled={isDisabled(nicType)} onChange={onFieldChange} />
+              </Grid>
+            )}
+            {nicNumber && (
+              <Grid item xs={12} sm={6} md={4}>
+                <SimpleInput
+                  field={nicNumber}
+                  disabled={isDisabled(nicNumber)}
+                  onChange={onFieldChange}
+                  inputProps={{ endAdornment: nicPhoto && nicPhoto.value && (
+                    <InputAdornment position="end">
+                      <Tooltip title={<img alt={nicPhoto.fieldName} name={nicPhoto.fieldName} src={nicPhoto.value} style={{ maxWidth: 'inherit', maxHeight: 'inherit' }} />}>
+                        <TagFaces />
+                      </Tooltip>
+                    </InputAdornment>
+                  ) }}
+                />
+              </Grid>
+            )}
+            {address && (
+              <Grid item xs={12} sm={6}>
+                <SimpleInput field={address} disabled={isDisabled(address)} onChange={onFieldChange} />
+              </Grid>
+            )}
+            {contactNumber && (
+              <Grid item xs={12} sm={6}>
+                <SimpleInput field={contactNumber} disabled={isDisabled(contactNumber)} onChange={onFieldChange} />
+              </Grid>
+            )}
+            {email && (
+              <Grid item xs={12} sm={12}>
+                <SimpleInput field={email} disabled={isDisabled(email)} onChange={onFieldChange} />
+              </Grid>
+            )}
             {nationalMatriculation && (
               <Grid item xs={12} sm={6}>
                 <SimpleInput field={nationalMatriculation} disabled={isDisabled(nationalMatriculation)} onChange={onFieldChange} />
@@ -221,7 +258,7 @@ const ProfilePage = (props) => {
                   </Grid>
                 </>
               )}
-              {!editing && (
+              {!editing && canEditProfile() && (
                 <Grid item>
                   <Button variant="contained" color="primary" onClick={startEdition}>Editar</Button>
                 </Grid>
