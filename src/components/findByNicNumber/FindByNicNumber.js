@@ -28,8 +28,9 @@ const FindByNicNumber = ({
                     <MenuItem value="M">Hombre</MenuItem>
                     <MenuItem value="F">Mujer</MenuItem>
                 </TextField>
+                <Button onClick={search} disabled={!gender || !nicNumber}>Buscar</Button>
             </FormControl>
-            <Button onClick={search}>Buscar</Button>
+
 
         </div>
     );

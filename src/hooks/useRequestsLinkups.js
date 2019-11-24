@@ -1,21 +1,16 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import LinksService from '../services/LinksService';
 
-export default (getter = value => value) => {
+export default () => {
   const [requests, setRequests] = useState([]);
-  async function fetchData() {
-    try {
-      const dataRequests = await LinksService.getLinksRequests();
-      setRequests(getter(dataRequests));
-    } catch (error) {
-      // TODO show ?
-      console.error('error fetching data', error);
-    }
-  }
+  const updateState = useCallback(async () => {
+    const dataRequests = await LinksService.getLinksRequests();
+    setRequests(dataRequests);
+  }, [])
   useEffect(() => {
-    fetchData();
-  }, []);
+    updateState();
+  }, [updateState]);
 
-  return [requests, fetchData];
+  return [requests, updateState];
 };

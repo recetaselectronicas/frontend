@@ -37,7 +37,7 @@ const LinkUpsPage = ({ showSuccess, showError }) => {
     setDeclineData({ id, type });
   };
   return (
-    <Container>
+    <Container className="page">
       <RequestLinkupsList
         title="Solicitudes de pacientes"
         requests={requestsLinkups.affiliateRequests}

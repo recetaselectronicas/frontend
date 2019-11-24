@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import MedicalInsuranceService from '../../services/MedicalInsuranceService';
 import PharmacistService from '../../services/PharmacistService';
 import UserListsMedicalInsurance from '../../components/userListsMedicalInsurance/UserListsMedicalInsurance';

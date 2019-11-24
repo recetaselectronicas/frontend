@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Container, Paper, Button, TextField, MenuItem, Typography } from '@material-ui/core';
+import { Container, Paper, Button, TextField, MenuItem, Typography, IconButton } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import MedicalInsuranceService from '../../services/MedicalInsuranceService';
 import PatientService from '../../services/PatientService';
 import LinksService from '../../services/LinksService';
@@ -13,7 +14,7 @@ const AffiliatesPage = ({ showSuccess, showError }) => {
   const [nicNumber, setNicnumber] = useState('');
   const [gender, setGender] = useState('');
   const [affiliateFlow, setAddAffiliateFlow] = useState(false);
-  const [searchPatients, setSearchPatients] = useState([]);
+  const [searchPatients, setSearchPatients] = useState(null);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -30,10 +31,11 @@ const AffiliatesPage = ({ showSuccess, showError }) => {
     } catch (error) {
       showError('Hubo un error inesperado lo sentimos !');
     }
-  }, []);
+  }, [showError]);
+
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const unlink = async (affiliate) => {
     try {
@@ -62,8 +64,10 @@ const AffiliatesPage = ({ showSuccess, showError }) => {
     }
   };
   const cleanInputs = () => {
+    setAddAffiliateFlow(false)
     setSelectedPatient(null);
     setSelectedPlan(null);
+    setSearchPatients(null)
     setImageCredential('');
     setCode('');
     setCategory('');
@@ -101,19 +105,29 @@ const AffiliatesPage = ({ showSuccess, showError }) => {
 
   const selectPatient = (patient) => {
     setSelectedPatient(patient);
-    setSearchPatients([]);
+    setSearchPatients(null);
   };
 
+  const onClose = () => {
+    cleanInputs();
+  }
+  const linkupButtonDisabled = !code || !category || !imageCredential || !selectedPlan || !selectedPatient
   return (
-    <Container>
-      <Paper style={{ padding: '2em' }}>
+    <Container className="page">
+      <Paper style={{ padding: '2em', marginBottom: '2em' }}>
         <div>
           {!affiliateFlow && <Button onClick={() => setAddAffiliateFlow(true)}>Agregar a un afiliado</Button>}
+          {affiliateFlow && <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography variant="h5">Agregar a un afiliado</Typography>
+            <IconButton aria-label="Close" onClick={onClose} >
+              <CloseIcon />
+            </IconButton>
+          </div>}
         </div>
         {affiliateFlow && (
           <div>
             Buscar
-                      <FindByNicNumber
+            <FindByNicNumber
               gender={gender}
               nicNumber={nicNumber}
               setNicnumber={setNicnumber}
@@ -121,7 +135,7 @@ const AffiliatesPage = ({ showSuccess, showError }) => {
               search={search}
             />
             <div>
-              <UsersList users={searchPatients} onClick={(patient) => selectPatient(patient)} labelButton="Vincular" />
+              <UsersList users={searchPatients} onClick={(patient) => selectPatient(patient)} labelButton="Vincular" emptyState={gender && nicNumber && "No hay resultados que  para esta busqueda"} />
 
               {selectedPatient && (
                 <div>
@@ -148,7 +162,7 @@ const AffiliatesPage = ({ showSuccess, showError }) => {
                   <TextField fullWidth label="Categoria" onChange={event => setCategory(event.target.value)} value={category} />
                   <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1em' }}>
 
-                    <Button variant="contained" color="primary" onClick={linkup}>
+                    <Button variant="contained" color="primary" disabled={linkupButtonDisabled} onClick={linkup}>
                       Aceptar
                                         </Button>
                   </div>
@@ -158,7 +172,7 @@ const AffiliatesPage = ({ showSuccess, showError }) => {
           </div>
         )}
       </Paper>
-      <Typography variant="h5">Usuarios afiliados</Typography>
+      <Typography variant="h5" style={{ marginBottom: '1em' }}>Usuarios afiliados</Typography>
       <UsersList users={affiliates} onClick={unlink} emptyState="No tienes afiliados asociados" labelButton="Desvincular" />
     </Container>
   );
