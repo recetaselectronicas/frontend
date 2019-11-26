@@ -27,7 +27,8 @@ export default ({
   isMedicalInsurance = false,
   onAccept = false,
   title,
-  emptyState
+  emptyState,
+  type
 }) => {
   const [showOnlyPending, setShowOnlyPending] = useState(true)
   const hasRequests = requests.length > 0
@@ -42,9 +43,9 @@ export default ({
     <Paper style={{ marginBottom: '2em' }}>
       <ExpansionPanel>
         <ExpansionPanelSummary
+          data-testid={`${type}-summary`}
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
-          id="panel1a-header"
         >
           <Typography>{title}</Typography>
         </ExpansionPanelSummary>
@@ -62,6 +63,7 @@ export default ({
                 {getRequests().map(request => <RequestCard
                   key={request.idRequest}
                   {...request}
+                  type={type}
                   isMedicalInsurance={isMedicalInsurance}
                   onCancel={onCancel}
                   onDecline={onDecline}
@@ -97,7 +99,8 @@ const RequestCard = ({
   isMedicalInsurance,
   onAccept,
   onCancel,
-  onDecline
+  onDecline,
+  type
 }) => {
   const couldCancel = status => isPending(status) && !isMedicalInsurance;
   const couldDecline = status => isPending(status) && isMedicalInsurance;
@@ -153,7 +156,7 @@ const RequestCard = ({
 
       <Grid item xs={12} sm={2}>
         {couldAccept(status) && onAccept && (
-          <Button onClick={() => onAccept(idRequest)}>
+          <Button onClick={() => onAccept(idRequest)} data-testid={`${type}-accept-${idRequest}`}>
             Aceptar
       </Button>)}
         {couldCancel(status) && onCancel && (

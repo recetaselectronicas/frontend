@@ -103,7 +103,7 @@ export default function LoginPage(props) {
           <Typography component="h1" variant="h5">
             Login
           </Typography>
-          <form className={classes.form} noValidate onSubmit={login}>
+          <form className={classes.form} noValidate onSubmit={login} data-testid="login-form">
             <TextField
               variant="outlined"
               margin="normal"
@@ -116,8 +116,11 @@ export default function LoginPage(props) {
               autoFocus
               value={user.username}
               onChange={onChangeInput}
+              data-testid="user"
+
             />
             <TextField
+              data-testid="password"
               variant="outlined"
               margin="normal"
               required

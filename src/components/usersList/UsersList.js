@@ -3,7 +3,7 @@ import { Paper, Button, Typography } from '@material-ui/core';
 import { Shower } from '../shower/Shower';
 
 
-export const UsersList = ({ users, onClick, emptyState, labelButton }) => {
+export const UsersList = ({ users, onClick, emptyState, labelButton, entity }) => {
     if (!users) {
         return null
     }
@@ -12,7 +12,7 @@ export const UsersList = ({ users, onClick, emptyState, labelButton }) => {
         {!isEmpty ? users.map((user) => {
             const { id, name, lastName, birthDate, contactNumber, nationality, address, email, nationalMatriculation, nicNumber, gender } = user
             return (
-                <Paper key={id} style={{ padding: '2em', marginBottom: '2em', display: 'flex', justifyContent: 'space-between' }}>
+                <Paper key={id} style={{ padding: '2em', marginBottom: '2em', display: 'flex', justifyContent: 'space-between' }} data-testid={`${entity}-card-${id}`}>
                     <div>
                         {Boolean(name) && Boolean(lastName) && (
                             <div>
@@ -29,7 +29,7 @@ export const UsersList = ({ users, onClick, emptyState, labelButton }) => {
                         <Shower label="Sexo" attribute={gender} />
                     </div>
                     <div>
-                        <Button onClick={() => onClick(user)} > {labelButton} </Button>
+                        <Button onClick={() => onClick(user)} data-testid={`${entity}-action-${id}`} > {labelButton} </Button>
                     </div>
                 </Paper>
             )

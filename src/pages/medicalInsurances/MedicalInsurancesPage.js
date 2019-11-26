@@ -32,16 +32,14 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
   const isAffiliate = type === 'affiliate';
 
   const fetchData = useCallback(async () => {
-    try {
-      const dataMedicalInsurance = await MedicalInsuranceService.getAll();
-      const medicalInsurancesLinked = await MedicalInsuranceService.getLinkedMedicalInsurances();
-      setMedicalInsurances(dataMedicalInsurance);
-      setLinkedMedicalInsurances(medicalInsurancesLinked);
-    } catch (error) {
-      showError('Hubo un error inesperado lo sentimos !');
-    }
-  }, [showError])
+    const dataMedicalInsurance = await MedicalInsuranceService.getAll();
+    const medicalInsurancesLinked = await MedicalInsuranceService.getLinkedMedicalInsurances();
+    setMedicalInsurances(dataMedicalInsurance);
+    setLinkedMedicalInsurances(medicalInsurancesLinked);
+  }, [])
+
   useEffect(() => {
+
     fetchData();
   }, [fetchData]);
 
@@ -161,18 +159,18 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
               borderRadius: '5px',
               padding: '1em',
               justifyContent: 'space-between',
+              flexWrap: 'wrap'
             }}
             >
-              <div>
+              <p>
                 {description}
                 (
                 {corporateName}
                 )
-              </div>
-              <div>{address}</div>
-              <div>{contactNumber}</div>
-              <div>{email}</div>
-
+              </p>
+              <p>{address}</p>
+              <p>{contactNumber}</p>
+              <p>{email}</p>
               <Button onClick={() => unlikMedicalInsurance(medicalInsurance)}> Desvincularse </Button>
             </div>
           );
@@ -188,9 +186,9 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
       <Paper style={{ padding: '2em' }}>
         <div>Obras sociales disponibles</div>
         <div>
-          <TextField fullWidth select label="Obra social" onChange={event => setSelectedMedicalInsurance(event.target.value)} value={selectedmedicalInsurance}>
+          <TextField data-testid="medical-insurance-select" fullWidth select label="Obra social" onChange={event => setSelectedMedicalInsurance(event.target.value)} value={selectedmedicalInsurance}>
             {medicalInsurances.map(medicalInsurance => (
-              <MenuItem key={medicalInsurance.id} value={medicalInsurance}>
+              <MenuItem data-testid={`${medicalInsurance.description}-select`} key={medicalInsurance.id} value={medicalInsurance}>
                 {medicalInsurance.description}
               </MenuItem>
             ))}
@@ -228,7 +226,7 @@ const MedicalInsurancesPage = ({ showSuccess, showError }) => {
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1em' }}>
 
-          <Button variant="contained" color="primary" onClick={requestLink} disabled={!canRequestLink}>
+          <Button variant="contained" color="primary" onClick={requestLink} disabled={!canRequestLink} data-testid="request-button">
             Solicitar
           </Button>
         </div>
