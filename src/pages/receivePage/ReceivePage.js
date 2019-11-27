@@ -118,7 +118,7 @@ const ReceivePage = (props) => {
     <Grid container className="page">
       {authenticateAffiliate && affiliateDefaultAuth && (
         <AuthorizationProvider
-          authenticationType="usr_pass"
+          authenticationType={affiliateDefaultAuth.default}
           authorizationType="authorize_receive"
           data={{ id: selectedPrescription }}
           userType="affiliate"
