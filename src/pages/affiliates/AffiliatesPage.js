@@ -23,15 +23,11 @@ const AffiliatesPage = ({ showSuccess, showError }) => {
   const [category, setCategory] = useState('');
 
   const fetchData = useCallback(async () => {
-    try {
-      const data = await MedicalInsuranceService.getAffiliates();
-      const plansData = await MedicalInsuranceService.getPlans();
-      setAffiliates(data);
-      setPlans(plansData);
-    } catch (error) {
-      showError('Hubo un error inesperado lo sentimos !');
-    }
-  }, [showError]);
+    const data = await MedicalInsuranceService.getAffiliates();
+    const plansData = await MedicalInsuranceService.getPlans();
+    setAffiliates(data);
+    setPlans(plansData);
+  });
 
   useEffect(() => {
     fetchData();

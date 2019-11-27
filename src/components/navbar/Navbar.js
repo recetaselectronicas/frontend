@@ -121,6 +121,7 @@ function MenuAppBar({ history, location, setUserIsLogged }) {
               color="inherit"
               aria-label="Menu"
               onClick={toggleDrawer(true)}
+              data-testid="menu-drawer-button"
             >
               <MenuIcon />
             </IconButton>
@@ -137,6 +138,7 @@ function MenuAppBar({ history, location, setUserIsLogged }) {
                 aria-haspopup="true"
                 onClick={handleMenu}
                 color="inherit"
+                data-testid='user-icon'
               >
                 <AccountCircle />
               </IconButton>
@@ -155,7 +157,7 @@ function MenuAppBar({ history, location, setUserIsLogged }) {
                 onClose={handleClose}
               >
                 <MenuItem onClick={goConfiguration}>Configuración</MenuItem>
-                <MenuItem onClick={logout}>Log out</MenuItem>
+                <MenuItem onClick={logout} data-testid='logout-button'>Log out</MenuItem>
               </Menu>
             </div>
           )}
@@ -165,7 +167,7 @@ function MenuAppBar({ history, location, setUserIsLogged }) {
         <div className={classes.list} role="presentation" onKeyDown={toggleDrawer(false)}>
           <List>
             {menu.map(link => (
-              <ListItem button key={link.label} onClick={() => onSelectedItem(link)}>
+              <ListItem button key={link.label} data-testid={link.url} onClick={() => onSelectedItem(link)}>
                 <ListItemText primary={link.label} />
               </ListItem>
             ))}

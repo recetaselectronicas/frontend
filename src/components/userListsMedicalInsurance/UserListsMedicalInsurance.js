@@ -18,13 +18,9 @@ const UserListsMedicalInsurance = ({ showSuccess, showError, findUsers, entity, 
     const [matriculation, setMatriculation] = useState('');
 
     const fetchData = useCallback(async () => {
-        try {
-            const data = await findUsers();
-            setUsers(data);
-        } catch (error) {
-            showError('Hubo un error inesperado lo sentimos !');
-        }
-    }, [findUsers, showError])
+        const data = await findUsers();
+        setUsers(data);
+    }, [findUsers])
 
     useEffect(() => {
         fetchData();
@@ -129,10 +125,10 @@ const UserListsMedicalInsurance = ({ showSuccess, showError, findUsers, entity, 
                     )}
                 </div>
 
-                {searchResult.length > 0 && <UsersList users={searchResult} onClick={linkup} labelButton="Vincular" />}
+                {searchResult.length > 0 && <UsersList users={searchResult} onClick={linkup} labelButton="Vincular" entity={entity} />}
 
             </Paper>
-            <UsersList users={users} onClick={unlink} emptyState={`No tienes ningun ${label} asociado`} labelButton="Desvincular" />
+            <UsersList users={users} onClick={unlink} emptyState={`No tienes ningun ${label} asociado`} labelButton="Desvincular" entity={entity} />
         </Container>
     );
 };

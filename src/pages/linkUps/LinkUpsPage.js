@@ -45,6 +45,7 @@ const LinkUpsPage = ({ showSuccess, showError }) => {
         onDecline={openDeclineModal('affiliate')}
         onAccept={acceptRequestLinkup('affiliate')}
         emptyState="Aun no tienes solicitudes de pacientes"
+        type="affiliate"
       />
       <RequestLinkupsList
         title="Solicitudes de doctores"
@@ -53,6 +54,7 @@ const LinkUpsPage = ({ showSuccess, showError }) => {
         onDecline={openDeclineModal('doctor')}
         onAccept={acceptRequestLinkup('doctor')}
         emptyState="Aun no tienes solicitudes de doctores"
+        type="doctor"
       />
       <RequestLinkupsList
         title="Solicitudes de farmaceuticos"
@@ -61,6 +63,7 @@ const LinkUpsPage = ({ showSuccess, showError }) => {
         onDecline={openDeclineModal('pharmacist')}
         onAccept={acceptRequestLinkup('pharmacist')}
         emptyState="Aun no tienes solicitudes de farmaceuticos"
+        type="pharmacist"
       />
 
       <ReasonDialog
