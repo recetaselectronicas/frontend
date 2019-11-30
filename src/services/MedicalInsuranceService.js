@@ -2,7 +2,6 @@ import RestclientService from './RestclientService';
 
 export default class MedicalInsuranceService extends RestclientService {
   static getAll() {
-    // return new Promise(res => res([{ id: 0, label: 'OSDE' }, { id: 1, label: 'Swiss medical' }, { id: 2, label: 'ACA Salud' }]));
     return this.get('/medical-insurances');
   }
 
@@ -19,8 +18,11 @@ export default class MedicalInsuranceService extends RestclientService {
   }
 
   static getByDoctor() {
-    // return new Promise(res => res([{ id: 0, label: 'OSDE' }, { id: 1, label: 'Swiss medical' }, { id: 2, label: 'ACA Salud' }]));
     return this.get('/doctors/medical-insurances');
+  }
+
+  static getByPharmacist() {
+    return this.get('/pharmacists/medical-insurances');
   }
 
   static getLinkedMedicalInsurances() {

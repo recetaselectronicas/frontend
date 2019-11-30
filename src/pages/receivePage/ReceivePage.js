@@ -56,7 +56,7 @@ const ReceivePage = (props) => {
   const [affiliateDefaultAuth, setAffiliateDefaultAuth] = useState('');
 
   useEffect(() => {
-    MedicalInsuranceService.getAll()
+    MedicalInsuranceService.getByPharmacist()
       .then((data) => {
         setMedicalInsurances(data);
       })
