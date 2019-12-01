@@ -27,3 +27,11 @@ Cypress.Commands.add('navigateTo', (url) => {
     cy.get(getDataTestId(`"${url}"`)).click();
     cy.location('pathname').should('eq', url);
 })
+
+Cypress.Commands.add('visitHome', (url) => {
+    cy.visit('/', {
+        onBeforeLoad: (win) => {
+            win.sessionStorage.clear()
+        }
+    })
+})

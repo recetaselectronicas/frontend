@@ -2,14 +2,14 @@
 
 import { getDataTestId } from "../../utils/getDataTestId"
 
-context('RequestLinkupDoctor.spec', () => {
+context('RequestLinkupPharmacist', () => {
     it('entramos a la home', () => {
         // cy.initDataBase()
         cy.visitHome()
     })
 
-    it('vamos a la seccion de login del doctor y nos logeamos', () => {
-        cy.login({ type: 'doctor', user: 'rosco', pass: '1234' })
+    it('vamos a la seccion de login del farmaceutico y nos logeamos', () => {
+        cy.login({ type: 'pharmacist', user: 'andale', pass: '1234' })
     })
 
     it('entramos a la seccion de obras sociales', () => {
@@ -39,18 +39,18 @@ context('RequestLinkupDoctor.spec', () => {
     })
 
     it('y aceptamos la solicitud', () => {
-        cy.get(getDataTestId('doctor-summary')).click();
-        cy.get(getDataTestId('doctor-accept-1')).click();
+        cy.get(getDataTestId('pharmacist-summary')).click();
+        cy.get(getDataTestId('pharmacist-accept-1')).click();
     })
 
-    it('y vemos en la seccion de doctores este nuevo doctor', () => {
-        cy.navigateTo('/doctores').should('exist')
-        cy.get(getDataTestId('doctor-card-3'))
+    it('y vemos en la seccion de farmaceuticos este nuevo farmaceutico', () => {
+        cy.navigateTo('/farmaceuticos').should('exist')
+        cy.get(getDataTestId('pharmacist-card-1'))
     })
 
     it('y lo desvinculamos', () => {
-        cy.get(getDataTestId('doctor-action-3')).click()
-        cy.get(getDataTestId('doctor-card-3')).should('not.exist');
+        cy.get(getDataTestId('pharmacist-action-1')).click()
+        cy.get(getDataTestId('pharmacist-card-1')).should('not.exist');
     })
 
 })
