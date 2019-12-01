@@ -27,7 +27,7 @@ const AffiliatesPage = ({ showSuccess, showError }) => {
     const plansData = await MedicalInsuranceService.getPlans();
     setAffiliates(data);
     setPlans(plansData);
-  });
+  }, [setAffiliates, setPlans]);
 
   useEffect(() => {
     fetchData();

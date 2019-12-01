@@ -4,7 +4,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import DateFnsUtils from '@date-io/date-fns';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import Button from '@material-ui/core/Button';
-import { Paper } from '@material-ui/core';
+import { Paper, Hidden } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
@@ -90,9 +90,11 @@ function CreateAffiliateAccount(props) {
         <Container maxWidth="md">
           <Paper>
             <input type="hidden" value="justForDisablingAutocomplete" />
-            <Grid container spacing={3}>
-              <Grid item xs={1} />
-              <Grid item container spacing={3} xs={4}>
+            <Grid container spacing={3} className="without-spacing-xs">
+              <Hidden xsDown>
+                <Grid item xs={1} />
+              </Hidden>
+              <Grid item container spacing={3} className="without-spacing-xs" xs={12} sm={4} className="without-spacing-xs">
                 <Grid item xs={12}>
                   <TextField name={name.fieldName} margin="normal" fullWidth helperText={name.error} error={!!name.error} label="Nombre" onChange={event => wrapOnChange(event.target, name)} value={name.value} autoComplete="off" />
                 </Grid>
@@ -109,53 +111,58 @@ function CreateAffiliateAccount(props) {
                   <TextField name={password.fieldName} fullWidth helperText={password.error} error={!!password.error} type="password" label="Password" onChange={event => wrapOnChange(event.target, password)} value={password.value} autoComplete="new-password" />
                 </Grid>
               </Grid>
-              <Grid item xs={1}>
-                <Divider orientation="vertical" variant="middle" style={{ marginTop: '10px' }} />
-              </Grid>
-              <Grid item container spacing={3} xs={6}>
+              <Hidden xsDown>
+                <Grid item sm={1}>
+                  <Divider orientation="vertical" variant="middle" style={{ marginTop: '10px' }} />
+                </Grid>
+              </Hidden>
+              <Grid item container spacing={3} xs={12} sm={6} className="without-spacing-xs">
                 <Grid item xs={12}>
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <KeyboardDatePicker name={birthDate.fieldName} margin="normal" helperText={birthDate.error} error={!!birthDate.error} format="dd/MM/yyyy" label="Fecha de Nacimiento" onChange={value => wrapOnChange({ value }, birthDate)} value={birthDate.value} autoComplete="off" />
                   </MuiPickersUtilsProvider>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <TextField name={gender.fieldName} fullWidth helperText={gender.error} error={!!gender.error} select label="Sexo" onChange={event => wrapOnChange(event.target, gender)} value={gender.value} autoComplete="off">
                     {getGenderItems(availableGenders)}
                   </TextField>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <TextField name={nationality.fieldName} fullWidth helperText={nationality.error} error={!!nationality.error} select label="Nacionalidad" onChange={event => wrapOnChange(event.target, nationality)} value={nationality.value} autoComplete="off">
                     {getNationalityItems(availableNationalities)}
                   </TextField>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <TextField name={nicType.fieldName} fullWidth helperText={nicType.error} error={!!nicType.error} select label="Tipo de Documento" onChange={event => wrapOnChange(event.target, nicType)} value={nicType.value} autoComplete="off">
                     {getNicTypeItems(availableNicTypes)}
                   </TextField>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <TextField name={nicNumber.fieldName} fullWidth helperText={nicNumber.error} error={!!nicNumber.error} label="Número de Documento" onChange={event => wrapOnChange(event.target, nicNumber)} value={nicNumber.value} autoComplete="off" />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <TextField name={address.fieldName} fullWidth helperText={address.error} error={!!address.error} label="Dirección" onChange={event => wrapOnChange(event.target, address)} value={address.value} autoComplete="off" />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <TextField name={contactNumber.fieldName} fullWidth helperText={contactNumber.error} error={!!contactNumber.error} label="Telefono de Contacto" onChange={event => wrapOnChange(event.target, contactNumber)} value={contactNumber.value} autoComplete="off" />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
                   <ImageSelector photo={nicPhoto.value} onSelect={value => wrapOnChange({ value }, nicPhoto)} onUnSelect={() => wrapOnChange({ value: '' }, nicPhoto)} autoComplete="off" />
                 </Grid>
               </Grid>
             </Grid>
-            <Grid container spacing={3} style={{ marginTop: '30px' }}>
-              <Grid item xs={3} />
-              <Grid item xs={3} />
-              <Grid item xs={2}>
+            <Grid container spacing={3} className="without-spacing-xs" style={{ marginTop: '30px' }}>
+              <Hidden xsDown>
+
+                <Grid item xs={3} />
+                <Grid item xs={3} />
+              </Hidden>
+              <Grid item xs={6} sm={2}>
                 <Button onClick={cancel} variant="contained" color="secondary" disabled={creating}>
                   Cancelar
                 </Button>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={6} sm={2}>
                 <Button onClick={createAccount} variant="contained" color="primary" style={{ minWidth: '150px' }} disabled={creating}>
                   {!creating && 'Crear Cuenta'}
                   {creating && (<CircularProgress size={24} />)}
