@@ -31,6 +31,9 @@ const useStyles = makeStyles(theme => ({
     paddingTop: '1em',
     textAlign: 'center',
     color: theme.palette.text.secondary,
+    [theme.breakpoints.down('sm')]: {
+      padding: '0.5em',
+    },
   },
   formControl: {
     margin: theme.spacing(1),
@@ -174,8 +177,8 @@ export const EmitRecipeComponent = (props) => {
   return (
     <React.Fragment>
       {onEmitFlow && <PrescriptionEmitFlow affiliate={selectedAffiliate} prescription={buildPrescriptionRequest()} onFailure={onFailureEmit} onSuccess={onSuccessEmit} />}
-      <Grid container justify="center" spacing={3} className="page">
-        <Grid item xs={9}>
+      <Grid container justify="center" spacing={3} className="page without-spacing-xs">
+        <Grid item sm={9}>
           <Paper className={classes.paper}>
             <div>
               <TextField disabled={created} name="institucion" fullWidth select label="Institucion" onChange={event => setSelectedInstitution(event.target.value)} value={selectedInstitution}>
@@ -294,7 +297,7 @@ export const EmitRecipeComponent = (props) => {
               )}
           </Paper>
         </Grid>
-        <Grid container item justify="flex-end" xs={9}>
+        <Grid container item justify="flex-end" sm={9}>
           <Button
             variant="contained"
             color="primary"

@@ -73,7 +73,7 @@ const PrescriptionsPage = (props) => {
   return (
     <Grid container component="main" className="page">
       <CssBaseline />
-      <Grid item xs={2} className="prescriptions-page__special-filters">
+      <Grid item sm={2} xs={12} className="prescriptions-page__special-filters">
         <div>
           Filtros aplicados
           <div
@@ -95,7 +95,7 @@ const PrescriptionsPage = (props) => {
         </div>
         {filtersValue && <SpecialFilterSection {...filtersValue} onSelectFilter={onSelectFilter} />}
       </Grid>
-      <Grid item xs={10}>
+      <Grid item sm={10} xs={12}>
         {filtersValue && (
           <FiltersSection
             {...filtersValue}

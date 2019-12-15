@@ -42,15 +42,19 @@ const useStyles = makeStyles(theme => ({
 const localRoutes = [
   {
     url: '/configuracion',
-    label: 'Configuración'
+    label: 'Configuración',
   },
   {
     url: '/',
-    label: 'Home'
-  }
-]
+    label: 'Home',
+  },
+  {
+    url: '/verify-account',
+    label: 'Verificación de la cuenta',
+  },
+];
 
-function MenuAppBar({ history, location, setUserIsLogged }) {
+function MenuAppBar({ history, location, setUserIsLogged, title }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -101,14 +105,13 @@ function MenuAppBar({ history, location, setUserIsLogged }) {
   };
 
   const getActualPage = () => {
-    const searchUrl = menuItem => menuItem.url === location.pathname
-    const page = menu.find(searchUrl) || localRoutes.find(searchUrl)
+    const searchUrl = menuItem => menuItem.url === location.pathname;
+    const page = menu.find(searchUrl) || localRoutes.find(searchUrl);
     if (page) {
-      return page.label
-    } else {
-      return location.pathname.replace("/", "")
+      return page.label;
     }
-  }
+    return title;
+  };
 
   return (
     <div className={classes.root}>
@@ -128,7 +131,9 @@ function MenuAppBar({ history, location, setUserIsLogged }) {
           )}
           <img src={unifyLogo} alt="" width={25} onClick={goHome} style={{ cursor: 'pointer' }} />
           <Typography variant="h6" className={classes.title} onClick={goHome}>
-            Unify - <span style={{ textTransform: 'capitalize' }}>{getActualPage()}</span>
+            Unify -
+            {' '}
+            <span>{getActualPage()}</span>
           </Typography>
 
           {userIsLogged && (
@@ -138,7 +143,7 @@ function MenuAppBar({ history, location, setUserIsLogged }) {
                 aria-haspopup="true"
                 onClick={handleMenu}
                 color="inherit"
-                data-testid='user-icon'
+                data-testid="user-icon"
               >
                 <AccountCircle />
               </IconButton>
@@ -157,7 +162,7 @@ function MenuAppBar({ history, location, setUserIsLogged }) {
                 onClose={handleClose}
               >
                 <MenuItem onClick={goConfiguration}>Configuración</MenuItem>
-                <MenuItem onClick={logout} data-testid='logout-button'>Log out</MenuItem>
+                <MenuItem onClick={logout} data-testid="logout-button">Log out</MenuItem>
               </Menu>
             </div>
           )}

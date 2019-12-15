@@ -25,4 +25,9 @@ body {
     margin: 0px!important;
     width:initial!important;
   }
+  .page {
+    padding-top: 0.5em;
+    padding-left: 0;
+    padding-right: 0;
+  }
 }

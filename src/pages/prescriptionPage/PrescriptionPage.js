@@ -23,7 +23,7 @@ const translations = {
   'item audited medicine must be equal to item received medicine.': 'El medicamente auditado debe coincidir con el recepcionado',
 };
 const PrescriptionsPage = (props) => {
-  const { location, showError, showSuccess } = props;
+  const { location, showError, showSuccess, setTitle, match: { params: { id } } } = props;
   const [prescription, setPrescription] = useState(null);
   const [actions, setActions] = useState([]);
   const [currentActionFlow, setCurrentAction] = useState('');
@@ -50,7 +50,10 @@ const PrescriptionsPage = (props) => {
       props.history.push('/404');
     });
   };
-  useEffect(getPrescription, []);
+  useEffect(() => {
+    getPrescription();
+    setTitle(`Receta numero ${id}`);
+  }, []);
 
   const clearAll = async () => {
     setCurrentAction('');

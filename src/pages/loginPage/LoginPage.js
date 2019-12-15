@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -17,6 +17,7 @@ import { Redirect } from 'react-router-dom';
 import loginBackground from './login_background.jpg';
 import UserService from '../../services/UserService';
 import SessionService from '../../services/SessionService';
+import i18n from '../../utils/i18n';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -59,7 +60,12 @@ export default function LoginPage(props) {
   const classes = useStyles();
   const [user, setUserData] = useState(initialStateUser);
   const [error, setError] = useState('');
-  const { type } = props;
+  const { type, setTitle } = props;
+
+
+  useEffect(() => {
+    setTitle(`Login de ${i18n.gettext(type)}`);
+  }, [type]);
 
   const login = async (event) => {
     event.preventDefault();

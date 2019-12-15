@@ -38,6 +38,7 @@ const NoMatch = ({ location }) => (
 function App() {
   const [type, setType] = useState('');
   const [userIsLogged, setUserIsLogged] = useState(false);
+  const [title, setTitle] = useState(null);
 
   useEffect(() => {
     const { token } = SessionService.getUserData();
@@ -46,15 +47,15 @@ function App() {
 
   return (
     <Router>
-      <Navbar setUserIsLogged={setUserIsLogged} />
+      <Navbar setUserIsLogged={setUserIsLogged} title={title} />
       <main>
         {!userIsLogged && (
           <>
             <Switch>
               <Route path="/" exact render={props => <HomePage {...props} setType={setType} />} />
-              <Route path="/login" exact render={props => <LoginPage {...props} type={type} setUserIsLogged={setUserIsLogged} />} />
-              <Route path="/create-account" exact render={props => <CreateAccount {...props} type={type} />} />
-              <Route path="/verify-account" exact component={VerifyAccount} />
+              <Route path="/login" exact render={props => <LoginPage {...props} type={type} setUserIsLogged={setUserIsLogged} setTitle={setTitle} />} />
+              <Route path="/create-account" exact render={props => <CreateAccount {...props} type={type} setTitle={setTitle} />} />
+              <Route path="/verify-account" exact render={props => <VerifyAccount {...props} setTitle={setTitle} />} />
               <Route component={NoMatch} />
             </Switch>
           </>
@@ -65,7 +66,7 @@ function App() {
             <Switch>
               <Route path="/emitir" component={EmitRecipe} />
               <Route path="/recetas" component={PrescriptionsPage} />
-              <Route path="/receta/:id" exact component={PrescriptionPage} />
+              <Route path="/receta/:id" exact render={props => <PrescriptionPage {...props} setTitle={setTitle} />} />
               <Route path="/normas" exact component={Norm} />
               <Route path="/recepcionar" exact component={ReceivePage} />
               <Route path="/configuracion" exact component={ConfigurationPage} />
