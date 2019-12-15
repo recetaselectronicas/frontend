@@ -108,7 +108,7 @@ const AddItemDialog = (props) => {
           <Button
             color="primary"
             className="add-item__confirm-button"
-            disabled={!medicine.id || itemQuantity === 0}
+            disabled={!medicine.id || itemQuantity <= 0}
             onClick={addItem}
           >
             Agregar
